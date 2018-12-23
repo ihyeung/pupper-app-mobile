@@ -21,11 +21,17 @@ export class SignupPage {
   zip: string;
   maritalStatus: any;
   sex: any;
+  minDate: string;
+  maxDate: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public http: Http, private toastCtrl: ToastController,
     public globalVarsProvider: GlobalvarsProvider) {
-    }
+      this.minDate = new Date('Jan 1, 1930').toISOString();
+      const minAgeLim = new Date();
+      minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
+          this.maxDate = minAgeLim.toISOString();
+  }
 
     createUserAccountAndProfile() {
       if (this.userInputIsValid()) {
@@ -74,7 +80,7 @@ export class SignupPage {
             'Content-Type': 'application/json',
             'Authorization': jwt
           });
-          this.globalVarsProvider.setHeadersWithAuthToken(headersWithAuth);
+          this.globalVarsProvider.setAuthHeaders(headersWithAuth);
 
           this.createUserProfile(userAccountObj);
       }, error => console.log(error)
@@ -102,7 +108,7 @@ export class SignupPage {
       console.log('Creating a new user profile: ' + createUserProfileUrl);
 
       this.http.post(createUserProfileUrl, userProfileData,
-        { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+        { headers: this.globalVarsProvider.getAuthHeaders() })
         .subscribe(result => {
           if (result['status'] == 200) {
             let jsonResponseObj = JSON.parse(result['_body']);
@@ -110,7 +116,10 @@ export class SignupPage {
               this.presentToast("User Profile Created! Please wait ...");
 
               let userProfileObj = jsonResponseObj['userProfiles'][0];
-              this.globalVarsProvider.setUserId(userProfileObj['id']);
+
+              //Store user profile object in global vars
+              this.globalVarsProvider.setUserProfileObj(userProfileObj);
+
               this.navCtrl.push(TabsPage, {}, { animate: true });
             }
           }
@@ -168,7 +177,6 @@ export class SignupPage {
   }
 
   validateEmailFormat(emailIn) {
-    //string@string.string
     let format = /\S+@\S+\.\S+/;
     return format.test(emailIn);
   }

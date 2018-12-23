@@ -25,7 +25,7 @@ export class DogProfilePage {
   size: string;
   userProfile: any;
 
-  userId: any;
+  // userId: any;
   formData: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
@@ -37,7 +37,7 @@ export class DogProfilePage {
     if (this.userInputIsValid()) {
       const breedLookupUrl = ENV.BASE_URL + 'pupper/breed?name=' + this.breed;
       this.http.get(breedLookupUrl,
-        { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+        { headers: this.globalVarsProvider.getAuthHeaders() })
         .subscribe(result => {
           if (result['status'] != 200) {
             this.presentToast("Please enter a valid breed name.");
@@ -52,10 +52,7 @@ export class DogProfilePage {
   }
 
   public createMatchProfileFromWithBreedObj(breedObj) {
-    this.userId = this.globalVarsProvider.getUserId();
-    let userProfileData = this.globalVarsProvider.getUserProfileObj();
-    let userProfToPrint = JSON.stringify({ userProfileData });
-    console.log("User profile data from dog profile: " + userProfToPrint);
+    const userProfileId = this.globalVarsProvider.getUserProfileObj()['id'];
 
     let matchProfileDetails = JSON.stringify({
       aboutMe: this.aboutMe,
@@ -68,19 +65,18 @@ export class DogProfilePage {
       profileImage: null,
       sex: this.sex,
       size: this.size,
-      userProfile: userProfileData
+      userProfile: this.globalVarsProvider.getUserProfileObj()
     });
     console.log("MATCHPROFILEDETAILS" + matchProfileDetails);
 
-    const createMatchProfileUrl = ENV.BASE_URL + '/user/' + this.userId + '/matchProfile';
+    const createMatchProfileUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
     this.http.post(createMatchProfileUrl, matchProfileDetails,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() }) //For running back-end in AWS
+      { headers: this.globalVarsProvider.getAuthHeaders() }) //For running back-end in AWS
       .subscribe(result => {
         if (result['status'] == 200) {
           let jsonResponseObj = JSON.parse((result['_body']));
           let matchProfileObj = jsonResponseObj['matchProfiles'][0];
           let matchProfileId = matchProfileObj['id'];
-          this.globalVarsProvider.setMatchProfileId(matchProfileId);
 
           this.uploadDogProfilePicFile(this.profileImage,
             matchProfileId, this.globalVarsProvider.getFileToUpload());
@@ -102,13 +98,20 @@ export class DogProfilePage {
     let formData = new FormData();
     formData.append('profilePic', file);
 
-    let authToken = this.globalVarsProvider.getHeadersWithAuthToken().get('Authorization');
+    let authToken = this.globalVarsProvider.getAuthHeaders().get('Authorization');
     const formheadersWithAuth = new Headers({
       'Authorization': authToken
     });
 
-    let imageUploadEndpoint = ENV.BASE_URL + '/upload/user/' + this.userId +
+    const userProfileId = this.globalVarsProvider.getUserProfileObj()['id'];
+
+    let imageUploadEndpoint = ENV.BASE_URL + '/upload/user/' + userProfileId +
     '/matchProfile/' + matchProfileId;
+
+    //uncomment the code below after the image controller endpoint has been changed on the backend
+    // let imageUploadEndpoint = ENV.BASE_URL + '/user/' + userProfileId +
+    // '/matchProfile/' + matchProfileId + 'upload';
+
     this.http.put(imageUploadEndpoint, formData,
       { headers: formheadersWithAuth })
       .subscribe(result => {

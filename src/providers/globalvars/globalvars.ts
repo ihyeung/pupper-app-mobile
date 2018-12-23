@@ -1,29 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-/*
-  Generated class for the GlobalvarsProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
 @Injectable()
 export class GlobalvarsProvider {
 
   fileToUpload: any;
   filename: any;
-  userProfileId: any;
   userProfileObj: any;
-  headersWithAuthToken: any;
+  authHeaders: any;
   matchProfileObj: any;
-  matchProfileId: any;
 
   constructor(public http: HttpClient) {
   }
 
   public setFileToUpload(value) {
     this.fileToUpload = value;
-    console.log("Global Vars, File To Upload: " + this.fileToUpload);
   }
 
   public getFileToUpload() {
@@ -36,14 +27,6 @@ export class GlobalvarsProvider {
 
   public getFilename() {
     return this.filename;
-  }
-
-  public setUserId(value) {
-    this.userProfileId = value;
-  }
-
-  public getUserId() {
-    return this.userProfileId;
   }
 
   public setUserProfileObj(value) {
@@ -62,19 +45,11 @@ export class GlobalvarsProvider {
     return this.matchProfileObj;
   }
 
-  public setMatchProfileId(value) {
-    this.matchProfileId = value;
+  public setAuthHeaders(value) {
+    this.authHeaders = value;
   }
 
-  public getMatchProfileId() {
-    return this.matchProfileId;
-  }
-
-  public setHeadersWithAuthToken(value) {
-    this.headersWithAuthToken = value;
-  }
-
-  public getHeadersWithAuthToken() {
-    return this.headersWithAuthToken;
+  public getAuthHeaders() {
+    return this.authHeaders;
   }
 }

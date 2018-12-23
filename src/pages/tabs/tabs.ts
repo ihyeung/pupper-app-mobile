@@ -21,36 +21,19 @@ export class TabsPage {
 
   constructor(public navParams: NavParams, public http: Http, public globalVarsProvider: GlobalvarsProvider,
     private toastCtrl: ToastController) {
-    this.findUserProfileById();
+      if (null == this.globalVarsProvider.getUserProfileObj()) {
+        console.log('Error: cannot retrieve user profile data from global vars');
+      } else {
+        console.log('Now retreiving match profiles for the currently logged in user');
+        this.retrieveMatchProfilesForUser(this.globalVarsProvider.getUserProfileObj()['id']);
+      }
   }
 
-  findUserProfileById() {
-    const getUserProfileUrl = ENV.BASE_URL + '/user/' + this.globalVarsProvider.getUserId();
-    console.log('Retrieving user profile url : ' + getUserProfileUrl);
-    this.http.get(getUserProfileUrl,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
-      .subscribe(resp => {
-        if (resp['status'] == 403) {
-          this.presentToast("Your session has expired. Please log in again.");
-          return;
-        }
-        else if (resp['status'] == 400 || resp['status'] == 404 || resp['status'] == 422) {
-          this.presentToast("Error loading User Profile data.");
-          return;
-        }
-        else if (resp['status'] == 200) {
-          const jsonResponseObj = JSON.parse((resp['_body']));
-          const userProfileObj = jsonResponseObj['userProfiles'][0];
-
-        }
-      }, error => console.log(error)
-      );
-  }
-
-  getMatchProfilesByUserZip(userZipCode){
-    const getMatchProfileByUserZipUrl = ENV.BASE_URL + '/matchProfile?zip=' + userZipCode;
-    this.http.get(getMatchProfileByUserZipUrl,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+  retrieveMatchProfilesForUser(userProfileId){
+    const getMatchProfilesForUserUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
+    console.log('Url to retrieve match profiles for user: ' + getMatchProfilesForUserUrl);
+    this.http.get(getMatchProfilesForUserUrl,
+      { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
         if (resp['status'] == 403) {
           this.presentToast("Your session has expired. Please log in again.");
@@ -63,6 +46,7 @@ export class TabsPage {
         else if (resp['status'] == 200) {
           let jsonResponseObj = JSON.parse((resp['_body']));
           let matchProfileObj = jsonResponseObj['matchProfiles'][0];
+          //Store the match profile object for the currently logged in user
           this.globalVarsProvider.setMatchProfileObj(matchProfileObj);
         }
       }, error => console.log(error)

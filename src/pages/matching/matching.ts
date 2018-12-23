@@ -47,7 +47,7 @@ export class MatchingPage {
     }
 
     retrieveNextProfileBatch() {
-      const matchProfileId = this.globalVarsProvider.getMatchProfileId();
+      const matchProfileId = this.globalVarsProvider.getMatchProfileObj()['id'];
       //TODO: Retrieve next batch from database
       this.remainingProfiles = 10;
     }

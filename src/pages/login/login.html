@@ -1,27 +1,39 @@
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>Log Into Pupper</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>
+      PUPPER LOGIN
+    </ion-title>
   </ion-navbar>
-
 </ion-header>
 
+<ion-content padding>
+  <br />
+  <p *ngIf="submitAttempt" style="color: #ea6153;">Please fill in all fields.</p>
+  <br />
+  <ion-list no-lines>
+    <form [formGroup]="userAccountForm">
 
-  <ion-content padding>
-  <ion-list>
-    <div id="emailPwd">
-    <ion-item>
-      <ion-label>Email</ion-label>
-      <ion-input [(ngModel)]="email" [ngModelOptions]="{standalone: true}" type="text" value="" [(ngModel)]="login.email"></ion-input>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Password</ion-label>
-        <ion-input [(ngModel)]="password" [ngModelOptions]="{standalone: true}" type="password" value="" [(ngModel)]="login.password"></ion-input>
+      <ion-item>
+        <ion-label floating>USERNAME/EMAIL</ion-label>
+        <ion-input formControlName="email" type="text" [class.invalid]="!userAccountForm.controls.email.valid && (userAccountForm.controls.email.dirty || submitAttempt)" [(ngModel)]="email"></ion-input>
       </ion-item>
-    </div>
-    <button ion-button round color="primary" class="btn" (click)="login()">Login</button>
-      </ion-list>
 
+      <ion-item *ngIf="!userAccountForm.controls.email.valid  && (userAccountForm.controls.email.dirty || submitAttempt)">
+        <p>Please enter a valid email.</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>PASSWORD</ion-label>
+        <ion-input formControlName="password" type="password" [class.invalid]="!userAccountForm.controls.password.valid && (userAccountForm.controls.password.dirty || submitAttempt)" [(ngModel)]="password"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="!userAccountForm.controls.password.valid  && (userAccountForm.controls.password.dirty || submitAttempt)">
+        <p>Please enter a valid password.</p>
+      </ion-item>
+
+    </form>
+  </ion-list>
+
+  <button ion-button full color="primary" (click)="login()">Login</button>
 
 </ion-content>

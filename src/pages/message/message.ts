@@ -26,20 +26,25 @@ export class MessagePage {
   // Match profile Id 1 belongs to userProfileId=5,
   // and matchProfileId 2 belongs to userProfileId=2
   onSendBtnClick() {
-    const senderUserProfileId = 5;
     const receiverUserProfileId = 2;
     console.log("onSendBtnClick clicked to send message");
-    console.log("Message: " + this.message);
-    const senderId = this.globalVarsProvider.getUserId();
-    this.retrieveMatchProfilesAndSendMessage(senderUserProfileId, receiverUserProfileId);
-    this.message = "HELLO MESSAGES WORKING!";
+    const senderId = this.globalVarsProvider.getUserProfileObj()['id'];
+    if (null == this.globalVarsProvider.getMatchProfileObj()) {
+      console.log('No match profile is stored in global vars, need to retrieve it');
+      this.retrieveMatchProfilesAndSendMessage(senderId, receiverUserProfileId);
+
+    } else {
+      //already have the sender match profile, just need to retrieve receiver match profile
+      this.retrieveMatchProfileReceiver(receiverUserProfileId);
+    }
+    this.message = "TEST MESSAGE";
   }
 
   retrieveMatchProfilesAndSendMessage(senderUserProfileId, receiverUserProfileId) {
     const getMatchProfileEndpointUrl = ENV.BASE_URL + "/user/" + senderUserProfileId + "/matchProfile";
 
     console.log("Hitting endpoint to retrieve match profile for a given user id: " + getMatchProfileEndpointUrl);
-    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(response => {
 
         if (response['status'] == 200) {
@@ -56,7 +61,7 @@ export class MessagePage {
   retrieveMatchProfileReceiver(receiverUserProfileId) {
     const getMatchProfileEndpointUrl = ENV.BASE_URL + "/user/" + receiverUserProfileId + "/matchProfile";
     console.log("Hitting endpoint to retrieve match profile for a given user id: " + getMatchProfileEndpointUrl);
-    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(response => {
         if (response['status'] == 200) {
           let jsonResponseObj = JSON.parse((response['_body']));
@@ -88,7 +93,7 @@ export class MessagePage {
       this.sendFrom + "&sendTo=" + this.sendTo;
 
     this.http.post(sendMessageUrl, pupperMessageBody,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+      { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(response => {
         const jsonResponseObj = JSON.parse((response['_body']));
         if (jsonResponseObj['isSuccess'] == 200) {

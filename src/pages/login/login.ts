@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Http, Headers } from '@angular/http';
 import { ToastController } from 'ionic-angular';
 import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AccountValidator } from  '../../validators/account';
 
 
 @Component({
@@ -15,13 +17,25 @@ export class LoginPage {
   responseData: any;
   email: string;
   password: string;
+  userAccountForm: FormGroup;
+  submitAttempt: boolean = false;
 
   constructor(public navCtrl: NavController, public http: Http, private toastCtrl: ToastController,
-    public globalVarsProvider: GlobalvarsProvider) {
+    public globalVarsProvider: GlobalvarsProvider, public formBuilder: FormBuilder) {
+      this.userAccountForm = formBuilder.group({
+        email: ['', AccountValidator.isValidEmail],
+        password: ['', Validators.required]
+      });
   }
 
   login() {
-    if (this.userInputIsValid()) {
+    if(!this.userAccountForm.valid){
+      this.submitAttempt = true;
+      console.log("Validation failed!")
+      console.log(this.userAccountForm.value);
+      return;
+    }
+
       const headers = new Headers({ 'Content-Type': 'application/json' });
 
       let loginData = JSON.stringify({
@@ -33,8 +47,7 @@ export class LoginPage {
 
       this.http.post(loginUrl, loginData, { headers: headers })
         .subscribe(response => {
-            //A response is only received if login is successful
-
+            //A response is only received if login is successful (only applies to this specific endpoint)
             this.presentToast("Login success! Happy Puppering.");
             this.extractAuthHeadersFromLoginSuccessResponse(response);
             this.retrieveUserProfileForLastLoginUpdate();
@@ -43,20 +56,19 @@ export class LoginPage {
             this.presentToast("Invalid login credentials, please try again.");
           }
         );
-    }
   }
 
   extractAuthHeadersFromLoginSuccessResponse(response) {
     const jwtAccessToken = response.headers.get("Authorization");
     let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': jwtAccessToken });
-    this.globalVarsProvider.setHeadersWithAuthToken(headers);
+    this.globalVarsProvider.setAuthHeaders(headers);
 
   }
 
   retrieveUserProfileForLastLoginUpdate() {
     const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + this.email;
     this.http.get(retrieveUserProfileUrl,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+      { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
         if (resp['status'] == 403) {
           this.presentToast("Your session has expired. Please log in again.");
@@ -70,9 +82,12 @@ export class LoginPage {
           let jsonResponseObj = JSON.parse((resp['_body']));
           let userProfileData = jsonResponseObj['userProfiles'][0];
 
-          this.globalVarsProvider.setUserId(userProfileData['id']);
+          // this.globalVarsProvider.setUserId(userProfileData['id']);
+
+          //Store the retrieved user profile object in global vars
           this.globalVarsProvider.setUserProfileObj(userProfileData);
 
+          //Check if the lastLogin field needs to be updated
           if (userProfileData['lastLogin'] != this.getCurrentDateInValidFormat()) {
             this.updateLastLoginTimestampForUserProfile(userProfileData);
           }
@@ -87,22 +102,9 @@ export class LoginPage {
     const updateLastLoginUrlString = ENV.BASE_URL +
       "/user/" + userProfileObj['id'] + "?lastLogin=" + this.getCurrentDateInValidFormat();
     this.http.put(updateLastLoginUrlString, userProfileObj,
-      { headers: this.globalVarsProvider.getHeadersWithAuthToken() })
+      { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
       }, error => console.log(error));
-  }
-
-  userInputIsValid() {
-    if (!this.email || !this.password || !this.validateEmailFormat(this.email)) {
-      this.presentToast("Please enter a valid email and password.");
-      return false;
-    }
-    return true;
-  }
-
-  validateEmailFormat(emailIn): boolean {
-    const emailRegEx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegEx.test(emailIn);
   }
 
   presentToast(msgToDisplay) {

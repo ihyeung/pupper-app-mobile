@@ -4,11 +4,11 @@ import { LoginPage } from '../login/login';
 import { SignupPage } from '../signup/signup';
 
 @Component({
-  selector: 'page-welcome',
-  templateUrl: 'welcome.html',
+  selector: 'page-home',
+  templateUrl: 'home.html',
 })
 
-export class WelcomePage {
+export class HomePage {
   constructor(public navCtrl: NavController) {
   }
 
