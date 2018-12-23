@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Message
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="allMessages"> 
+    <ion-card>
+        <ion-card-content *ngFor="let messageToSend of allMessages">
+          {{ messageToSend }}
+        </ion-card-content>
+      </ion-card>
+  <ion-item>
+    <ion-input type="message" placeholder="Your Message..." [(ngModel)]="message" [ngModelOptions]="{standalone: true}" type="text" value=""></ion-input>
+        <button ion-button round item-right class="sendbutton" (click)="onSendBtnClick()">Send</button>
+  </ion-item>
+</ion-content>

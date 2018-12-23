@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Messaging
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+<div padding>
+    <ion-segment [(ngModel)]="pet">
+      <ion-segment-button value="messages">
+        Messages
+      </ion-segment-button>
+      <ion-segment-button value="matches">
+        Matches
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  
+  <div [ngSwitch]="pet">
+    <ion-list *ngSwitchCase="'messages'">
+      <ion-item>
+        <ion-thumbnail item-start>
+          <img src="assets/imgs/boston.jpeg" alt="boston">
+        </ion-thumbnail>
+        <h2>Boston</h2>
+      </ion-item>
+    </ion-list>
+  
+    <ion-list *ngSwitchCase="'matches'">
+        <ion-item>
+            <ion-thumbnail item-start>
+              <img src="assets/imgs/indy.jpeg" alt="boston">
+            </ion-thumbnail>
+            <h2>Indy</h2>
+          </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

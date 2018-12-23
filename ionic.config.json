@@ -1,0 +1,7 @@
+{
+  "name": "pup",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}

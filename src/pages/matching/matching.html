@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Matching
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-content padding>
+    <div class="card-container" *ngIf="ready">
+      <sc-card padding *ngFor="let attendant of attendants" [orientation]="cardDirection" [tinder-card]="cardOverlay"
+        [callDestroy]="attendant.destroyEvent" [callLike]="attendant.likeEvent" (onLike)="onProfileMatchResult($event)">
+        <ion-input [placeholder]="profileCard"></ion-input>
+        <div class="user_img" [style.background-image]="attendant.asBg"></div>
+      </sc-card>
+    </div>

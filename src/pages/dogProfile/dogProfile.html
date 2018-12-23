@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Create A New Pupper Profile
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-list>
+        <ion-item>
+            <ion-label fixed>Pup Name</ion-label>
+            <ion-input [(ngModel)]="names" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+          </ion-item>
+          <ion-list>
+              <ion-item>
+                <ion-label>Breed</ion-label>
+                <ion-select [(ngModel)]="breed">
+                  <ion-option value="Aussie">Australian Sheepdog</ion-option>
+                  <ion-option value="Beagle">Beagle</ion-option>
+                  <ion-option value="Border Collie">Border Collie</ion-option>
+                  <ion-option value="Chihuahua">Chihuahua</ion-option>
+                  <ion-option value="Golden Retriever">Golden Retriever</ion-option>
+                  <ion-option value="Great Dane">Great Dane</ion-option>
+                  <ion-option value="Maltese">Maltese</ion-option>
+                  <ion-option value="Goldendoodle">Goldendoodle</ion-option>
+                  <ion-option value="Pomeranian">Pomeranian</ion-option>
+                  <ion-option value="Sheltie">Sheltie</ion-option>
+                  <ion-option value="Shiba">Shiba Inu</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
+          <!--Energy Level Dropdown-->
+          <ion-list>
+              <ion-item>
+                <ion-label>Energy Level</ion-label>
+                <ion-select [(ngModel)]="energyLevel">
+                  <ion-option value="MIN">Minimal</ion-option>
+                  <ion-option value="LOW">Low</ion-option>
+                  <ion-option value="MED">Medium</ion-option>
+                  <ion-option value="HIGH">High</ion-option>
+                  <ion-option value="EXTREME">Extreme</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
+
+          <!--Life Stage Dropdown-->
+          <ion-list>
+              <ion-item>
+                <ion-label>Life Stage</ion-label>
+                <ion-select [(ngModel)]="lifeStage">
+                  <ion-option value="PUPPY">Puppy</ion-option>
+                  <ion-option value="YOUNG">Young</ion-option>
+                  <ion-option value="ADULT">Adult</ion-option>
+                  <ion-option value="MATURE">Mature</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
+
+          <!--Size Dropdown-->
+          <ion-list>
+            <ion-item>
+              <ion-label>Pup Size</ion-label>
+              <ion-select [(ngModel)]="size">
+                <ion-option value="TOY">Toy</ion-option>
+                <ion-option value="SMALL">Small</ion-option>
+                <ion-option value="MID">Mid</ion-option>
+                <ion-option value="LARGE">Large</ion-option>
+                <ion-option value="XLARGE">X-Large</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <!--Sex-->
+          <ion-list>
+              <ion-item>
+                <ion-label>Gender</ion-label>
+                <ion-select [(ngModel)]="sex">
+                  <ion-option value="FEMALE">Female</ion-option>
+                  <ion-option value="MALE">Male</ion-option>
+                  <ion-option value="UNKNOWN">Prefer Not To Answer</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
+          <ion-item>
+            <ion-label>Birthdate</ion-label>
+            <ion-datetime displayFormat="MMM/DD/YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}"></ion-datetime>
+          </ion-item>
+
+          <ion-item>
+            <ion-label fixed>Pup Bio</ion-label>
+            <ion-input [(ngModel)]="aboutMe" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+          </ion-item>
+
+          <button ion-button round color="primary" class="btn" (click)="addDogProfilePic()">Add Photo</button>
+          <button ion-button round color="primary" class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
+          </ion-list>
+</ion-content>

@@ -1,0 +1,28 @@
+page-matching {
+    ion-content {
+        background: url(../assets/imgs/gradient.jpg) no-repeat center center fixed;
+        background-size: cover;
+        height: 100%;
+        overflow: hidden;
+        .item-md, .item-ios {
+          background: none;
+        }
+    }
+    .card-container {
+        height: 90vw;
+        width: 90vw;
+    }
+    .user_img {
+        display: block;
+        width: 100%;
+        height: 80%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .pup_details {
+        display: block; 
+        padding-bottom: 400px; 
+        border-collapse: separate; 
+    }
+}
