@@ -26,7 +26,6 @@ export class MessagePage {
 
   onSendBtnClick() {
     const receiverUserProfileId = 2;
-    console.log("onSendBtnClick clicked to send message");
     const senderId = this.globalVarsProvider.getUserProfileObj()['id'];
     if (null == this.globalVarsProvider.getMatchProfileObj()) {
       console.log('No match profile is stored in global vars, need to retrieve it');
