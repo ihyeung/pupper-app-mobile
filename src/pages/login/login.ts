@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Http, Headers } from '@angular/http';
@@ -20,8 +20,11 @@ export class LoginPage {
   userAccountForm: FormGroup;
   submitAttempt: boolean = false;
 
-  constructor(public navCtrl: NavController, public http: Http, private toastCtrl: ToastController,
-    public globalVarsProvider: GlobalvarsProvider, public formBuilder: FormBuilder) {
+  constructor(public navCtrl: NavController,
+    public http: Http,
+    private toastCtrl: ToastController,
+    public globalVarsProvider: GlobalvarsProvider,
+    public formBuilder: FormBuilder) {
       this.userAccountForm = formBuilder.group({
         email: ['', AccountValidator.isValidEmail],
         password: ['', Validators.required]
@@ -81,8 +84,6 @@ export class LoginPage {
         else if (resp['status'] == 200) {
           let jsonResponseObj = JSON.parse((resp['_body']));
           let userProfileData = jsonResponseObj['userProfiles'][0];
-
-          // this.globalVarsProvider.setUserId(userProfileData['id']);
 
           //Store the retrieved user profile object in global vars
           this.globalVarsProvider.setUserProfileObj(userProfileData);

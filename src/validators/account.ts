@@ -9,7 +9,6 @@ export class AccountValidator {
         "Not a valid email": true
       };
     }
-
     return null;
   }
 
@@ -22,8 +21,6 @@ export class AccountValidator {
         "Not a valid password": true
       };
     }
-
     return null;
   }
-
 }

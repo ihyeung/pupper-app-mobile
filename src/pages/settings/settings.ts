@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, App } from 'ionic-angular';
-import { DogProfilePage } from '../dogProfile/dogProfile';
+import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { environment as ENV } from '../../environments/environment';
 
 @Component({
@@ -18,9 +18,4 @@ export class SettingsPage {
     root.popToRoot();
   }
 
-  myPupperProfile() {
-    //TODO: JSON Request With Dog Profile Info
-    console.log("My Pupper Profile Button Pressed on Settings Page");
-    this.navCtrl.push(DogProfilePage, {});
-  }
 }

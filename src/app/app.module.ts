@@ -2,23 +2,23 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
+
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup';
-
 import { MatchingPage } from '../pages/matching/matching';
 import { MessagingPage } from '../pages/messaging/messaging';
 import { MessagePage } from '../pages/message/message';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
-import { DogProfilePage} from '../pages/dogProfile/dogProfile';
+import { CreateMatchProfilePage } from '../pages/createMatchProfile/createMatchProfile';
 import { DogProfilePicPage } from '../pages/dogProfilePic/dogProfilePic'
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LoginPageModule } from '../pages/login/login.module';
 import { SwipeCardsModule } from 'ng2-swipe-cards';
-import { HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { File } from '@ionic-native/file';
 import { Transfer } from '@ionic-native/transfer';
@@ -39,7 +39,7 @@ import { IonicStorageModule } from '@ionic/storage';
     LoginPage,
     SignupPage,
     TabsPage,
-    DogProfilePage,
+    CreateMatchProfilePage,
     DogProfilePicPage
   ],
   imports: [
@@ -61,7 +61,7 @@ import { IonicStorageModule } from '@ionic/storage';
     LoginPage,
     SignupPage,
     TabsPage,
-    DogProfilePage,
+    CreateMatchProfilePage,
     DogProfilePicPage
   ],
   providers: [

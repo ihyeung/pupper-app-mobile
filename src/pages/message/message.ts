@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
-import { Http, Response, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 
@@ -23,8 +23,7 @@ export class MessagePage {
   constructor(public navCtrl: NavController, public navParams: NavParams, private toastCtrl: ToastController,
     public http: Http, public globalVarsProvider: GlobalvarsProvider) {
   }
-  // Match profile Id 1 belongs to userProfileId=5,
-  // and matchProfileId 2 belongs to userProfileId=2
+
   onSendBtnClick() {
     const receiverUserProfileId = 2;
     console.log("onSendBtnClick clicked to send message");
@@ -34,7 +33,7 @@ export class MessagePage {
       this.retrieveMatchProfilesAndSendMessage(senderId, receiverUserProfileId);
 
     } else {
-      //already have the sender match profile, just need to retrieve receiver match profile
+      //already have the  match profile, just need to retrieve receiver match profile
       this.retrieveMatchProfileReceiver(receiverUserProfileId);
     }
     this.message = "TEST MESSAGE";
@@ -76,9 +75,6 @@ export class MessagePage {
   }
 
   sendMessageToMatch(matchProfileReceiverObj) {
-    //The following fields need to be parsed from their matchProfileObjects
-    // Match profile Id 1 belongs to userProfileId=5,
-    // and matchProfileId 2 belongs to userProfileId=2
     this.sendFrom = 1;
     this.sendTo = 2;
 

@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Create A Matching Profile
+      CREATE A MATCHING PROFILE
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -9,12 +9,12 @@
 <ion-content padding>
     <ion-list>
         <ion-item>
-            <ion-label fixed>Dog Name</ion-label>
+            <ion-label fixed>DOG NAME</ion-label>
             <ion-input [(ngModel)]="names" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
           </ion-item>
           <ion-list>
               <ion-item>
-                <ion-label>Breed</ion-label>
+                <ion-label>BREED</ion-label>
                 <ion-select [(ngModel)]="breed">
                   <ion-option value="Aussie">Australian Sheepdog</ion-option>
                   <ion-option value="Beagle">Beagle</ion-option>
@@ -33,7 +33,7 @@
           <!--Energy Level Dropdown-->
           <ion-list>
               <ion-item>
-                <ion-label>Energy Level</ion-label>
+                <ion-label>ENERGY LEVEL</ion-label>
                 <ion-select [(ngModel)]="energyLevel">
                   <ion-option value="MIN">Minimal</ion-option>
                   <ion-option value="LOW">Low</ion-option>
@@ -47,7 +47,7 @@
           <!--Life Stage Dropdown-->
           <ion-list>
               <ion-item>
-                <ion-label>Life Stage</ion-label>
+                <ion-label>LIFE STAGE</ion-label>
                 <ion-select [(ngModel)]="lifeStage">
                   <ion-option value="PUPPY">Puppy</ion-option>
                   <ion-option value="YOUNG">Young</ion-option>
@@ -60,7 +60,7 @@
           <!--Size Dropdown-->
           <ion-list>
             <ion-item>
-              <ion-label>Pup Size</ion-label>
+              <ion-label>PUP SIZE</ion-label>
               <ion-select [(ngModel)]="size">
                 <ion-option value="TOY">Toy</ion-option>
                 <ion-option value="SMALL">Small</ion-option>
@@ -71,28 +71,28 @@
             </ion-item>
           </ion-list>
 
-          <!--Sex-->
+          <!-- Gender -->
           <ion-list>
-              <ion-item>
-                <ion-label>Gender</ion-label>
-                <ion-select [(ngModel)]="sex">
-                  <ion-option value="FEMALE">Female</ion-option>
-                  <ion-option value="MALE">Male</ion-option>
-                  <ion-option value="UNKNOWN">Prefer Not To Answer</ion-option>
-                </ion-select>
-              </ion-item>
-            </ion-list>
+            <ion-item>
+              <ion-label>GENDER</ion-label>
+              <ion-select [(ngModel)]="sex">
+                <ion-option value="FEMALE">FEMALE</ion-option>
+                <ion-option value="MALE">MALE</ion-option>
+                <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
           <ion-item>
-            <ion-label>Birthdate</ion-label>
-            <ion-datetime displayFormat="MMM/DD/YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}"></ion-datetime>
+            <ion-label>BIRTHDAY</ion-label>
+            <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}"></ion-datetime>
           </ion-item>
 
           <ion-item>
-            <ion-label fixed>Pup Bio</ion-label>
+            <ion-label fixed>ABOUT ME</ion-label>
             <ion-input [(ngModel)]="aboutMe" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
           </ion-item>
 
-          <button ion-button round color="primary" class="btn" (click)="addDogProfilePic()">Add Photo</button>
-          <button ion-button round color="primary" class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
+          <button ion-button full color="primary" class="btn" (click)="addDogProfilePic()">Add Photo</button>
+          <button ion-button full color="primary" class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
           </ion-list>
 </ion-content>

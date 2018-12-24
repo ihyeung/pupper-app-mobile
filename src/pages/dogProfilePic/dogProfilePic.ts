@@ -17,7 +17,7 @@ export class DogProfilePicPage {
   lastImage: string = null;
   loading: Loading;
 
-  constructor(public navCtrl: NavController, private camera: Camera, private transfer: Transfer,
+  constructor(public navCtrl: NavController, private camera: Camera,
     private file: File, private filePath: FilePath, public actionSheetCtrl: ActionSheetController,
     public toastCtrl: ToastController, public platform: Platform, public loadingCtrl: LoadingController,
     public globalVarsProvider: GlobalvarsProvider) { }

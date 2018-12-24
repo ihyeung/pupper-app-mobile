@@ -45,9 +45,13 @@ export class TabsPage {
         }
         else if (resp['status'] == 200) {
           let jsonResponseObj = JSON.parse((resp['_body']));
-          let matchProfileObj = jsonResponseObj['matchProfiles'][0];
-          //Store the match profile object for the currently logged in user
-          this.globalVarsProvider.setMatchProfileObj(matchProfileObj);
+
+          //Check to see whether user has previously created match profiles
+          if (null != jsonResponseObj['matchProfiles']) {
+            let matchProfileObj = jsonResponseObj['matchProfiles'][0];
+            //Store the match profile object for the currently logged in user
+            this.globalVarsProvider.setMatchProfileObj(matchProfileObj);
+          }
         }
       }, error => console.log(error)
       );
@@ -62,4 +66,5 @@ export class TabsPage {
 
     toast.present();
   }
+
 }

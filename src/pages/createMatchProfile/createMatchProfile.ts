@@ -5,14 +5,14 @@ import { AlertController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular'
 import { DogProfilePicPage } from '../dogProfilePic/dogProfilePic';
 import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 
 @Component({
-  selector: 'page-dogProfile',
-  templateUrl: 'dogProfile.html'
+  selector: 'page-createMatchProfile',
+  templateUrl: 'createMatchProfile.html'
 })
-export class DogProfilePage {
+export class CreateMatchProfilePage {
   aboutMe: string;
   birthdate: string;
   breed: any;
@@ -23,9 +23,6 @@ export class DogProfilePage {
   profileImage: any;
   sex: string;
   size: string;
-  userProfile: any;
-
-  // userId: any;
   formData: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
@@ -61,7 +58,7 @@ export class DogProfilePage {
       energyLevel: this.energyLevel,
       lifeStage: this.lifeStage,
       names: this.names,
-      numDogs: 1, //intentionally hard-coded to match backend
+      numDogs: 1,
       profileImage: null,
       sex: this.sex,
       size: this.size,
@@ -93,7 +90,6 @@ export class DogProfilePage {
       );
   }
 
-  // /upload --> Form Data ProfilePic, requestBody ImageUploadRequest -> MatchProfile
   public uploadDogProfilePicFile(file: Blob, matchProfileId, imageFilePath) {
     let formData = new FormData();
     formData.append('profilePic', file);
@@ -125,8 +121,8 @@ export class DogProfilePage {
   }
 
   userInputIsValid() {
-    if (!this.isValidStringInput(this.names) || !this.isValidStringInput(this.breed)) {
-      this.presentToast("Please enter a valid name and breed.");
+    if (!this.isValidStringInput(this.names)) {
+      this.presentToast("Please enter a valid name.");
       return false;
     }
     if (!this.birthdate) {
@@ -154,13 +150,6 @@ export class DogProfilePage {
   isValidAboutMeInput(strToCheck) {
     let validStringFormat = /[A-Za-z0-9 _.,!"'/$]*/;
     return validStringFormat.test(strToCheck);
-  }
-
-  //Valid Date Format is month/date/year
-  validateDateInput(dateToCheck) {
-    let splitDate = dateToCheck.split('/');
-    var date = new Date(splitDate[2] + '/' + splitDate[0] + '/' + splitDate[1]);
-    return (date && (date.getMonth() + 1) == splitDate[0] && date.getDate() == Number(splitDate[1]) && date.getFullYear() == Number(splitDate[2]));
   }
 
   presentToast(msgToDisplay) {
