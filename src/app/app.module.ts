@@ -12,6 +12,7 @@ import { MessagePage } from '../pages/message/message';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
 import { CreateMatchProfilePage } from '../pages/createMatchProfile/createMatchProfile';
+import { ProfileMainPage } from '../pages/profileMain/profileMain';
 import { DogProfilePicPage } from '../pages/dogProfilePic/dogProfilePic'
 
 import { SwipeCardsModule } from 'ng2-swipe-cards';
@@ -39,12 +40,19 @@ import { UtilityProvider } from '../providers/utility/utilities';
     SignupPage,
     TabsPage,
     CreateMatchProfilePage,
-    DogProfilePicPage
+    DogProfilePicPage,
+    ProfileMainPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {
+      platforms: {
+        ios: {
+          statusbarPadding: true
+        }
+      }
+    }),
     IonicStorageModule.forRoot(),
     SwipeCardsModule
   ],
@@ -60,7 +68,8 @@ import { UtilityProvider } from '../providers/utility/utilities';
     SignupPage,
     TabsPage,
     CreateMatchProfilePage,
-    DogProfilePicPage
+    DogProfilePicPage,
+    ProfileMainPage
   ],
   providers: [
     File,

@@ -7,7 +7,7 @@ import { environment as ENV } from '../../environments/environment';
 export class UsersProvider {
     basicHeaders: any;
 
-    constructor(public http: Http) {
+    constructor(public http: Http, public globalVars: GlobalVarsProvider) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
 
@@ -40,6 +40,18 @@ export class UsersProvider {
 
     }
 
+    getUserProfileByEmail(userEmail) {
+      const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
+      console.log('endpoint: ' + retrieveUserProfileUrl);
+
+      let headers = this.globalVars.getAuthHeaders();
+      console.log('headers: ' + headers.get('Authorization'));
+      console.log('headers: ' + headers.get('Content-Type'));
+
+      return this.http.get(retrieveUserProfileUrl,
+        { headers: headers });
+    }
+
     createUserProfile(userProfileObj) {
 
     }
@@ -49,6 +61,10 @@ export class UsersProvider {
     }
 
     updateLastLogin(userProfileId) {
+
+    }
+
+    uploadImage(userProfileId, file){
 
     }
 

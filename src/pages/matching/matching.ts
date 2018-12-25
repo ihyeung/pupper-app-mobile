@@ -43,6 +43,8 @@ export class MatchingPage {
 
   constructor(private sanitizer: DomSanitizer, public navParams: NavParams, public alertCtrl: AlertController,
     public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider) {
+      console.log('Constructor for matching page');
+
       this.retrieveNextProfileBatch();
       this.grabCards();
     }

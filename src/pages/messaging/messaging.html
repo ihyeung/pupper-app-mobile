@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
+  <ion-navbar color="secondary" class="nav">
+    <ion-title class="navTitle">
       Messaging
     </ion-title>
   </ion-navbar>
@@ -17,7 +17,7 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  
+
   <div [ngSwitch]="pet">
     <ion-list *ngSwitchCase="'messages'">
       <ion-item>
@@ -27,7 +27,7 @@
         <h2>Boston</h2>
       </ion-item>
     </ion-list>
-  
+
     <ion-list *ngSwitchCase="'matches'">
         <ion-item>
             <ion-thumbnail item-start>

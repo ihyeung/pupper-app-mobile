@@ -18,16 +18,32 @@
 
 @font-face {
   font-family: 'Lato';
-  src: url('../assets/fonts/lato_hairline.ttf') format('truetype');
+  src: url('../assets/fonts/lato_thin.ttf') format('truetype');
   font-weight: 200;
 }
 
-$toast-width: 50%;
+$toast-width: 75%;
 
 .btn {
     display: block;
-    background-color: #000000;
-    margin-top: 20px;
+    color: map-get($colors, secondary);
+    font-weight: bold;
+    background-color: map-get($colors, primary);
+    border-radius: 2px;
     margin-left: auto;
-    margin-right: auto
+    margin-right: auto;
+    padding: 20px;
+    max-width: 300px;
+    width: 300px;
+    text-transform: uppercase;
+}
+
+.btn:hover{
+    background-color: map-get($colors, light) !important;
+    color: map-get($colors, primary);
+    border-radius: 4px;
+}
+
+.navTitle {
+  text-transform: uppercase;
 }

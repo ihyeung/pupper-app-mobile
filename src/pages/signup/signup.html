@@ -1,24 +1,26 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>CREATE AN ACCOUNT</ion-title>
+  <ion-navbar color="primary" class="nav">
+    <ion-title class="navTitle">
+      CREATE YOUR ACCOUNT
+    </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-label fixed>EMAIL</ion-label>
+      <ion-label floating>EMAIL</ion-label>
       <ion-input [(ngModel)]="email" [ngModelOptions]="{standalone: true}" type="email"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label fixed>PASSWORD</ion-label>
+      <ion-label floating>PASSWORD</ion-label>
       <ion-input [(ngModel)]="password" [ngModelOptions]="{standalone: true}" type="password"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label fixed>FIRST NAME</ion-label>
+      <ion-label floating>FIRST NAME</ion-label>
       <ion-input [(ngModel)]="firstName" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label fixed>LAST NAME</ion-label>
+      <ion-label floating>LAST NAME</ion-label>
       <ion-input [(ngModel)]="lastName" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
     </ion-item>
     <ion-item>
@@ -26,7 +28,7 @@
       <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}" [min]="minDate" [max]="maxDate"></ion-datetime>
     </ion-item>
     <ion-item>
-      <ion-label fixed>ZIPCODE</ion-label>
+      <ion-label floating>ZIPCODE</ion-label>
       <ion-input [(ngModel)]="zip" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
     </ion-item>
     <!--Marital Status-->

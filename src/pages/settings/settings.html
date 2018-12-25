@@ -1,13 +1,34 @@
 <ion-header>
-  <ion-navbar>
-    <img ion-right src="assets/imgs/logo.png" class="navbarLogo" />
-    <ion-title>SETTINGS</ion-title>
+  <ion-navbar color="primary" class="nav">
+    <ion-title class="navTitle">
+      SETTINGS
+    </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-    <button ion-button full class="btn" (click)="myPupperProfile()">VIEW/EDIT USER PROFILE</button>
-    <button ion-button full class="btn" (click)="myPupperProfile()">VIEW/EDIT MATCHING PROFILE</button>
+<ion-content>
+  <ion-card full>
+    <div class="card-title">
+    <ion-item>
+          <ion-label color="primary">Search Radius</ion-label>
+          <ion-input placeholder="5 miles" type="number" [(ngModel)]="searchRadius"></ion-input>
+        </ion-item>
+  </div>
+    <div class="card-subtitle">Subtitle</div>
+  </ion-card>
 
-    <button ion-button full class="btn" (click)="logout()">LOGOUT</button>
+  <ion-card full>
+    <div class="card-title">
+    <ion-item>
+          <ion-label color="primary">Profile Status</ion-label>
+          <ion-input placeholder="ACTIVE" [(ngModel)]="profileVisibility"></ion-input>
+        </ion-item>
+  </div>
+    <div class="card-subtitle">Subtitle</div>
+  </ion-card>
+    <button ion-button full outline class="btn" (click)="userProfile()">User profile</button>
+    <button ion-button full outline class="btn" (click)="matchProfiles()">Match profiles</button>
+    <button ion-button full outline class="btn" (click)="logout()">Logout</button>
+    <button ion-button full outline class="btn" (click)="deleteAccount()">Delete account</button>
+
 </ion-content>

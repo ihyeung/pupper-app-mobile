@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { Headers } from '@angular/http';
 
 @Injectable()
 export class UtilityProvider {
-  constructor(private toastCtrl: ToastController, private globalVars: GlobalVarsProvider) {
+  constructor(private toastCtrl: ToastController, public globalVars: GlobalVarsProvider) {
 
   }
 
   setAuthHeaders(response) {
-      const jwtAccessToken = response.headers.get("Authorization");
+      const jwtAccessToken = response.headers.get('Authorization');
       let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': jwtAccessToken });
       this.globalVars.setAuthHeaders(headers);
-
       return headers;
   }
 

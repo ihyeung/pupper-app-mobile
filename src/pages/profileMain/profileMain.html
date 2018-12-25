@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-navbar color="primary" class="nav">
+    <ion-title class="navTitle">
+      Pupper
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div id="profileMainTitle"><h2>Welcome Back!</h2></div>
+  <div id="profilePic">
+    <p>profile pic goes here </p>
+  </div>
+
+  <ion-card>
+    <div class="card-title">
+      <ion-item>
+        <ion-label color="primary">Location</ion-label>
+      </ion-item>
+    </div>
+  </ion-card>
+  <ion-card>
+    <div class="card-title">
+      <ion-item>
+        <ion-label color="primary">Active Match Profile</ion-label>
+      </ion-item>
+    </div>
+  </ion-card>
+  <ion-card>
+    <div class="card-title">
+      <ion-item>
+        <ion-label color="primary">Matching Profiles</ion-label>
+        <ion-input readonly="true" placeholder="2"></ion-input>
+      </ion-item>
+    </div>
+  </ion-card>
+  <ion-card>
+    <div class="card-title">
+      <ion-item>
+        <ion-label color="primary">Member Since</ion-label>
+      </ion-item>
+    </div>
+    </ion-card>
+    <ion-card>
+    <div class="card-title">
+      <ion-item>
+        <ion-label color="primary">Last Login</ion-label>
+      </ion-item>
+    </div>
+  </ion-card>
+    <div class="card-title">
+      <button ion-button full outline (click)="retrieveMatchProfiles()">SWITCH MATCHING PROFILE</button>
+    </div>
+</ion-content>

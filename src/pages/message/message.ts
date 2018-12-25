@@ -22,6 +22,8 @@ export class MessagePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private toastCtrl: ToastController,
     public http: Http, public globalVarsProvider: GlobalVarsProvider) {
+      console.log('Constructor for message page');
+
   }
 
   onSendBtnClick() {

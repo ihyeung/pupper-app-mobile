@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-navbar color="primary">
-    <ion-title>
+  <ion-navbar color="primary" class="nav">
+    <ion-title class="navTitle">
       PUPPER LOGIN
     </ion-title>
   </ion-navbar>
@@ -9,7 +9,6 @@
 <ion-content padding>
   <br />
   <p *ngIf="submitAttempt" style="color: #ea6153;">Please fill in all fields.</p>
-  <br />
   <ion-list no-lines>
     <form [formGroup]="userAccountForm">
 
@@ -34,6 +33,6 @@
     </form>
   </ion-list>
 
-  <button ion-button full color="primary" (click)="login()">Login</button>
+  <button ion-button full color="primary" (click)="login()" class="btn">Login</button>
 
 </ion-content>

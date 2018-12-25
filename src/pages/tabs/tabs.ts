@@ -1,26 +1,29 @@
 import { Component } from '@angular/core';
-
 import { MessagingPage } from '../messaging/messaging';
 import { MatchingPage } from '../matching/matching';
 import { SettingsPage } from '../settings/settings';
-import { NavParams } from 'ionic-angular';
+import { ProfileMainPage } from '../profileMain/profileMain';
+// import { NavParams, NavController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { ToastController } from 'ionic-angular';
+import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
+import { UtilityProvider } from '../../providers/utility/utilities';
 import { environment as ENV } from '../../environments/environment';
 
 @Component({
-  templateUrl: 'tabs.html'
+  templateUrl: 'tabs.html',
+  selector: 'page-tabs',
+
 })
 export class TabsPage {
 
-  tab1Root = SettingsPage;
-  tab2Root = MatchingPage;
-  tab3Root = MessagingPage;
-  zip: any;
+  tabRootProfile = ProfileMainPage;
+  tabRootSettings = SettingsPage;
+  tabRootMatching = MatchingPage;
+  tabRootMessaging = MessagingPage;
 
-  constructor(public navParams: NavParams, public http: Http, public globalVarsProvider: GlobalVarsProvider,
-    private toastCtrl: ToastController) {
+  constructor(public http: Http, public globalVarsProvider: GlobalVarsProvider,
+    private matchProfService: MatchProfilesProvider, private utilService: UtilityProvider) {
       if (null == this.globalVarsProvider.getUserProfileObj()) {
         console.log('Error: cannot retrieve user profile data from global vars');
       } else {
@@ -36,11 +39,11 @@ export class TabsPage {
       { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
         if (resp['status'] == 403) {
-          this.presentToast("Your session has expired. Please log in again.");
+          this.utilService.presentDismissableToast("Your session has expired. Please log in again.");
           return;
         }
         else if (resp['status'] == 400 || resp['status'] == 404 || resp['status'] == 422) {
-          this.presentToast("Error loading Match Profile data.");
+          this.utilService.presentAutoDismissToast("Error loading Match Profile data.");
           return;
         }
         else if (resp['status'] == 200) {
@@ -55,16 +58,6 @@ export class TabsPage {
         }
       }, error => console.log(error)
       );
-  }
-
-  presentToast(msgToDisplay) {
-    let toast = this.toastCtrl.create({
-      message: msgToDisplay,
-      duration: 2000,
-      position: 'middle'
-    });
-
-    toast.present();
   }
 
 }

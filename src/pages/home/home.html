@@ -1,23 +1,12 @@
 <ion-content padding class="home">
-  <img src="assets/imgs/pupNoGradient.png" class="logo" />
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <h1>PUPPER</h1>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <ion-grid>
-    <ion-row>
-      <ion-col center text-center>
-        <button ion-button full (click)="signup()">Create a new account</button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col center text-center>
-        <button ion-button full (click)="login()">Login</button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div id="logoDiv">
+    <img src="assets/imgs/appLogo.png" />
+  </div>
+  <div id="titleDiv">
+    <h1>Pupper</h1>
+  </div>
+  <div>
+    <button ion-button outline large (click)="signup()" class="btn">Sign up</button>
+    <button ion-button outline large (click)="login()" class="btn">Login</button>
+  </div>
 </ion-content>

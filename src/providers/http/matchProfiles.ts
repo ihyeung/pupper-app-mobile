@@ -7,7 +7,6 @@ import { environment as ENV } from '../../environments/environment';
 export class MatchProfilesProvider {
   authHeaders: any;
 
-
     constructor(public http: Http, public globalVarsProvider: GlobalVarsProvider) {
       if (null != this.globalVarsProvider.getAuthHeaders()) {
         this.authHeaders = this.globalVarsProvider.getAuthHeaders();
@@ -23,6 +22,10 @@ export class MatchProfilesProvider {
     }
 
     getMatchProfiles(userProfileId){
+
+    }
+
+    uploadImage(userProfileId, matchProfileId, file){
 
     }
 
