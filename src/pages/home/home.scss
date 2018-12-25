@@ -12,17 +12,12 @@ page-home {
   }
   #logoDiv{
     margin-top: 50px;
-    align-content: stretch;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
     padding-bottom: 0px;
     margin-bottom: 0px;
 
   }
   #titleDiv{
-    align-content: stretch;
-
     margin-top: 0px;
     padding-top: 0px;
     padding-bottom: 10px;
@@ -30,5 +25,6 @@ page-home {
 
   .home {
     background: linear-gradient(to bottom,  #7EFFD4 0%, #2295FF 100%);
+    max-width: 800px;
   }
 }
