@@ -25,23 +25,45 @@
 $toast-width: 75%;
 
 .btn {
-    display: block;
-    color: map-get($colors, secondary);
-    font-weight: bold;
-    background-color: map-get($colors, primary);
-    border-radius: 2px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-    max-width: 300px;
-    width: 300px;
-    text-transform: uppercase;
+  display: block;
+  color: white;
+  font-weight: bolder;
+  // background-color: map-get($colors, primary);
+  background: linear-gradient(to right,  #7EFFD4 30%, #2295FF 100%);
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  max-width: 300px;
+  width: 300px;
+  text-transform: uppercase;
 }
 
 .btn:hover{
-    background-color: map-get($colors, light) !important;
-    color: map-get($colors, primary);
-    border-radius: 4px;
+  background-color: map-get($colors, light) !important;
+  font-weight: bolder;
+  border-radius: 4px;
+  color: map-get($colors, primary);
+}
+
+.btn-home {
+  display: block;
+  color: map-get($colors, secondary);
+  font-weight: bold;
+  background-color: map-get($colors, primary);
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  max-width: 300px;
+  width: 300px;
+  text-transform: uppercase;
+}
+
+.btn-home:hover{
+  background-color: map-get($colors, light) !important;
+  color: map-get($colors, primary);
+  border-radius: 4px;
 }
 
 .navTitle {
