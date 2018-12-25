@@ -8,14 +8,18 @@
 
 <ion-content padding>
   <div id="profileMainTitle"><h2>Welcome Back!</h2></div>
+  <ion-card>
+
   <div id="profilePic">
-    <p>profile pic goes here </p>
+    <img src="assets/imgs/appLogo.png" />
   </div>
+  </ion-card>
 
   <ion-card>
     <div class="card-title">
       <ion-item>
         <ion-label color="primary">Location</ion-label>
+        <ion-input [(ngModel)]="location"></ion-input>
       </ion-item>
     </div>
   </ion-card>

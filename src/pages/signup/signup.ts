@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
-// import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { NavController, NavParams } from 'ionic-angular';
-import { TabsPage } from '../tabs/tabs';
+import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { Http, Headers } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { UsersProvider } from '../../providers/http/userProfiles';
 import { UtilityProvider } from '../../providers/utility/utilities';
 
-// @IonicPage()
 @Component({
   selector: 'page-signup',
   templateUrl: 'signup.html',
@@ -29,6 +27,7 @@ export class SignupPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public http: Http, public globalVarsProvider: GlobalVarsProvider,
     public utilService: UtilityProvider, public userService: UsersProvider) {
+
       this.minDate = new Date('Jan 1, 1930').toISOString();
       const minAgeLim = new Date();
       minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
@@ -43,7 +42,7 @@ export class SignupPage {
             let jsonResponseObj = JSON.parse(result['_body']); //Parse response body string resp['_body']into JSON object to extract data
             if (jsonResponseObj['responseCode'] == 409) {
               this.utilService.presentDismissableToast("A user account with your selected username already exists." +
-              "Please login as an existing user or create a user profile using a unique username.");
+              " Please login as an existing user or create a user profile using a unique username.");
               return;
             }
             let userAccountObj = jsonResponseObj['userAccounts'][0]; //Pass the userAccount in the response to createUserProfile()
@@ -78,10 +77,6 @@ export class SignupPage {
           userAccount: userAccountObj
         });
 
-        if (headers == this.globalVarsProvider.getAuthHeaders()) {
-          console.log('headers match');
-        }
-
         const createUserProfileUrl = ENV.BASE_URL + '/user';
         console.log('Creating a new user profile: ' + createUserProfileUrl);
 
@@ -98,7 +93,8 @@ export class SignupPage {
                 //Store user profile object in global vars
                 this.globalVarsProvider.setUserProfileObj(userProfileObj);
 
-                this.navCtrl.push(TabsPage, {}, { animate: true });
+                //Redirect newly created user to create a new match profile
+                this.navCtrl.push(CreateMatchProfilePage);
               }
             }
           }, error => console.log(error)

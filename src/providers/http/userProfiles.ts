@@ -6,6 +6,7 @@ import { environment as ENV } from '../../environments/environment';
 @Injectable()
 export class UsersProvider {
     basicHeaders: any;
+    authHeaders: any;
 
     constructor(public http: Http, public globalVars: GlobalVarsProvider) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
@@ -42,14 +43,11 @@ export class UsersProvider {
 
     getUserProfileByEmail(userEmail) {
       const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
-      console.log('endpoint: ' + retrieveUserProfileUrl);
 
-      let headers = this.globalVars.getAuthHeaders();
-      console.log('headers: ' + headers.get('Authorization'));
-      console.log('headers: ' + headers.get('Content-Type'));
+      this.authHeaders = this.globalVars.getAuthHeaders();
 
       return this.http.get(retrieveUserProfileUrl,
-        { headers: headers });
+        { headers: this.authHeaders });
     }
 
     createUserProfile(userProfileObj) {
@@ -60,8 +58,12 @@ export class UsersProvider {
 
     }
 
-    updateLastLogin(userProfileId) {
+    updateLastLogin(userProfileObj, date) {
+      const updateLastLoginUrlString = ENV.BASE_URL +
+      "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
 
+      return this.http.put(updateLastLoginUrlString, userProfileObj,
+        { headers: this.authHeaders })
     }
 
     uploadImage(userProfileId, file){

@@ -5,16 +5,14 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-
-<ion-content padding>
+<ion-content>
   <ion-card>
     <ion-item>
       <ion-label floating>DOG NAME</ion-label>
-      <ion-input [(ngModel)]="names" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+      <ion-input [(ngModel)]="names" type="text"></ion-input>
     </ion-item>
-    <ion-list>
       <ion-item>
-        <ion-label>BREED</ion-label>
+        <ion-label floating>BREED</ion-label>
         <ion-select [(ngModel)]="breed">
           <ion-option value="Aussie">Australian Sheepdog</ion-option>
           <ion-option value="Beagle">Beagle</ion-option>
@@ -29,11 +27,8 @@
           <ion-option value="Shiba">Shiba Inu</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
-    <!--Energy Level Dropdown-->
-    <ion-list>
       <ion-item>
-        <ion-label>ENERGY LEVEL</ion-label>
+        <ion-label floating>ENERGY LEVEL</ion-label>
         <ion-select [(ngModel)]="energyLevel">
           <ion-option value="MIN">Minimal</ion-option>
           <ion-option value="LOW">Low</ion-option>
@@ -42,12 +37,8 @@
           <ion-option value="EXTREME">Extreme</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
-
-    <!--Life Stage Dropdown-->
-    <ion-list>
       <ion-item>
-        <ion-label>LIFE STAGE</ion-label>
+        <ion-label floating>LIFE STAGE</ion-label>
         <ion-select [(ngModel)]="lifeStage">
           <ion-option value="PUPPY">Puppy</ion-option>
           <ion-option value="YOUNG">Young</ion-option>
@@ -55,12 +46,8 @@
           <ion-option value="MATURE">Mature</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
-
-    <!--Size Dropdown-->
-    <ion-list>
       <ion-item>
-        <ion-label>PUP SIZE</ion-label>
+        <ion-label floating>PUP SIZE</ion-label>
         <ion-select [(ngModel)]="size">
           <ion-option value="TOY">Toy</ion-option>
           <ion-option value="SMALL">Small</ion-option>
@@ -69,30 +56,25 @@
           <ion-option value="XLARGE">X-Large</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
-
-    <!-- Gender -->
-    <ion-list>
       <ion-item>
-        <ion-label>GENDER</ion-label>
+        <ion-label floating>GENDER</ion-label>
         <ion-select [(ngModel)]="sex">
           <ion-option value="FEMALE">FEMALE</ion-option>
           <ion-option value="MALE">MALE</ion-option>
           <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
     <ion-item>
-      <ion-label>BIRTHDAY</ion-label>
-      <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}"></ion-datetime>
+      <ion-label floating>BIRTHDAY</ion-label>
+      <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate"></ion-datetime>
     </ion-item>
-
     <ion-item>
       <ion-label floating>ABOUT ME</ion-label>
-      <ion-textarea [(ngModel)]="aboutMe" [ngModelOptions]="{standalone: true}" type="textarea" min="0" max="150"></ion-textarea>
+      <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="150" placeholder="Write a short bio"></ion-textarea>
     </ion-item>
-    <button ion-button full color="primary" class="btn" (click)="addDogProfilePic()">Add Photo</button>
-    <button ion-button full color="primary" class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
+    <button ion-button full class="btn" (click)="addDogProfilePic()">Add Photo</button>
+    <button ion-button full class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
+    <br>
   </ion-card>
 
 </ion-content>

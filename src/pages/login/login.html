@@ -16,7 +16,6 @@
         <ion-label floating>USERNAME/EMAIL</ion-label>
         <ion-input formControlName="email" type="text" [class.invalid]="!userAccountForm.controls.email.valid && (userAccountForm.controls.email.dirty || submitAttempt)" [(ngModel)]="email"></ion-input>
       </ion-item>
-
       <ion-item *ngIf="!userAccountForm.controls.email.valid  && (userAccountForm.controls.email.dirty || submitAttempt)">
         <p>Please enter a valid email.</p>
       </ion-item>
@@ -25,14 +24,11 @@
         <ion-label floating>PASSWORD</ion-label>
         <ion-input formControlName="password" type="password" [class.invalid]="!userAccountForm.controls.password.valid && (userAccountForm.controls.password.dirty || submitAttempt)" [(ngModel)]="password"></ion-input>
       </ion-item>
-
       <ion-item *ngIf="!userAccountForm.controls.password.valid  && (userAccountForm.controls.password.dirty || submitAttempt)">
         <p>Please enter a valid password.</p>
       </ion-item>
-
     </form>
   </ion-list>
 
   <button ion-button full color="primary" (click)="login()" class="btn">Login</button>
-
 </ion-content>

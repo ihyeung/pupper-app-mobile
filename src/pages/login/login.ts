@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
-import { Http } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account';
 import { UtilityProvider } from '../../providers/utility/utilities';
 import { UsersProvider } from '../../providers/http/userProfiles';
-
 
 @Component({
   selector: 'page-login',
@@ -21,7 +19,7 @@ export class LoginPage {
   userAccountForm: FormGroup;
   submitAttempt: boolean = false;
 
-  constructor(public navCtrl: NavController, public http: Http,
+  constructor(public navCtrl: NavController,
     public globalVarsProvider: GlobalVarsProvider,
     public formBuilder: FormBuilder, public utilService: UtilityProvider,
     public userService: UsersProvider) {
@@ -40,19 +38,19 @@ export class LoginPage {
       }
       if(!this.userAccountForm.valid){
         this.submitAttempt = true;
-        this.utilService.presentDismissableToast("Please enter a valid username/password");
+        // this.utilService.presentDismissableToast("Please enter a valid username/password");
         return;
       }
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
-        this.utilService.presentAutoDismissToast("Login success! Happy Puppering.");
+        this.utilService.presentAutoDismissToast("Login success! Please wait...");
 
         this.utilService.setAuthHeaders(response);
-        console.log('retrieiving user prfoile');
+
         this.retrieveUserProfile();
-      },
-      error => {
+
+      }, error => {
         this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
       }
     );
@@ -61,32 +59,28 @@ export class LoginPage {
   retrieveUserProfile() {
     this.userService.getUserProfileByEmail(this.email)
     .subscribe(resp => {
-      console.log('get user profile by email');
-      if (resp['status'] == 200) {
         let jsonResponseObj = JSON.parse((resp['_body']));
-        let userProfileData = jsonResponseObj['userProfiles'][0];
+        let userProfileObj = jsonResponseObj['userProfiles'][0];
 
         //Store the retrieved user profile object in global vars
-        this.globalVarsProvider.setUserProfileObj(userProfileData);
+        this.globalVarsProvider.setUserProfileObj(userProfileObj);
+
+        const currentDate = this.utilService.getCurrentDateInValidFormat();
 
         //Check if the lastLogin field needs to be updated
-        const currentDate = this.utilService.getCurrentDateInValidFormat();
-        if (userProfileData['lastLogin'] != currentDate) {
-          this.updateLastLoginTimestampForUserProfile(userProfileData, currentDate);
+        if (userProfileObj['lastLogin'] != currentDate) {
+          this.updateLastLogin(userProfileObj, currentDate);
         }
         this.navCtrl.push(TabsPage);
-      }
-    }, error => console.log(error)
-  );
-}
+    }, error => console.log(error));
+  }
 
-updateLastLoginTimestampForUserProfile(userProfileObj, timestamp) {
-  const updateLastLoginUrlString = ENV.BASE_URL +
-  "/user/" + userProfileObj['id'] + "?lastLogin=" + timestamp;
-
-  this.http.put(updateLastLoginUrlString, userProfileObj,
-    { headers: this.globalVarsProvider.getAuthHeaders() })
+  updateLastLogin(userProfileObj, currentDate) {
+    this.userService.updateLastLogin(userProfileObj, currentDate)
     .subscribe(resp => {
+      if (resp['status'] == 200) {
+        console.log('updated last login');
+      }
     }, error => console.log(error));
   }
 }

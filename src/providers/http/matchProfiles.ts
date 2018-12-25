@@ -7,9 +7,9 @@ import { environment as ENV } from '../../environments/environment';
 export class MatchProfilesProvider {
   authHeaders: any;
 
-    constructor(public http: Http, public globalVarsProvider: GlobalVarsProvider) {
-      if (null != this.globalVarsProvider.getAuthHeaders()) {
-        this.authHeaders = this.globalVarsProvider.getAuthHeaders();
+    constructor(public http: Http, public globalVars: GlobalVarsProvider) {
+      if (null != this.globalVars.getAuthHeaders()) {
+        this.authHeaders = this.globalVars.getAuthHeaders();
       }
     }
 
@@ -21,8 +21,14 @@ export class MatchProfilesProvider {
 
     }
 
-    getMatchProfiles(userProfileId){
+    getMatchProfiles(){
+      const userProfileId = this.globalVars.getUserProfileObj()['id'];
+      const getMatchProfilesForUserUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
 
+      console.log('Url to retrieve match profiles for user: ' + getMatchProfilesForUserUrl);
+
+      return this.http.get(
+        getMatchProfilesForUserUrl, { headers: this.authHeaders })
     }
 
     uploadImage(userProfileId, matchProfileId, file){

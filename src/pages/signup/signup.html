@@ -5,36 +5,33 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content padding>
-  <ion-list>
+<ion-content>
     <ion-item>
       <ion-label floating>EMAIL</ion-label>
-      <ion-input [(ngModel)]="email" [ngModelOptions]="{standalone: true}" type="email"></ion-input>
+      <ion-input [(ngModel)]="email" type="email"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label floating>PASSWORD</ion-label>
-      <ion-input [(ngModel)]="password" [ngModelOptions]="{standalone: true}" type="password"></ion-input>
+      <ion-input [(ngModel)]="password" type="password"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label floating>FIRST NAME</ion-label>
-      <ion-input [(ngModel)]="firstName" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+      <ion-input [(ngModel)]="firstName" type="text"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label floating>LAST NAME</ion-label>
-      <ion-input [(ngModel)]="lastName" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+      <ion-input [(ngModel)]="lastName" type="text"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>BIRTHDAY</ion-label>
-      <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [ngModelOptions]="{standalone: true}" [min]="minDate" [max]="maxDate"></ion-datetime>
+      <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [min]="minDate" [max]="maxDate"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label floating>ZIPCODE</ion-label>
-      <ion-input [(ngModel)]="zip" [ngModelOptions]="{standalone: true}" type="text"></ion-input>
+      <ion-input [(ngModel)]="zip" type="text"></ion-input>
     </ion-item>
-    <!--Marital Status-->
-    <ion-list>
       <ion-item>
-        <ion-label>MARITAL STATUS</ion-label>
+        <ion-label floating>MARITAL STATUS</ion-label>
         <ion-select [(ngModel)]="maritalStatus">
           <ion-option value="SINGLE">SINGLE</ion-option>
           <ion-option value="RELATIONSHIP">IN A RELATIONSHIP</ion-option>
@@ -43,18 +40,14 @@
           <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
-    <!-- Gender -->
-    <ion-list>
       <ion-item>
-        <ion-label>GENDER</ion-label>
+        <ion-label floating>GENDER</ion-label>
         <ion-select [(ngModel)]="sex">
           <ion-option value="FEMALE">FEMALE</ion-option>
           <ion-option value="MALE">MALE</ion-option>
           <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
         </ion-select>
       </ion-item>
-    </ion-list>
+    <br><br>
     <button ion-button full class="btn" (click)="createUserAccountAndProfile()">CREATE A PROFILE</button>
-  </ion-list>
 </ion-content>
