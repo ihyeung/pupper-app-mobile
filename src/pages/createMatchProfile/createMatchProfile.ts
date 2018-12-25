@@ -4,7 +4,7 @@ import { TabsPage } from '../tabs/tabs';
 import { AlertController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular'
 import { DogProfilePicPage } from '../dogProfilePic/dogProfilePic';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 
@@ -27,7 +27,7 @@ export class CreateMatchProfilePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public alertCtrl: AlertController, private toastCtrl: ToastController,
-    public globalVarsProvider: GlobalvarsProvider, public http: Http) {
+    public globalVarsProvider: GlobalVarsProvider, public http: Http) {
   }
 
   public createDogProfileBtnClick() {

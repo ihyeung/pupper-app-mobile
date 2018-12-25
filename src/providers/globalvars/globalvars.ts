@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class GlobalvarsProvider {
+export class GlobalVarsProvider {
 
   fileToUpload: any;
   filename: any;
@@ -10,7 +9,7 @@ export class GlobalvarsProvider {
   authHeaders: any;
   matchProfileObj: any;
 
-  constructor(public http: HttpClient) {
+  constructor() {
   }
 
   public setFileToUpload(value) {

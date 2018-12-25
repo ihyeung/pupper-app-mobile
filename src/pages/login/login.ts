@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
-import { Http, Headers } from '@angular/http';
-import { ToastController } from 'ionic-angular';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { Http } from '@angular/http';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account';
+import { UtilityProvider } from '../../providers/utility/utilities';
+import { UsersProvider } from '../../providers/http/userProfiles';
 
 
 @Component({
@@ -20,11 +21,11 @@ export class LoginPage {
   userAccountForm: FormGroup;
   submitAttempt: boolean = false;
 
-  constructor(public navCtrl: NavController,
-    public http: Http,
-    private toastCtrl: ToastController,
-    public globalVarsProvider: GlobalvarsProvider,
-    public formBuilder: FormBuilder) {
+  constructor(public navCtrl: NavController, public http: Http,
+              public globalVarsProvider: GlobalVarsProvider,
+              public formBuilder: FormBuilder, public utilService: UtilityProvider,
+              public userService: UsersProvider) {
+
       this.userAccountForm = formBuilder.group({
         email: ['', AccountValidator.isValidEmail],
         password: ['', Validators.required]
@@ -34,38 +35,23 @@ export class LoginPage {
   login() {
     if(!this.userAccountForm.valid){
       this.submitAttempt = true;
-      console.log("Validation failed!")
-      console.log(this.userAccountForm.value);
+      this.utilService.presentDismissableToast("Please enter a valid username/password");
       return;
     }
 
-      const headers = new Headers({ 'Content-Type': 'application/json' });
-
-      let loginData = JSON.stringify({
-        username: this.email,
-        password: this.password
-      });
-
-      const loginUrl = ENV.BASE_URL + '/login';
-
-      this.http.post(loginUrl, loginData, { headers: headers })
+      this.userService.authenticateUser(this.email, this.password)
         .subscribe(response => {
             //A response is only received if login is successful (only applies to this specific endpoint)
-            this.presentToast("Login success! Happy Puppering.");
-            this.extractAuthHeadersFromLoginSuccessResponse(response);
+            this.utilService.presentAutoDismissToast("Login success! Happy Puppering.");
+
+            this.utilService.setAuthHeaders(response);
+
             this.retrieveUserProfileForLastLoginUpdate();
         },
           error => {
-            this.presentToast("Invalid login credentials, please try again.");
+            this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
           }
         );
-  }
-
-  extractAuthHeadersFromLoginSuccessResponse(response) {
-    const jwtAccessToken = response.headers.get("Authorization");
-    let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': jwtAccessToken });
-    this.globalVarsProvider.setAuthHeaders(headers);
-
   }
 
   retrieveUserProfileForLastLoginUpdate() {
@@ -74,11 +60,11 @@ export class LoginPage {
       { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
         if (resp['status'] == 403) {
-          this.presentToast("Your session has expired. Please log in again.");
+          this.utilService.presentAutoDismissToast("Your session has expired. Please log in again.");
           return;
         }
         else if (resp['status'] == 400 || resp['status'] == 404 || resp['status'] == 422) {
-          this.presentToast("Error loading User Profile data.");
+          this.utilService.presentAutoDismissToast("Error loading User Profile data.");
           return;
         }
         else if (resp['status'] == 200) {
@@ -89,8 +75,9 @@ export class LoginPage {
           this.globalVarsProvider.setUserProfileObj(userProfileData);
 
           //Check if the lastLogin field needs to be updated
-          if (userProfileData['lastLogin'] != this.getCurrentDateInValidFormat()) {
-            this.updateLastLoginTimestampForUserProfile(userProfileData);
+          const currentDate = this.utilService.getCurrentDateInValidFormat();
+          if (userProfileData['lastLogin'] != currentDate) {
+            this.updateLastLoginTimestampForUserProfile(userProfileData, currentDate);
           }
           this.navCtrl.push(TabsPage);
         }
@@ -98,31 +85,13 @@ export class LoginPage {
       );
   }
 
-  updateLastLoginTimestampForUserProfile(userProfileObj) {
+  updateLastLoginTimestampForUserProfile(userProfileObj, timestamp) {
 
     const updateLastLoginUrlString = ENV.BASE_URL +
-      "/user/" + userProfileObj['id'] + "?lastLogin=" + this.getCurrentDateInValidFormat();
+      "/user/" + userProfileObj['id'] + "?lastLogin=" + timestamp;
     this.http.put(updateLastLoginUrlString, userProfileObj,
       { headers: this.globalVarsProvider.getAuthHeaders() })
       .subscribe(resp => {
       }, error => console.log(error));
-  }
-
-  presentToast(msgToDisplay) {
-    let toast = this.toastCtrl.create({
-      message: msgToDisplay,
-      duration: 2000,
-      position: 'top'
-    });
-    toast.present();
-  }
-
-  getCurrentDateInValidFormat() {
-    const today = new Date();
-    //Months are 0 indexed so increment month by 1
-    const monthVal = today.getMonth() + 1;
-    const monthString = monthVal < 10 ? "0" + monthVal : monthVal;
-    const dayString = today.getDate() < 10 ? "0" + today.getDate() : today.getDate();
-    return today.getFullYear() + "-" + monthString + "-" + dayString;
   }
 }

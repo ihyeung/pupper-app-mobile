@@ -17,7 +17,7 @@ export class ProfileValidator {
     let zipCodeRegEx = /^\d{5}$/;
     if(!zipCodeRegEx.test(control.value)) {
       return {
-        "Not a valid 5-digit zipcode": true
+        "Not a valid 5-digit United States zip code": true
       };
     }
     return null;

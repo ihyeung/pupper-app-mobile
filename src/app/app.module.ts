@@ -14,18 +14,17 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { CreateMatchProfilePage } from '../pages/createMatchProfile/createMatchProfile';
 import { DogProfilePicPage } from '../pages/dogProfilePic/dogProfilePic'
 
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { LoginPageModule } from '../pages/login/login.module';
 import { SwipeCardsModule } from 'ng2-swipe-cards';
-import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { File } from '@ionic-native/file';
-import { Transfer } from '@ionic-native/transfer';
 import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
-import { GlobalvarsProvider } from '../providers/globalvars/globalvars';
 import { IonicStorageModule } from '@ionic/storage';
+
+import { GlobalVarsProvider } from '../providers/globalvars/globalvars';
+import { UsersProvider } from '../providers/http/userProfiles';
+import { MatchProfilesProvider } from '../providers/http/matchProfiles';
+import { UtilityProvider } from '../providers/utility/utilities';
 
 
 @NgModule({
@@ -44,7 +43,6 @@ import { IonicStorageModule } from '@ionic/storage';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
     HttpModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
@@ -65,14 +63,14 @@ import { IonicStorageModule } from '@ionic/storage';
     DogProfilePicPage
   ],
   providers: [
-    StatusBar,
-    SplashScreen,
     File,
-    Transfer,
     Camera,
     FilePath,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    GlobalvarsProvider
+    GlobalVarsProvider,
+    UsersProvider,
+    MatchProfilesProvider,
+    UtilityProvider
   ]
 })
 export class AppModule {}

@@ -3,7 +3,7 @@ import { NavController, NavParams } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AlertController } from 'ionic-angular';
 import { MessagePage } from '../message/message';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { environment as ENV } from '../../environments/environment';
 
@@ -42,7 +42,7 @@ export class MatchingPage {
 
 
   constructor(private sanitizer: DomSanitizer, public navParams: NavParams, public alertCtrl: AlertController,
-    public navCtrl: NavController, public globalVarsProvider: GlobalvarsProvider) {
+    public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider) {
       this.retrieveNextProfileBatch();
       this.grabCards();
     }

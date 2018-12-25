@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { Http } from '@angular/http';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 
 @Component({
@@ -21,7 +21,7 @@ export class MessagePage {
   sendTo: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private toastCtrl: ToastController,
-    public http: Http, public globalVarsProvider: GlobalvarsProvider) {
+    public http: Http, public globalVarsProvider: GlobalVarsProvider) {
   }
 
   onSendBtnClick() {

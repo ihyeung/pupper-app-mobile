@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
 import { ActionSheetController, ToastController, Platform, LoadingController, Loading } from 'ionic-angular';
 import { File } from '@ionic-native/file';
-import { Transfer } from '@ionic-native/transfer';
 import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 
 declare var cordova: any;
 
@@ -20,7 +19,7 @@ export class DogProfilePicPage {
   constructor(public navCtrl: NavController, private camera: Camera,
     private file: File, private filePath: FilePath, public actionSheetCtrl: ActionSheetController,
     public toastCtrl: ToastController, public platform: Platform, public loadingCtrl: LoadingController,
-    public globalVarsProvider: GlobalvarsProvider) { }
+    public globalVarsProvider: GlobalVarsProvider) { }
 
   public presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({

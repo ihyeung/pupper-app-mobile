@@ -5,7 +5,7 @@ import { MatchingPage } from '../matching/matching';
 import { SettingsPage } from '../settings/settings';
 import { NavParams } from 'ionic-angular';
 import { Http } from '@angular/http';
-import { GlobalvarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { ToastController } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
 
@@ -19,7 +19,7 @@ export class TabsPage {
   tab3Root = MessagingPage;
   zip: any;
 
-  constructor(public navParams: NavParams, public http: Http, public globalVarsProvider: GlobalvarsProvider,
+  constructor(public navParams: NavParams, public http: Http, public globalVarsProvider: GlobalVarsProvider,
     private toastCtrl: ToastController) {
       if (null == this.globalVarsProvider.getUserProfileObj()) {
         console.log('Error: cannot retrieve user profile data from global vars');
