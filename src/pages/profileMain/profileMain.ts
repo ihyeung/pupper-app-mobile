@@ -13,11 +13,14 @@ import { CreateMatchProfilePage } from '../../pages/createMatchProfile/createMat
 export class ProfileMainPage {
 
   constructor(public navCtrl: NavController, public globalVars: GlobalVarsProvider,
-  public utilService: UtilityProvider, public matchProfService: MatchProfilesProvider) {
+  public utilService: UtilityProvider, public matchProfService: MatchProfilesProvider,
+  public userService: UsersProvider) {
     console.log('profile main page constructor');
     if (null == this.globalVars.getUserProfileObj()) {
       console.log('Error: cannot retrieve user profile data from global vars');
     } else {
+      console.log('retrieving match profiles for user');
+
       this.retrieveMatchProfilesForUser();
     }
 }
@@ -35,9 +38,6 @@ retrieveMatchProfilesForUser(){
       }
       else if (resp['status'] == 200) {
         let jsonResponseObj = JSON.parse((resp['_body']));
-
-        console.log(resp['_body']);
-
         //Check to see whether user has previously created match profiles
         if (null != jsonResponseObj['matchProfiles']) {
           let matchProfileObj = jsonResponseObj['matchProfiles'][0];
