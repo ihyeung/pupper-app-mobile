@@ -2,13 +2,12 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
 @Component({
-  selector: 'page-messaging',
-  templateUrl: 'messaging.html'
+  selector: 'page-inbox',
+  templateUrl: 'inbox.html'
 })
-export class MessagingPage {
+export class MessageInboxPage {
 
   constructor(public navCtrl: NavController) {
-    console.log('Constructor for messaging page');
 
   }
 

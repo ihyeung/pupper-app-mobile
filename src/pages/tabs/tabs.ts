@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MessagingPage } from '../messaging/messaging';
+import { MessageInboxPage } from '../inbox/inbox';
 import { MatchingPage } from '../matching/matching';
 import { SettingsPage } from '../settings/settings';
 import { ProfileMainPage } from '../profileMain/profileMain';
@@ -19,11 +19,10 @@ export class TabsPage {
   tabRootProfile = ProfileMainPage;
   tabRootSettings = SettingsPage;
   tabRootMatching = MatchingPage;
-  tabRootMessaging = MessagingPage;
+  tabRootMessaging = MessageInboxPage;
 
   constructor(public http: Http, public globalVarsProvider: GlobalVarsProvider,
     private matchProfService: MatchProfilesProvider, private utilService: UtilityProvider) {
-      console.log('tabs page constructor');
 
   }
 

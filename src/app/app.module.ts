@@ -7,7 +7,7 @@ import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup';
 import { MatchingPage } from '../pages/matching/matching';
-import { MessagingPage } from '../pages/messaging/messaging';
+import { MessageInboxPage } from '../pages/inbox/inbox';
 import { MessagePage } from '../pages/message/message';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -32,7 +32,7 @@ import { UtilityProvider } from '../providers/utility/utilities';
   declarations: [
     MyApp,
     MatchingPage,
-    MessagingPage,
+    MessageInboxPage,
     MessagePage,
     SettingsPage,
     HomePage,
@@ -60,7 +60,7 @@ import { UtilityProvider } from '../providers/utility/utilities';
   entryComponents: [
     MyApp,
     MatchingPage,
-    MessagingPage,
+    MessageInboxPage,
     MessagePage,
     SettingsPage,
     HomePage,

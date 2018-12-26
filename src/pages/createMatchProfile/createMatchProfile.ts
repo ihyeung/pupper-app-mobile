@@ -5,6 +5,7 @@ import { AlertController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular'
 import { DogProfilePicPage } from '../dogProfilePic/dogProfilePic';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 
@@ -27,12 +28,26 @@ export class CreateMatchProfilePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public alertCtrl: AlertController, private toastCtrl: ToastController,
-    public globalVarsProvider: GlobalVarsProvider, public http: Http) {
+    public globalVarsProvider: GlobalVarsProvider, public http: Http,
+    public matchProfService: MatchProfilesProvider) {
+
+      this.getAllBreeds();
+
+  }
+
+  public getAllBreeds() {
+    console.log('Retrieving list of breeds to populate form with ');
+    this.matchProfService.retrieveBreedList()
+    .subscribe(response => {
+      let responseBody = JSON.parse(response['_body']);
+      console.log("Response body: " + responseBody);
+    }, error => console.log(error)
+    );
   }
 
   public createDogProfileBtnClick() {
     if (this.userInputIsValid()) {
-      const breedLookupUrl = ENV.BASE_URL + 'pupper/breed?name=' + this.breed;
+      const breedLookupUrl = ENV.BASE_URL + '/breed?name=' + this.breed;
       this.http.get(breedLookupUrl,
         { headers: this.globalVarsProvider.getAuthHeaders() })
         .subscribe(result => {

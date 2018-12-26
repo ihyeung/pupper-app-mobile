@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
 import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { Http, Headers } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
@@ -24,8 +24,8 @@ export class SignupPage {
   minDate: string;
   maxDate: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-    public http: Http, public globalVarsProvider: GlobalVarsProvider,
+  constructor(public navCtrl: NavController, public http: Http,
+    public globalVarsProvider: GlobalVarsProvider,
     public utilService: UtilityProvider, public userService: UsersProvider) {
 
       this.minDate = new Date('Jan 1, 1930').toISOString();
