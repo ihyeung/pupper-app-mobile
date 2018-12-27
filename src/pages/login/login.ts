@@ -22,10 +22,10 @@ export class LoginPage {
   constructor(public navCtrl: NavController,
     public globalVarsProvider: GlobalVarsProvider,
     public formBuilder: FormBuilder, public utilService: UtilityProvider,
-    public userService: UsersProvider) {
+    public userService: UsersProvider, public accountValidator: AccountValidator) {
 
       this.userAccountForm = formBuilder.group({
-        email: ['', AccountValidator.isValidEmail],
+        email: ['', accountValidator.isValidEmail],
         password: ['', Validators.required]
       });
     }

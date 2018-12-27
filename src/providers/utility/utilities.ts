@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from 'ionic-angular';
+import { ToastController, AlertController } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { Headers } from '@angular/http';
 
 @Injectable()
 export class UtilityProvider {
-  constructor(private toastCtrl: ToastController, public globalVars: GlobalVarsProvider) {
+  constructor(private toastCtrl: ToastController, private alertCtrl: AlertController,
+              public globalVars: GlobalVarsProvider) {
 
   }
 
@@ -44,4 +45,26 @@ export class UtilityProvider {
     });
     toast.present();
   }
+
+//   displayAlertDialog(title, message, buttonLeft, buttonRight) {
+//   let dialog = this.alertCtrl.create({
+//     title: title,
+//     message: message,
+//     buttons: [
+//       {
+//         text: buttonLeft,
+//         handler: () => {
+//           return true;
+//         }
+//       },
+//       {
+//         text: buttonRight,
+//         handler: () => {
+            // return false;
+//         }
+//       }
+//     ]
+//   });
+//   dialog.present();
+// }
 }

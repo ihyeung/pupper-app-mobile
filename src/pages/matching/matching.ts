@@ -1,9 +1,9 @@
 import { Component, EventEmitter } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AlertController } from 'ionic-angular';
 import { MessagePage } from '../message/message';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
 import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { environment as ENV } from '../../environments/environment';
 
@@ -12,24 +12,14 @@ import { environment as ENV } from '../../environments/environment';
   templateUrl: 'matching.html'
 })
 export class MatchingPage {
-  aboutMe: string;
-  ageWithUnits: string;
-  breedName: string;
-  distance: string;
-  lastActive: string;
-  location: string;
-  name: string;
-  profileId: any;
-  profileImage: string
-  sex: string;
-  matchProfileObj: any;
-  profileCard: any;
-  remainingProfiles: any;
-  userGeneratedMatchResults: any;
 
+  currentStackIndex: number = -1;
+  remainingProfiles: number;
+  userGeneratedMatchResults: Map<number, boolean>;
+  profileBatch: any;
 
-  ready = false;
-  attendants = [];
+  ready: boolean = false;
+  profiles = [];
   cardDirection = "xy";
   cardOverlay: any = {
     like: {
@@ -41,12 +31,15 @@ export class MatchingPage {
   };
 
 
-  constructor(private sanitizer: DomSanitizer, public navParams: NavParams, public alertCtrl: AlertController,
-    public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider) {
+  constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
+    public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider,
+  public matchProfService: MatchProfilesProvider) {
       console.log('Constructor for matching page');
 
+      this.userGeneratedMatchResults = new Map();
+      // this.profileBatch = this.retrieveNextProfileBatch();
       this.retrieveNextProfileBatch();
-      this.grabCards();
+      this.addRetrievedProfileBatchIntoStack();
     }
 
     retrieveNextProfileBatch() {
@@ -57,50 +50,57 @@ export class MatchingPage {
       } else {
         const matchProfileId = this.globalVarsProvider.getMatchProfileObj()['id'];
         //TODO: Retrieve next batch from database
-        this.remainingProfiles = 10;
+        this.remainingProfiles = 5;
       }
     }
 
-    grabCards() {
+    // addRetrievedProfileBatchIntoStack(profileBatchObj) {
+    addRetrievedProfileBatchIntoStack() {
       // let images = ["assets/imgs/indy.jpeg", "assets/imgs/jax.jpg", "assets/imgs/boston.jpeg", "assets/imgs/beagle.jpeg",
       // "assets/imgs/chihua.jpeg", "assets/imgs/collie.jpeg", "assets/imgs/doodle.jpeg", "assets/imgs/maltese.jpeg", "assets/imgs/sheltie.jpeg"]
 
+      let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
+
+      // profileBatchObj.forEach( card => {
+      //
+      // });
       let pupInfo = [new Array("Indy", " Shiba Inu", " Female"), new Array("Jax", " Pomeranian", " Male"), new Array("Boston", " Shiba Inu", " Male")];
 
-      let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
       for (let i = 0; i < images.length; i++) {
-        this.profileCard = pupInfo[0];
-        this.attendants.push({
+        this.profiles.push({
           id: i + 1,
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          asBg: this.sanitizer.bypassSecurityTrustStyle('url(' + images[i] + ')')
+          image: this.sanitizer.bypassSecurityTrustStyle('url(' + images[i] + ')'),
+          info: pupInfo[i]
         });
       }
       this.ready = true;
     }
 
     onProfileMatchResult(event) {
+      this.currentStackIndex++;
+
       if (event.like) {
         console.log("LIKE");
+        // const profileId = this.profileBatch
+        // this.userGeneratedMatchResults['']
         //TODO: 1. add result to matchResult map to update database
         //2. Check if mutual like
+        this.onMutualMatch();
       } else {
         console.log("NOT A LIKE");
       }
       this.remainingProfiles--;
 
-      if (this.remainingProfiles <= 5) { //Retrieve next batch when 5 cards remain
+      if (this.remainingProfiles <= 1) { //Retrieve next batch when 5 cards remain
+        // this.profileBatch = this.retrieveNextProfileBatch();
         this.retrieveNextProfileBatch();
       }
     }
 
-    onProfileDestroy(event) {
-
-    }
-
     onMutualMatch() {
-      let alertConfirm = this.alertCtrl.create({
+      let matchDialog = this.alertCtrl.create({
         title: 'It\'s a match!',
         message: 'Would you like to send this pup a message?',
         buttons: [
@@ -111,15 +111,21 @@ export class MatchingPage {
             }
           },
           {
-            text: 'Let\'s Chat!',
+            text: 'Send a message',
             handler: () => {
               console.log('Lets Chat Clicked');
-              console.log("Match profile details from matching page " + this.matchProfileObj);
-              this.navCtrl.push(MessagePage, { matchProfileDetails: this.matchProfileObj });
+              this.matchProfService.getMatchProfileById(1) //TODO: Figure out how to get the profileId for each card
+              .subscribe(resp => {
+                  const matchProfileObj = JSON.parse(resp['_body']);
+                  this.navCtrl.push(MessagePage, {
+                    matchProfileReceiver: matchProfileObj,
+                    matchProfileSender: this.globalVarsProvider.getMatchProfileObj()
+                  });
+              }, error => console.log(error));
             }
           }
         ]
       });
-      alertConfirm.present();
+      matchDialog.present();
     }
   }

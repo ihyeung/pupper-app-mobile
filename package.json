@@ -1,8 +1,8 @@
 {
-  "name": "pup",
+  "name": "Pupper",
   "version": "0.0.1",
   "author": "Kayla Cresswell & Irene Yeung",
-  "homepage": "http://ionicframework.com/",
+  "homepage": "https://www.github.com/ihyeung/pupper-app-mobile",
   "private": true,
   "scripts": {
     "start": "ionic-app-scripts serve",

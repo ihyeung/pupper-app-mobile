@@ -30,10 +30,14 @@ export class MatchProfilesProvider {
       const userProfileId = this.globalVars.getUserProfileObj()['id'];
       const getMatchProfilesForUserUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
 
-      console.log('Url to retrieve match profiles for user: ' + getMatchProfilesForUserUrl);
-
       return this.http.get(
         getMatchProfilesForUserUrl, { headers: this.authHeaders })
+    }
+
+    getMatchProfileById(matchProfileId) {
+      const matchProfileByIdUrl = ENV.BASE_URL + '/matchProfile?matchProfileId=' + matchProfileId;
+
+      return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     }
 
     uploadImage(userProfileId, matchProfileId, file){

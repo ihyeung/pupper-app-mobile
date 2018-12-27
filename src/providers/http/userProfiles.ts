@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { UtilityProvider } from '../../providers/utility/utilities';
 import { environment as ENV } from '../../environments/environment';
 
 @Injectable()
 export class UsersProvider {
-    basicHeaders: any;
-    authHeaders: any;
+  basicHeaders: any;
+  authHeaders: any;
 
-    constructor(public http: Http, public globalVars: GlobalVarsProvider) {
+  constructor(public http: Http, public globalVars: GlobalVarsProvider,
+    public utilService: UtilityProvider) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
 
@@ -33,21 +35,36 @@ export class UsersProvider {
       return this.http.post(loginUrl, loginData, { headers: this.basicHeaders });
     }
 
-    updateUserAccount(username, password) {
-
+    getUserAccountByEmail(username) {
+      const getUserAccountByEmailUrl = ENV.BASE_URL + '/account?email=' + username;
+      if (this.globalVars.getAuthHeaders() == null) {
+        this.authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
+        .subscribe(response => {
+          this.utilService.setAuthHeaders(response);
+          return this.http.get(getUserAccountByEmailUrl, { headers: this.globalVars.getAuthHeaders() });
+          
+        }, error => console.log(error)
+      );
+    } else {
+      return this.http.get(getUserAccountByEmailUrl, { headers: this.globalVars.getAuthHeaders() });
     }
+  }
 
-    getUserProfile(userProfileId) {
+  updateUserAccount(username, password) {
 
-    }
+  }
 
-    getUserProfileByEmail(userEmail) {
-      const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
+  getUserProfile(userProfileId) {
 
-      this.authHeaders = this.globalVars.getAuthHeaders();
+  }
 
-      return this.http.get(retrieveUserProfileUrl,
-        { headers: this.authHeaders });
+  getUserProfileByEmail(userEmail) {
+    const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
+
+    this.authHeaders = this.globalVars.getAuthHeaders();
+
+    return this.http.get(retrieveUserProfileUrl,
+      { headers: this.authHeaders });
     }
 
     createUserProfile(userProfileObj) {
@@ -64,14 +81,14 @@ export class UsersProvider {
 
       return this.http.put(updateLastLoginUrlString, userProfileObj,
         { headers: this.authHeaders })
+      }
+
+      uploadImage(userProfileId, file){
+
+      }
+
+      deleteUser(userProfileObj) {
+        //TODO: 2 calls to delete user account and delete user profile endpoints
+      }
+
     }
-
-    uploadImage(userProfileId, file){
-
-    }
-
-    deleteUser(userProfileObj) {
-      //TODO: 2 calls to delete user account and delete user profile endpoints
-    }
-
-}

@@ -1,7 +1,7 @@
 import { NgModule, ErrorHandler } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
 
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
@@ -27,10 +27,12 @@ import { UsersProvider } from '../providers/http/userProfiles';
 import { MatchProfilesProvider } from '../providers/http/matchProfiles';
 import { UtilityProvider } from '../providers/utility/utilities';
 
+import { ProfileValidator } from '../validators/profile';
+import { AccountValidator } from '../validators/account';
 
 @NgModule({
   declarations: [
-    MyApp,
+    AppComponent,
     MatchingPage,
     MessageInboxPage,
     MessagePage,
@@ -46,7 +48,7 @@ import { UtilityProvider } from '../providers/utility/utilities';
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp, {
+    IonicModule.forRoot(AppComponent, {
       platforms: {
         ios: {
           statusbarPadding: true
@@ -58,7 +60,7 @@ import { UtilityProvider } from '../providers/utility/utilities';
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
+    AppComponent,
     MatchingPage,
     MessageInboxPage,
     MessagePage,
@@ -79,7 +81,9 @@ import { UtilityProvider } from '../providers/utility/utilities';
     GlobalVarsProvider,
     UsersProvider,
     MatchProfilesProvider,
-    UtilityProvider
+    UtilityProvider,
+    AccountValidator,
+    ProfileValidator
   ]
 })
 export class AppModule {}

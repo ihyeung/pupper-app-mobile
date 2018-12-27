@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams} from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
@@ -20,9 +20,12 @@ export class MessagePage {
   sendFrom: any;
   sendTo: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private toastCtrl: ToastController,
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    private toastCtrl: ToastController,
     public http: Http, public globalVarsProvider: GlobalVarsProvider) {
       console.log('Constructor for message page');
+      this.matchProfileSender = navParams.get('matchProfileSender');
+      this.matchProfileReceiver = navParams.get('matchProfileReceiver');
 
   }
 
