@@ -1,40 +1,51 @@
 <ion-header>
   <ion-navbar color="secondary" class="nav">
     <ion-title class="navTitle">
-      Messaging
+      Message Inbox
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-<div padding>
-    <ion-segment [(ngModel)]="pet">
-      <ion-segment-button value="messages">
-        Messages
-      </ion-segment-button>
-      <ion-segment-button value="matches">
+  <div padding>
+    <ion-segment [(ngModel)]="inboxSelector">
+      <ion-segment-button value="matches" (click)="retrieveMatches()">
         Matches
+      </ion-segment-button>
+      <ion-segment-button value="messages" (click)="retrieveMessageHistoriesWithMatches()">
+        Messages
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  <div [ngSwitch]="pet">
-    <ion-list *ngSwitchCase="'messages'">
-      <ion-item>
-        <ion-thumbnail item-start>
-          <img src="assets/imgs/boston.jpeg" alt="boston">
-        </ion-thumbnail>
-        <h2>Boston</h2>
-      </ion-item>
-    </ion-list>
+  <div [ngSwitch]="inboxSelector">
+    <div class="inbox-container" *ngIf="messagesReady">
+      <!-- <ion-card> -->
+      <ion-list *ngSwitchCase="'messages'">
+        <button ion-item *ngFor="let inboxMessagePreview of inboxMessagePreviews" (click)="viewMessageHistory(inboxMessagePreview)">
+          <ion-avatar item-start>
+            <img src="{{inboxMessagePreview.image}}">
+          </ion-avatar>
+          <h2>{{inboxMessagePreview.matchProfileName}}</h2>
+          <h3>{{inboxMessagePreview.timestamp}}</h3>
+          <p>{{inboxMessagePreview.message}}</p>
+        </button>
+      </ion-list>
+    </div>
+    <div class="match-container" *ngIf="matchesReady">
+      <!-- <ion-card> -->
+      <ion-list *ngSwitchCase="'matches'">
+        <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)">
+          <ion-avatar item-start>
+            <img src="{{match.image}}">
+          </ion-avatar>
+          <h2>{{match.matchProfileName}}</h2>
+          <h3>{{match.timestamp}}</h3>
+          <p>{{match.about}}</p>
+        </button>
 
-    <ion-list *ngSwitchCase="'matches'">
-        <ion-item>
-            <ion-thumbnail item-start>
-              <img src="assets/imgs/indy.jpeg" alt="boston">
-            </ion-thumbnail>
-            <h2>Indy</h2>
-          </ion-item>
-    </ion-list>
+      </ion-list>
+      <!-- </ion-card> -->
+    </div>
   </div>
 </ion-content>

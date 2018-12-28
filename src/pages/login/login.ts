@@ -59,7 +59,7 @@ export class LoginPage {
   retrieveUserProfile() {
     this.userService.getUserProfileByEmail(this.email)
     .subscribe(resp => {
-        let jsonResponseObj = JSON.parse((resp['_body']));
+        let jsonResponseObj = JSON.parse(resp['_body']);
         let userProfileObj = jsonResponseObj['userProfiles'][0];
 
         //Store the retrieved user profile object in global vars

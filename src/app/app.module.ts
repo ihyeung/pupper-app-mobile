@@ -25,6 +25,8 @@ import { IonicStorageModule } from '@ionic/storage';
 import { GlobalVarsProvider } from '../providers/globalvars/globalvars';
 import { UsersProvider } from '../providers/http/userProfiles';
 import { MatchProfilesProvider } from '../providers/http/matchProfiles';
+import { MatchesProvider } from '../providers/http/matches';
+import { MessagesProvider } from '../providers/http/messages';
 import { UtilityProvider } from '../providers/utility/utilities';
 
 import { ProfileValidator } from '../validators/profile';
@@ -83,7 +85,9 @@ import { AccountValidator } from '../validators/account';
     MatchProfilesProvider,
     UtilityProvider,
     AccountValidator,
-    ProfileValidator
+    ProfileValidator,
+    MatchesProvider,
+    MessagesProvider
   ]
 })
 export class AppModule {}

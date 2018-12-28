@@ -21,11 +21,6 @@ export class MatchProfilesProvider {
 
     }
 
-    retrieveBreedList() {
-      return this.http.get(ENV.BASE_URL + '/breed',
-        { headers: this.globalVars.getAuthHeaders() });
-    }
-
     getMatchProfiles(){
       const userProfileId = this.globalVars.getUserProfileObj()['id'];
       const getMatchProfilesForUserUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';

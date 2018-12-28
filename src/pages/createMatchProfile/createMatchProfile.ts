@@ -5,7 +5,7 @@ import { AlertController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular'
 import { DogProfilePicPage } from '../dogProfilePic/dogProfilePic';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
+import { UtilityProvider } from '../../providers/utility/utilities';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 
@@ -16,11 +16,11 @@ import { environment as ENV } from '../../environments/environment';
 export class CreateMatchProfilePage {
   aboutMe: string;
   birthdate: string;
-  breed: any;
+  breed: string;
   energyLevel: string;
-  lifeStage: any;
+  lifeStage: string;
   names: string;
-  numDogs: 1;
+  numDogs: number = 1;
   profileImage: any;
   sex: string;
   size: string;
@@ -29,7 +29,7 @@ export class CreateMatchProfilePage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public alertCtrl: AlertController, private toastCtrl: ToastController,
     public globalVarsProvider: GlobalVarsProvider, public http: Http,
-    public matchProfService: MatchProfilesProvider) {
+    public utilService: UtilityProvider) {
 
       this.getAllBreeds();
 
@@ -37,7 +37,7 @@ export class CreateMatchProfilePage {
 
   public getAllBreeds() {
     console.log('Retrieving list of breeds to populate form with ');
-    this.matchProfService.retrieveBreedList()
+    this.utilService.retrieveBreedList()
     .subscribe(response => {
       let responseBody = JSON.parse(response['_body']);
       console.log("Response body: " + responseBody);
@@ -116,12 +116,8 @@ export class CreateMatchProfilePage {
 
     const userProfileId = this.globalVarsProvider.getUserProfileObj()['id'];
 
-    let imageUploadEndpoint = ENV.BASE_URL + '/upload/user/' + userProfileId +
-    '/matchProfile/' + matchProfileId;
-
-    //uncomment the code below after the image controller endpoint has been changed on the backend
-    // let imageUploadEndpoint = ENV.BASE_URL + '/user/' + userProfileId +
-    // '/matchProfile/' + matchProfileId + 'upload';
+    let imageUploadEndpoint = ENV.BASE_URL + '/user/' + userProfileId +
+    '/matchProfile/' + matchProfileId + '/upload';
 
     this.http.put(imageUploadEndpoint, formData,
       { headers: formheadersWithAuth })
@@ -177,7 +173,7 @@ export class CreateMatchProfilePage {
   }
 
   addDogProfilePic() {
-    this.navCtrl.push(DogProfilePicPage, {});
+    this.navCtrl.push(DogProfilePicPage);
   }
 
 }
