@@ -1,24 +1,22 @@
 import { Component, EventEmitter } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MessagePage } from '../message/message';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
-import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { environment as ENV } from '../../environments/environment';
 
+@IonicPage()
 @Component({
   selector: 'page-matching',
   templateUrl: 'matching.html'
 })
 export class MatchingPage {
 
-  currentStackIndex: number = -1;
   remainingProfiles: number;
   userGeneratedMatchResults: Map<number, boolean>;
-  profileBatch: any;
+  profileCardBatch: any = [];
 
-  ready: boolean = false;
+  nextBatchReady: boolean = false;
   profiles = [];
   cardDirection = "xy";
   cardOverlay: any = {
@@ -46,7 +44,7 @@ export class MatchingPage {
       //Check to make sure a matching profile has been created to start matching
       if (null == this.globalVarsProvider.getMatchProfileObj()) {
         console.log('Please create a matching profile to begin matching.');
-        this.navCtrl.push(CreateMatchProfilePage);
+        this.navCtrl.push('CreateMatchProfilePage');
       } else {
         const matchProfileId = this.globalVarsProvider.getMatchProfileObj()['id'];
         //TODO: Retrieve next batch from database
@@ -56,8 +54,8 @@ export class MatchingPage {
 
     // addRetrievedProfileBatchIntoStack(profileBatchObj) {
     addRetrievedProfileBatchIntoStack() {
-      // let images = ["assets/imgs/indy.jpeg", "assets/imgs/jax.jpg", "assets/imgs/boston.jpeg", "assets/imgs/beagle.jpeg",
-      // "assets/imgs/chihua.jpeg", "assets/imgs/collie.jpeg", "assets/imgs/doodle.jpeg", "assets/imgs/maltese.jpeg", "assets/imgs/sheltie.jpeg"]
+      // let images = ["assets/img/indy.jpeg", "assets/img/jax.jpg", "assets/img/boston.jpeg", "assets/img/beagle.jpeg",
+      // "assets/img/chihua.jpeg", "assets/img/collie.jpeg", "assets/img/doodle.jpeg", "assets/img/maltese.jpeg", "assets/img/sheltie.jpeg"]
 
       let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
 
@@ -75,11 +73,13 @@ export class MatchingPage {
           info: pupInfo[i]
         });
       }
-      this.ready = true;
+      this.nextBatchReady = true;
     }
 
-    onProfileMatchResult(event) {
-      this.currentStackIndex++;
+    onProfileMatchResult(event, profile) {
+
+      const listIndex = this.profiles.indexOf(profile);
+      console.log('profile card #' + listIndex + ' of stack has been liked/disliked by user');
 
       if (event.like) {
         console.log("LIKE");
@@ -95,6 +95,7 @@ export class MatchingPage {
 
       if (this.remainingProfiles <= 1) { //Retrieve next batch when 5 cards remain
         // this.profileBatch = this.retrieveNextProfileBatch();
+        this.nextBatchReady = false;
         this.retrieveNextProfileBatch();
       }
     }
@@ -117,9 +118,9 @@ export class MatchingPage {
               this.matchProfService.getMatchProfileById(1) //TODO: Figure out how to get the profileId for each card
               .subscribe(resp => {
                   const matchProfileObj = JSON.parse(resp['_body']);
-                  this.navCtrl.push(MessagePage, {
-                    matchProfileReceiver: matchProfileObj,
-                    matchProfileSender: this.globalVarsProvider.getMatchProfileObj()
+                  this.navCtrl.push('MessagePage', {
+                    newMatch: true,
+                    matchProfileReceiver: matchProfileObj
                   });
               }, error => console.log(error));
             }

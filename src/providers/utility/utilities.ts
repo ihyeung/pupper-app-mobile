@@ -6,13 +6,11 @@ import { environment as ENV } from '../../environments/environment';
 
 @Injectable()
 export class UtilityProvider {
-  constructor(private toastCtrl: ToastController,
-    private alertCtrl: AlertController,
-    public globalVars: GlobalVarsProvider,
+  constructor(public globalVars: GlobalVarsProvider,
     public http: Http,
-    public loadingCtrl: LoadingController) {
-
-    }
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+    public loadCtrl: LoadingController) { }
 
     setAuthHeaders(response) {
       const jwtAccessToken = response.headers.get('Authorization');
@@ -30,9 +28,11 @@ export class UtilityProvider {
       return today.getFullYear() + "-" + monthString + "-" + dayString;
     }
 
-    retrieveBreedList() {
-      return this.http.get(ENV.BASE_URL + '/breed',
-      { headers: this.globalVars.getAuthHeaders() });
+    convertUtcTimestampToDate(utcString) {
+    }
+
+    getBreeds(headers) {
+      return this.http.get(ENV.BASE_URL + '/breed', { headers: headers });
     }
 
     presentDismissableToast(message) {
@@ -49,14 +49,14 @@ export class UtilityProvider {
     presentAutoDismissToast(message) {
       const toast = this.toastCtrl.create({
         message: message,
-        duration: 3000,
-        position: 'bottom',
+        duration: 2000,
+        position: 'middle'
       });
       toast.present();
     }
 
     presentLoadingIndicator() {
-      const loader = this.loadingCtrl.create({
+      const loader = this.loadCtrl.create({
         content: "Please wait...",
         duration: 3000
       });
@@ -69,11 +69,11 @@ export class UtilityProvider {
         message: message,
         buttons: [
           { text: buttonLeft,
-            handler: () => { return true; }
+            handler: () => { return false; }
           },
           {
             text: buttonRight,
-            handler: () => { return false; }
+            handler: () => { return true; }
           }
         ]
       });

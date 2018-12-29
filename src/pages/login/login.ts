@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { TabsPage } from '../tabs/tabs';
+import { NavController, IonicPage } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,6 +7,7 @@ import { AccountValidator } from  '../../validators/account';
 import { UtilityProvider } from '../../providers/utility/utilities';
 import { UsersProvider } from '../../providers/http/userProfiles';
 
+@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -32,9 +32,9 @@ export class LoginPage {
 
     login() {
       if (ENV.AUTO_FILL == true) {
-        this.email = "test@test.com";
-        this.password = "password";
-        this.navCtrl.push(TabsPage);
+        this.email = ENV.VALIDATE_EMAIL_USER;
+        this.password = ENV.VALIDATE_EMAIL_PASS;
+        this.navCtrl.push('TabsPage');
       }
       if(!this.userAccountForm.valid){
         this.submitAttempt = true;
@@ -71,7 +71,7 @@ export class LoginPage {
         if (userProfileObj['lastLogin'] != currentDate) {
           this.updateLastLogin(userProfileObj, currentDate);
         }
-        this.navCtrl.push(TabsPage);
+        this.navCtrl.push('TabsPage');
     }, error => console.log(error));
   }
 

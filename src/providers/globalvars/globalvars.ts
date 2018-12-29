@@ -8,6 +8,7 @@ export class GlobalVarsProvider {
   userProfileObj: any;
   authHeaders: any;
   matchProfileObj: any;
+  breedData: any = [];
 
   constructor() {
   }
@@ -50,5 +51,13 @@ export class GlobalVarsProvider {
 
   public getAuthHeaders() {
     return this.authHeaders;
+  }
+
+  public getBreedData() {
+    return this.breedData;
+  }
+
+  public setBreedData(value) {
+    this.breedData = value;
   }
 }

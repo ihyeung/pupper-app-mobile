@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { UsersProvider } from '../../providers/http/userProfiles';
 import { UtilityProvider } from '../../providers/utility/utilities';
 import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
-import { CreateMatchProfilePage } from '../../pages/createMatchProfile/createMatchProfile';
 
+@IonicPage()
 @Component({
   selector: 'page-profileMain',
   templateUrl: 'profileMain.html',
@@ -45,7 +45,7 @@ retrieveMatchProfilesForUser(){
           this.globalVars.setMatchProfileObj(matchProfileObj);
         } else {
           this.utilService.presentDismissableToast("Please create a matching profile to get started.");
-          this.navCtrl.push(CreateMatchProfilePage);
+          this.navCtrl.push('CreateMatchProfilePage');
         }
       }
     }, error => console.log(error)

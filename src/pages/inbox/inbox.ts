@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { MatchesProvider } from '../../providers/http/matches';
 import { MessagesProvider } from '../../providers/http/messages';
-import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { UtilityProvider } from '../../providers/utility/utilities';
 
+@IonicPage()
 @Component({
   selector: 'page-inbox',
   templateUrl: 'inbox.html'
@@ -13,8 +13,9 @@ import { UtilityProvider } from '../../providers/utility/utilities';
 export class MessageInboxPage {
 
   matchProfileId: number;
-  inboxMessagePreviews = [];
-  matchesList = [];
+  inboxMessagePreviews: any = []; //The latest PupperMessage exchanged between user and all of their matches
+  inboxMessageRecentHistory: any = []; //The 5 most recent PupperMessages exchanged between user and all of their matches
+  matchesList: any = [];
   messagesReady: boolean = false;
   matchesReady: boolean = false;
 
@@ -23,8 +24,7 @@ export class MessageInboxPage {
     public matchService: MatchesProvider, public msgService: MessagesProvider,
     public utilService: UtilityProvider) {
       if (null == this.globalVars.getMatchProfileObj()) {
-        console.log('Please create a matching profile to begin matching.');
-        this.navCtrl.push(CreateMatchProfilePage);
+        this.noMatchProfileFoundHandler();
       }
       this.matchProfileId = this.globalVars.getMatchProfileObj()['id'];
       this.retrieveMatches(); //Default to show contents of matches tab
@@ -40,7 +40,7 @@ export class MessageInboxPage {
         matchProfileList.forEach(match => {
           this.matchesList.push({
             matchProfileId: match['id'],
-            image: match['profileImage'] == null ? 'assets/imgs/appLogo.png' : match['profileImage'],
+            image: match['profileImage'] == null ? 'assets/img/appLogo.png' : match['profileImage'],
             matchProfileName: match['names'],
             breed: match['breed']['name'],
             about: match['aboutMe']
@@ -72,18 +72,18 @@ export class MessageInboxPage {
           otherMatchProfileName = history[0]['matchProfileReceiver']['names'];
           otherMatchProfileImage = history[0]['matchProfileReceiver']['profileImage'];
         }
+        this.inboxMessageRecentHistory.push(history);
         this.inboxMessagePreviews.push({
           matchProfileId: otherMatchProfileId,
           matchProfileName: otherMatchProfileName,
-          image: otherMatchProfileImage == null ? 'assets/imgs/appLogo.png' : otherMatchProfileImage,
+          image: otherMatchProfileImage == null ? 'assets/img/appLogo.png' : otherMatchProfileImage,
           message: history[0]['message'],
           timestamp: history[0]['timestamp']
         });
       }
     });
     this.messagesReady = true;
-  }, err => console.log(err)
-);
+  }, err => console.log(err));
 }
 
 viewMatchProfile(matchListEntry) {
@@ -91,9 +91,29 @@ viewMatchProfile(matchListEntry) {
   console.log('clicked on match profile for matchProfileId=' + matchProfileId);
 }
 
-viewMessageHistory(inboxMessage) {
-  const matchProfileId = inboxMessage['matchProfileId'];
+viewMessageHistory(inboxPreviewItem) {
+  const matchProfileId = inboxPreviewItem['matchProfileId'];
   console.log('clicked to view message history for current user & matchProfileId=' + matchProfileId);
+
+  const listIndex = this.inboxMessagePreviews.indexOf(inboxPreviewItem);
+
+  console.log('Retrieving message history for inboxMessagePreviews array element ' + listIndex);
+
+  this.navCtrl.push('MessagePage', this.inboxMessageRecentHistory[listIndex]);
 }
+
+
+noMatchProfileFoundHandler() {
+  const createMatchProfile = this.utilService.displayAlertDialog(
+    'Create a matching profile?',
+    'Please create a matching profile to begin matching.',
+    'Cancel',
+    'Create match profile');
+    if (createMatchProfile) {
+      this.navCtrl.push('CreateMatchProfilePage');
+    } else {
+      this.navCtrl.push('ProfileMainPage');
+    }
+  }
 
 }

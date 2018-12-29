@@ -1,20 +1,50 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { LoginPage } from '../login/login';
-import { SignupPage } from '../signup/signup';
+import { NavController, IonicPage } from 'ionic-angular';
+import { UtilityProvider } from '../../providers/utility/utilities';
+import { StatusBar } from '@ionic-native/status-bar';
+import { environment as ENV } from '../../environments/environment';
+import { UsersProvider } from '../../providers/http/userProfiles';
+import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 
+@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
 })
 
 export class HomePage {
-  constructor(public navCtrl: NavController) {
-  }
+
+  breedList: any;
+
+  constructor(public navCtrl: NavController, public utilService: UtilityProvider,
+  public statusBar: StatusBar, public userService: UsersProvider,
+  public globalVars: GlobalVarsProvider) {
+    this.statusBar.show();
+
+    this.retrieveBreedList();
+}
 
   ionViewDidLoad() {}
 
-  login(){ this.navCtrl.push(LoginPage); }
+  login(){
+    this.globalVars.setBreedData(this.breedList);
+    this.navCtrl.push('LoginPage');
+  }
 
-  signup(){ this.navCtrl.push(SignupPage); }
+  signup(){ this.navCtrl.push('SignupPage', this.breedList); }
+
+  retrieveBreedList() {
+      this.userService
+      .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
+      .subscribe(response => {
+
+        const headers = this.utilService.setAuthHeaders(response);
+        this.utilService.getBreeds(headers)
+        .subscribe(breedResponse => {
+          this.breedList = JSON.parse(breedResponse['_body']);
+
+          this.statusBar.hide();
+        }, error => console.log(error));
+      }, error => console.log(error));
+  }
 }

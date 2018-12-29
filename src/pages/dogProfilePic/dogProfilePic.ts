@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { ActionSheetController, ToastController, Platform, LoadingController, Loading } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 import { FilePath } from '@ionic-native/file-path';
@@ -8,6 +8,7 @@ import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 
 declare var cordova: any;
 
+@IonicPage()
 @Component({
   selector: 'page-dogProfilePic',
   templateUrl: 'dogProfilePic.html'

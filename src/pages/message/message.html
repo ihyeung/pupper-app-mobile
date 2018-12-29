@@ -6,14 +6,14 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content class="allMessages">
+<ion-content>
     <ion-card>
-        <ion-card-content *ngFor="let messageToSend of allMessages">
-          {{ messageToSend }}
+        <ion-card-content *ngFor="let message of chatMessages">
+          {{ message.message }}
         </ion-card-content>
       </ion-card>
   <ion-item>
-    <ion-input type="message" placeholder="Your Message..." [(ngModel)]="message" [ngModelOptions]="{standalone: true}" type="text" value=""></ion-input>
-        <button ion-button full item-right class="sendbutton" (click)="onSendBtnClick()">SEND</button>
+    <ion-input type="text" placeholder="Send a message .." #input></ion-input>
+        <button ion-button full item-right (click)="sendMessage(input.value)">SEND</button>
   </ion-item>
 </ion-content>

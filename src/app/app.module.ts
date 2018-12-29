@@ -2,18 +2,8 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
-
-import { HomePage } from '../pages/home/home';
-import { LoginPage } from '../pages/login/login';
-import { SignupPage } from '../pages/signup/signup';
-import { MatchingPage } from '../pages/matching/matching';
-import { MessageInboxPage } from '../pages/inbox/inbox';
-import { MessagePage } from '../pages/message/message';
-import { SettingsPage } from '../pages/settings/settings';
-import { TabsPage } from '../pages/tabs/tabs';
-import { CreateMatchProfilePage } from '../pages/createMatchProfile/createMatchProfile';
-import { ProfileMainPage } from '../pages/profileMain/profileMain';
-import { DogProfilePicPage } from '../pages/dogProfilePic/dogProfilePic'
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
 
 import { SwipeCardsModule } from 'ng2-swipe-cards';
 import { HttpModule } from '@angular/http';
@@ -34,51 +24,25 @@ import { AccountValidator } from '../validators/account';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    MatchingPage,
-    MessageInboxPage,
-    MessagePage,
-    SettingsPage,
-    HomePage,
-    LoginPage,
-    SignupPage,
-    TabsPage,
-    CreateMatchProfilePage,
-    DogProfilePicPage,
-    ProfileMainPage
+    AppComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(AppComponent, {
-      platforms: {
-        ios: {
-          statusbarPadding: true
-        }
-      }
-    }),
+    IonicModule.forRoot(AppComponent),
     IonicStorageModule.forRoot(),
     SwipeCardsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    AppComponent,
-    MatchingPage,
-    MessageInboxPage,
-    MessagePage,
-    SettingsPage,
-    HomePage,
-    LoginPage,
-    SignupPage,
-    TabsPage,
-    CreateMatchProfilePage,
-    DogProfilePicPage,
-    ProfileMainPage
+    AppComponent
   ],
   providers: [
     File,
     Camera,
     FilePath,
+    SplashScreen,
+    StatusBar,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     GlobalVarsProvider,
     UsersProvider,

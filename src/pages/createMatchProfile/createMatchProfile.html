@@ -14,17 +14,9 @@
       <ion-item>
         <ion-label floating>BREED</ion-label>
         <ion-select [(ngModel)]="breed">
-          <ion-option value="Aussie">Australian Sheepdog</ion-option>
-          <ion-option value="Beagle">Beagle</ion-option>
-          <ion-option value="Border Collie">Border Collie</ion-option>
-          <ion-option value="Chihuahua">Chihuahua</ion-option>
-          <ion-option value="Golden Retriever">Golden Retriever</ion-option>
-          <ion-option value="Great Dane">Great Dane</ion-option>
-          <ion-option value="Maltese">Maltese</ion-option>
-          <ion-option value="Goldendoodle">Goldendoodle</ion-option>
-          <ion-option value="Pomeranian">Pomeranian</ion-option>
-          <ion-option value="Sheltie">Sheltie</ion-option>
-          <ion-option value="Shiba">Shiba Inu</ion-option>
+            <ion-option *ngFor="let breed of breedList" [value]="breed">
+              <p>{{breed}}</p>
+            </ion-option>
         </ion-select>
       </ion-item>
       <ion-item>

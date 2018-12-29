@@ -9,15 +9,14 @@
 
 <ion-content padding>
   <ion-content padding>
-    <div class="card-container" *ngIf="ready">
+    <div class="card-container" *ngIf="nextBatchReady">
       <sc-card padding *ngFor="let profile of profiles" [orientation]="cardDirection" [tinder-card]="cardOverlay"
-      [callDestroy]="profile.destroyEvent" [callLike]="profile.likeEvent" (onLike)="onProfileMatchResult($event)">
-      <div class="user_img" [style.background-image]="profile.image"></div>
-
-      <div class="profileCardTitle" >
+      [callDestroy]="profile.destroyEvent" [callLike]="profile.likeEvent" (onLike)="onProfileMatchResult($event, profile)">
+      <div [style.background-image]="profile.image" id="profileImage"></div>
+      <div id ="profileCardTitle">
         <ion-label placeholder="profile.info"></ion-label>
       </div>
-      <div class="profileCardInfo" >
+      <div id="profileCardInfo">
       </div>
     </sc-card>
   </div>
