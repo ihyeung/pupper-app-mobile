@@ -83,24 +83,6 @@ export class MessagePage {
       this.retrieveReceiverAndSendMessage(receiverUserProfileId, message);
     }
   }
-  //
-  // retrieveMatchProfilesAndSendMessage(senderUserProfileId, receiverUserProfileId) {
-  //   const getMatchProfileEndpointUrl = ENV.BASE_URL + "/user/" + senderUserProfileId + "/matchProfile";
-  //
-  //   console.log("Hitting endpoint to retrieve match profile for a given user id: " + getMatchProfileEndpointUrl);
-  //   this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getAuthHeaders() })
-  //     .subscribe(response => {
-  //
-  //       if (response['status'] == 200) {
-  //         let jsonResponseObj = JSON.parse((response['_body']));
-  //         let matchProfileObj = jsonResponseObj['matchProfiles'][0];
-  //         this.globalVarsProvider.setMatchProfileObj(matchProfileObj);
-  //         this.retrieveMatchProfileReceiver(receiverUserProfileId);
-  //       }
-  //     },
-  //       error => console.log(error)
-  //     );
-  // }
 
   retrieveReceiverAndSendMessage(receiverUserProfileId, message) {
     const getMatchProfileEndpointUrl = ENV.BASE_URL + "/user/" + receiverUserProfileId + "/matchProfile";
@@ -112,7 +94,6 @@ export class MessagePage {
           let matchProfileObj = jsonResponseObj['matchProfiles'][0];
 
           this.sendMessageByMatchProfileReceiverObj(matchProfileObj, message);
-
         }
       },
         error => console.log(error)
