@@ -7,19 +7,23 @@
 </ion-header>
 
 <ion-content>
+  <div>
+  <h2 [hidden]="lastImage !== null">SELECT A IMAGE FILE FOR UPLOAD</h2>
+  </div>
+  <ion-card>
   <img src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null">
-  <h3 [hidden]="lastImage !== null">Select a profile image to upload.</h3>
+  </ion-card>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar color="primary">
-    <ion-buttons>
-        <button ion-button class="btn" full icon-left (click)="presentActionSheet()">
+    <!-- <ion-buttons> -->
+        <button ion-button class="btn" full icon-left (click)="selectImageForUpload()">
         <ion-icon name="camera"></ion-icon>Select Image
       </button>
       <button ion-button class="btn" full icon-left (click)="uploadImage()" [disabled]="lastImage === null">
         <ion-icon name="cloud-upload"></ion-icon>Upload
       </button>
-    </ion-buttons>
+    <!-- </ion-buttons> -->
   </ion-toolbar>
 </ion-footer>

@@ -17,21 +17,24 @@ export class CreateMatchProfilePage {
   birthdate: string;
   breed: string;
   energyLevel: string;
+  lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
   lifeStage: string;
   names: string;
-  numDogs: number = 1;
-  profileImage: any;
+  imageFile: any;
   sex: string;
   size: string;
-  formData: any;
   breedList: any = [];
+  imageFilePath: string;
+  imageFileName: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public alertCtrl: AlertController, private toastCtrl: ToastController,
     public globalVarsProvider: GlobalVarsProvider, public http: Http,
     public utilService: UtilityProvider) {
 
-      let breedData = this.navParams.data;
+      this.imageFilePath = this.navParams.get('filePath');
+      this.imageFileName = this.navParams.get('filename');
+
+      let breedData = this.navParams.get('breedList');
       if (breedData === undefined || breedData == null){
         //   console.log('no breed data from nav params');
         //   breedData = this.globalVarsProvider.getBreedData();
@@ -39,14 +42,15 @@ export class CreateMatchProfilePage {
       } else {
 
         for (var i = 0; i < breedData.length; i++) {
-          // console.log(breedData[i]['name']);
           this.breedList.push(breedData[i]['name']);
         }
       }
     }
 
-    public createDogProfileBtnClick() {
+    public createMatchProfile() {
       // if (this.userInputIsValid()) {
+      this.utilService.presentLoadingIndicator();
+
       const breedLookupUrl = ENV.BASE_URL + '/breed?name=' + this.breed;
       this.http.get(breedLookupUrl,
         { headers: this.globalVarsProvider.getAuthHeaders() })
@@ -65,7 +69,7 @@ export class CreateMatchProfilePage {
     public createMatchProfileFromWithBreedObj(breedObj) {
       const userProfileId = this.globalVarsProvider.getUserProfileObj()['id'];
 
-      let matchProfileDetails = JSON.stringify({
+      let matchProfileRequestBody = JSON.stringify({
         aboutMe: this.aboutMe,
         birthdate: this.birthdate,
         breed: breedObj,
@@ -78,33 +82,27 @@ export class CreateMatchProfilePage {
         size: this.size,
         userProfile: this.globalVarsProvider.getUserProfileObj()
       });
-      console.log("MATCHPROFILEDETAILS" + matchProfileDetails);
 
       const createMatchProfileUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
-      this.http.post(createMatchProfileUrl, matchProfileDetails,
+      this.http.post(createMatchProfileUrl, matchProfileRequestBody,
         { headers: this.globalVarsProvider.getAuthHeaders() }) //For running back-end in AWS
         .subscribe(result => {
-          if (result['status'] == 200) {
             let jsonResponseObj = JSON.parse((result['_body']));
             let matchProfileObj = jsonResponseObj['matchProfiles'][0];
             let matchProfileId = matchProfileObj['id'];
 
-            this.uploadDogProfilePicFile(this.profileImage,
-              matchProfileId, this.globalVarsProvider.getFileToUpload());
+              this.uploadProfileImage(this.imageFile,
+                //TODO: figure out how to get file object from filepath (this.imageFile is undefined)
+              matchProfileId, this.imageFilePath);
 
-              let matchProfileCreated = "Match Profile Created! Please wait . . .";
-              this.utilService.presentLoadingIndicator();
+              this.globalVarsProvider.setMatchProfileObj(matchProfileObj);
 
               this.navCtrl.push('TabsPage');
-            }
-            else if (result['status'] == 400 || result['status'] == 404) {
-              this.utilService.presentDismissableToast("There's an error with one of your matchProfile fields, this status code should never happen.");
-            }
           }, error => console.log(error)
         );
       }
 
-      public uploadDogProfilePicFile(file: Blob, matchProfileId, imageFilePath) {
+      uploadProfileImage(file: Blob, matchProfileId, imageFilePath) {
         let formData = new FormData();
         formData.append('profilePic', file);
 
@@ -120,12 +118,8 @@ export class CreateMatchProfilePage {
 
         this.http.put(imageUploadEndpoint, formData,
           { headers: formheadersWithAuth })
-          .subscribe(result => {
-            if (result['status'] == 200) {
+          .subscribe(() => {
               console.log('Image uploaded successfully.');
-            } else {
-              console.log('Error uploading profile image');
-            }
           }, error => console.log(error)
         );
       }
@@ -162,8 +156,8 @@ export class CreateMatchProfilePage {
       //   return validStringFormat.test(strToCheck);
       // }
 
-      addDogProfilePic() {
-        this.navCtrl.push('DogProfilePicPage');
+      addProfileImage() {
+        this.navCtrl.push('ImageUploadPage', { profileType: 'match'});
       }
 
     }

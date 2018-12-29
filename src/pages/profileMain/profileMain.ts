@@ -15,7 +15,6 @@ export class ProfileMainPage {
   constructor(public navCtrl: NavController, public globalVars: GlobalVarsProvider,
   public utilService: UtilityProvider, public matchProfService: MatchProfilesProvider,
   public userService: UsersProvider) {
-    console.log('profile main page constructor');
     if (null == this.globalVars.getUserProfileObj()) {
       console.log('Error: cannot retrieve user profile data from global vars');
     } else {
@@ -28,15 +27,7 @@ export class ProfileMainPage {
 retrieveMatchProfilesForUser(){
   this.matchProfService.getMatchProfiles()
     .subscribe(resp => {
-      if (resp['status'] == 403) {
-        this.utilService.presentDismissableToast("Your session has expired. Please log in again.");
-        return;
-      }
-      else if (resp['status'] == 400 || resp['status'] == 404 || resp['status'] == 422) {
-        this.utilService.presentAutoDismissToast("Error loading Match Profile data.");
-        return;
-      }
-      else if (resp['status'] == 200) {
+      if (resp['status'] == 200) {
         let jsonResponseObj = JSON.parse((resp['_body']));
         //Check to see whether user has previously created match profiles
         if (null != jsonResponseObj['matchProfiles']) {
@@ -48,8 +39,7 @@ retrieveMatchProfilesForUser(){
           this.navCtrl.push('CreateMatchProfilePage');
         }
       }
-    }, error => console.log(error)
-    );
+    }, error => console.log(error));
 }
 
 }

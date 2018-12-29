@@ -24,18 +24,21 @@ export class SignupPage {
   minDate: string;
   maxDate: string;
   breedList: any;
+  imageFilePath: string;
+  imageFileName: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
     public http: Http,
     public globalVarsProvider: GlobalVarsProvider,
-    public utilService: UtilityProvider, public userService: UsersProvider) {
+    public utilService: UtilityProvider,
+    public userService: UsersProvider) {
 
-      this.breedList = this.navParams.data;
+      this.imageFilePath = this.navParams.get('filePath');
+      this.imageFileName = this.navParams.get('filename');
+      this.breedList = this.navParams.get('breedList');
 
-      this.minDate = new Date('Jan 1, 1930').toISOString();
-      const minAgeLim = new Date();
-      minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
-      this.maxDate = minAgeLim.toISOString();
+      this.setUserAgeBounds();
     }
 
     createUserAccountAndProfile() {
@@ -67,7 +70,6 @@ export class SignupPage {
   }
 
   createUserProfile(userAccountObj, headers) {
-    // if (this.userInputIsValid()) {
     const today = this.utilService.getCurrentDateInValidFormat();
     let userProfileData = JSON.stringify({
       firstName: this.firstName,
@@ -98,11 +100,22 @@ export class SignupPage {
             this.globalVarsProvider.setUserProfileObj(userProfileObj);
 
             //Redirect newly created user to create a new match profile
-            this.navCtrl.push('CreateMatchProfilePage', this.breedList);
+            this.navCtrl.push('CreateMatchProfilePage', {
+              breedList: this.breedList});
           }
         }
       }, error => console.log(error));
-      // }
+    }
+
+    setUserAgeBounds() {
+      this.minDate = new Date('Jan 1, 1930').toISOString();
+      const minAgeLim = new Date();
+      minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
+      this.maxDate = minAgeLim.toISOString();
+    }
+
+    addProfileImage() {
+      this.navCtrl.push('ImageUploadPage', { profileType : 'user' });
     }
 
     // userInputIsValid() {

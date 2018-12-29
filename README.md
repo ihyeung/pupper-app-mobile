@@ -1,23 +1,35 @@
 # Pupper Mobile App
 
-#### Running The Application From the Command Line
+#### Running Pupper Locally
 
-- To start the application running locally in a web browser with multiple mobile platforms:
+To start up the application locally in a web browser displaying both iOS and Android views:
 
  ```ionic serve --lab```
 
-- To build for iOS platform (running in Xcode):
+To build/run using an iOS simulator:
 
- ```ionic cordova build iOS```
+ ```ionic cordova build ios```
+ ```ionic cordova emulate ios -- --buildFlag="-UseModernBuildSystem=0"```
+ ```ionic cordova run ios```
 
-- To build for Android platform (running in Android Studio):
+ To build/run using an Android simulator:
 
- ```ionic build Android```
+ ```ionic cordova build Android```
+ ```ionic cordova emulate Android```
+ ```ionic cordova run Android```
 
-#### Build Prerequisites
+ To build/run as a native app on an Android phone, run the following after connecting your Android device:
 
-For cordova camera to work, run the following commands from the command line prior to running the application:
+ ```ionic cordova run Android```
 
-- ```ionic cordova plugin add cordova-plugin-camera```
 
-- ```ionic cordova plugin add cordova-plugin-ios-camera-permissions```
+#### Cordova Plugins
+
+Prior to starting the application locally, install the following Cordova plugins:
+
+```ionic cordova plugin add cordova-plugin-statusbar```
+```ionic cordova plugin add cordova-plugin-splashscreen```
+```ionic cordova plugin add cordova-plugin-camera```
+```ionic cordova plugin add cordova-plugin-ios-camera-permissions``
+```ionic cordova plugin add cordova-plugin-file```
+```ionic cordova plugin add cordova-plugin-file-transfer```

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController, App, IonicPage } from 'ionic-angular';
-import { CreateMatchProfilePage } from '../createMatchProfile/createMatchProfile';
 import { environment as ENV } from '../../environments/environment';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { UtilityProvider } from '../../providers/utility/utilities';
@@ -20,7 +19,6 @@ export class SettingsPage {
     public globalVars: GlobalVarsProvider, public utilService: UtilityProvider) {
     // public userService: UsersProvider, public matchProfService: MatchProfilesProvider,
     // public matchService: MatchesProvider, public msgService: MessagesProvider) {
-    console.log('Constructor for settings page');
   }
 
   userProfile() {
@@ -34,10 +32,11 @@ export class SettingsPage {
   logout() {
     const confirm = this.utilService.displayAlertDialog('Log out?',
     'Are you sure you want to log out?', 'Cancel','Confirm');
-    if (confirm) {
+    // if (confirm) {
+      console.log('logging out');
       this.clearGlobalVars();
       this.returnToHomeScreen();
-    }
+    // }
 
   }
 
@@ -69,8 +68,8 @@ export class SettingsPage {
   }
 
   returnToHomeScreen() {
-    const root = this.app.getRootNav();
-    root.popToRoot();
+    this.app.getRootNav().setRoot('HomePage');
+    this.app.getRootNav().popToRoot();
   }
 
 }

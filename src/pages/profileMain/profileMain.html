@@ -7,52 +7,70 @@
 </ion-header>
 
 <ion-content padding>
-  <div id="profileMainTitle"><h2>Welcome Back!</h2></div>
-  <ion-card>
-
+  <div id="profileMainTitle">
+    <h2>Welcome Back!</h2>
+  </div>
+  <ion-list no-lines>
+<ion-card>
   <div id="profilePic">
     <img src="assets/img/appLogo.png" />
   </div>
-  </ion-card>
-
-  <ion-card>
-    <div class="card-title">
+</ion-card>
+    <div>
       <ion-item>
         <ion-label color="primary">Location</ion-label>
-        <ion-input [(ngModel)]="location"></ion-input>
+        <!-- <ion-input [(ngModel)]="location" readonly="true"></ion-input> -->
       </ion-item>
     </div>
-  </ion-card>
-  <ion-card>
-    <div class="card-title">
+    <div>
       <ion-item>
         <ion-label color="primary">Active Match Profile</ion-label>
       </ion-item>
     </div>
-  </ion-card>
-  <ion-card>
-    <div class="card-title">
-      <ion-item>
-        <ion-label color="primary">Matching Profiles</ion-label>
-        <ion-input readonly="true" placeholder="1"></ion-input>
-      </ion-item>
-    </div>
-  </ion-card>
-  <ion-card>
-    <div class="card-title">
+    <div>
       <ion-item>
         <ion-label color="primary">Member Since</ion-label>
       </ion-item>
     </div>
-    </ion-card>
-    <ion-card>
-    <div class="card-title">
+    <div>
       <ion-item>
         <ion-label color="primary">Last Login</ion-label>
       </ion-item>
     </div>
-  </ion-card>
-    <div class="card-title">
-      <button ion-button full outline (click)="retrieveMatchProfiles()">SWITCH MATCHING PROFILE</button>
-    </div>
+    <ion-item-sliding>
+    <ion-item>
+      MATCH PROFILES
+    </ion-item>
+    <ion-item-options>
+      <button ion-button color="primary">
+        <ion-icon name="add" item-start></ion-icon>
+        CREATE
+      </button>
+      <button ion-button color="secondary">
+        <ion-icon name="create" item-start></ion-icon>
+        VIEW/EDIT
+      </button>
+      <button ion-button color="dark">
+        <ion-icon name="trash" item-start></ion-icon>
+        DELETE
+      </button>
+    </ion-item-options>
+  </ion-item-sliding>
+
+  <ion-item-sliding>
+  <ion-item>
+    USER PROFILE
+  </ion-item>
+  <ion-item-options>
+    <button ion-button color="primary">
+      <ion-icon name="person" item-start></ion-icon>
+      VIEW/EDIT
+    </button>
+    <button ion-button color="secondary">
+      <ion-icon name="trash" item-start></ion-icon>
+      DELETE
+    </button>
+  </ion-item-options>
+</ion-item-sliding>
+</ion-list>
 </ion-content>

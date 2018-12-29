@@ -1,12 +1,13 @@
 <ion-header>
   <ion-navbar color="primary" class="nav">
     <ion-title class="navTitle">
-      CREATE A MATCHING PROFILE
+      CREATE MATCHING PROFILE
     </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-card>
+  <!-- <ion-card> -->
+  <ion-list no-lines>
     <ion-item>
       <ion-label floating>DOG NAME</ion-label>
       <ion-input [(ngModel)]="names" type="text"></ion-input>
@@ -32,10 +33,9 @@
       <ion-item>
         <ion-label floating>LIFE STAGE</ion-label>
         <ion-select [(ngModel)]="lifeStage">
-          <ion-option value="PUPPY">Puppy</ion-option>
-          <ion-option value="YOUNG">Young</ion-option>
-          <ion-option value="ADULT">Adult</ion-option>
-          <ion-option value="MATURE">Mature</ion-option>
+          <ion-option *ngFor="let lifeStage of lifeStages" [value]="lifeStage">
+            <p>{{lifeStage}}</p>
+            </ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
@@ -60,13 +60,13 @@
       <ion-label floating>BIRTHDAY</ion-label>
       <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate"></ion-datetime>
     </ion-item>
-    <ion-item>
-      <ion-label>ABOUT ME</ion-label>
-      <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="150" placeholder="Write a short bio"></ion-textarea>
+    <ion-item text-wrap>
+      <ion-label floating>ABOUT ME</ion-label><br>
+      <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="150"></ion-textarea>
     </ion-item>
-    <button ion-button full class="btn" (click)="addDogProfilePic()">Add Photo</button>
-    <button ion-button full class="btn" (click)="createDogProfileBtnClick()">Create Profile</button>
-    <br>
-  </ion-card>
-
+  </ion-list>
+    <br><br>
+    <button ion-button full class="btn" (click)="addProfileImage()">Add a profile image</button>
+    <button ion-button full class="btn" (click)="createMatchProfile()">Create Profile</button>
+  <!-- </ion-card> -->
 </ion-content>

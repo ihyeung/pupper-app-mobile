@@ -9,37 +9,28 @@
 <ion-content>
   <div id="settings-div">
     <ion-card>
-  <ion-list full>
-    <!-- <div class="card-title"> -->
-    <ion-item>
+      <ion-list full>
+        <ion-item-divider>
+          Matching Settings
+        </ion-item-divider>
+        <ion-item>
           <ion-label color="primary">Match Radius</ion-label>
           <ion-input placeholder="5 miles" type="number" [(ngModel)]="searchRadius"></ion-input>
-    </ion-item>
-  <!-- </div> -->
-    <!-- <div class="card-title"> -->
-    <ion-item>
-          <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
-          <ion-checkbox right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-checkbox>
-
         </ion-item>
-  <!-- </div> -->
-  </ion-list>
-
-  <!-- <ion-card full>
-    <div class="card-title">
-    <ion-item>
+        <ion-item>
           <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
-          <ion-checkbox color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-checkbox>
+          <ion-checkbox item-end right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-checkbox>
         </ion-item>
+        <ion-item-divider>
+          Profile Settings
+        </ion-item-divider>
+      </ion-list>
+      <ion-list>
+        <button ion-item  full outline color="secondary" (click)="userProfile()">Edit user</button>
+        <button ion-item full outline color="secondary" (click)="matchProfiles()">Edit profiles</button>
+        <button ion-button full outline color="secondary" (click)="logout()">Log out</button>
+        <button ion-button full outline color="secondary" (click)="deleteAccount()">Delete Account</button>
+      </ion-list>
+    </ion-card>
   </div>
-    <div class="card-subtitle">Subtitle</div>
-  </ion-card> -->
-  <ion-list>
-    <button ion-item  full outline color="secondary" (click)="userProfile()">Edit user</button>
-    <button ion-item full outline color="secondary" (click)="matchProfiles()">Edit profiles</button>
-    <button ion-button full outline color="secondary" (click)="logout()">Log out</button>
-    <button ion-button full outline color="secondary" (click)="deleteAccount()">Delete Account</button>
-</ion-list>
-</ion-card>
-</div>
 </ion-content>

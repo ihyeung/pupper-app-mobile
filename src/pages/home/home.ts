@@ -13,27 +13,30 @@ import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 })
 
 export class HomePage {
-
+  
   breedList: any;
 
   constructor(public navCtrl: NavController, public utilService: UtilityProvider,
-  public statusBar: StatusBar, public userService: UsersProvider,
-  public globalVars: GlobalVarsProvider) {
-    this.statusBar.show();
+    public statusBar: StatusBar, public userService: UsersProvider,
+    public globalVars: GlobalVarsProvider) {
 
-    this.retrieveBreedList();
-}
+      this.retrieveBreedList();
+    }
 
-  ionViewDidLoad() {}
+    ionViewDidLoad() {}
 
-  login(){
-    this.globalVars.setBreedData(this.breedList);
-    this.navCtrl.push('LoginPage');
-  }
+    login(){
+      this.globalVars.setBreedData(this.breedList);
+      this.navCtrl.push('LoginPage');
+    }
 
-  signup(){ this.navCtrl.push('SignupPage', this.breedList); }
+    signup() {
+      this.navCtrl.push('SignupPage', { breedList: this.breedList });
+    }
 
-  retrieveBreedList() {
+    retrieveBreedList() {
+      this.statusBar.show();
+
       this.userService
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
@@ -46,5 +49,5 @@ export class HomePage {
           this.statusBar.hide();
         }, error => console.log(error));
       }, error => console.log(error));
+    }
   }
-}
