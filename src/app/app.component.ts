@@ -10,16 +10,11 @@ export class AppComponent {
   rootPage: any = 'HomePage';
 
     constructor(public platform: Platform, public splashScreen: SplashScreen,
-      private statusBar: StatusBar) {
-      console.log('app component constructor');
-      // this.splashScreen.show();
-
+    public statusBar: StatusBar) {
     platform.ready().then(() => {
-      this.statusBar.styleDefault();
 
-      console.log('platform ready ');
-
-      this.splashScreen.hide();
+      statusBar.styleDefault();
+      splashScreen.hide();
 
     });
   }

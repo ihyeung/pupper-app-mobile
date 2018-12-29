@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import { NavController, IonicPage } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AccountValidator } from  '../../validators/account';
+import { AccountValidator } from  '../../validators/account.validator';
 import { UtilityProvider } from '../../providers/utility/utilities';
 import { UsersProvider } from '../../providers/http/userProfiles';
 
@@ -17,36 +18,61 @@ export class LoginPage {
   email: string;
   password: string;
   userAccountForm: FormGroup;
-  submitAttempt: boolean = false;
+  loginAttempted: boolean = false;
+  userAuthType: string = "login";
 
   constructor(public navCtrl: NavController,
     public globalVarsProvider: GlobalVarsProvider,
     public formBuilder: FormBuilder, public utilService: UtilityProvider,
-    public userService: UsersProvider, public accountValidator: AccountValidator) {
+    public userService: UsersProvider, public accountValidator: AccountValidator,
+    private storage: Storage) {
 
       this.userAccountForm = formBuilder.group({
         email: ['', accountValidator.isValidEmail],
-        password: ['', Validators.required]
+        password: ['', Validators.required],
+        confirm: ['', Validators.minLength(5)]
       });
     }
 
-    login() {
-      if (ENV.AUTO_FILL == true) {
-        this.email = ENV.VALIDATE_EMAIL_USER;
-        this.password = ENV.VALIDATE_EMAIL_PASS;
-        this.navCtrl.push('TabsPage');
-      }
+    authenticateUser() {
       if(!this.userAccountForm.valid){
-        this.submitAttempt = true;
-        // this.utilService.presentDismissableToast("Please enter a valid username/password");
+        this.loginAttempted = true;
         return;
       }
+      if (this.userAuthType == 'login') {
+        this.login();
+      } else {
+        this.register();
+      }
+    }
+
+    register() {
+      this.userService.createUserAccount(this.email, this.password)
+      .subscribe(response => {
+        if (response['status'] == 200) {
+          let jsonResponseObj = JSON.parse(response['_body']);
+          if (jsonResponseObj['responseCode'] == 409) {
+            this.utilService.presentDismissableToast("A user account with your selected username already exists." +
+            " Please login as an existing user or create a user profile using a unique username.");
+            return;
+          }
+          //login to get authentiation token
+          this.login();
+          
+          this.navCtrl.push('CreateUserProfilePage');
+        }
+      }, error => console.log(error));
+    }
+
+      login() {
+
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
         this.utilService.presentAutoDismissToast("Login success! Please wait...");
 
-        this.utilService.setAuthHeaders(response);
+        const auth = this.utilService.setAuthHeaders(response);
+        this.storage.set('auth', auth);
 
         this.retrieveUserProfile();
 
@@ -62,9 +88,9 @@ export class LoginPage {
         let jsonResponseObj = JSON.parse(resp['_body']);
         let userProfileObj = jsonResponseObj['userProfiles'][0];
 
-        //Store the retrieved user profile object in global vars
-        this.globalVarsProvider.setUserProfileObj(userProfileObj);
-
+        //Store the retrieved user profile object
+        // this.globalVarsProvider.setUserProfileObj(userProfileObj);
+        this.storage.set('user', userProfileObj);
         const currentDate = this.utilService.getCurrentDateInValidFormat();
 
         //Check if the lastLogin field needs to be updated

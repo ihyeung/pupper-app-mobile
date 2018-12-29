@@ -1,5 +1,5 @@
 page-home {
-  h1{
+  h1 {
     font-size: 90px;
     font-family: 'Rufina', serif;
     font-weight: bold;
@@ -9,15 +9,22 @@ page-home {
     text-align: center;
     margin-top: 0px;
     padding-top:0px;
+    margin-bottom: 0px;
   }
-  #logoDiv{
+  h2 {
+    text-align: center;
+    color: map-get($colors, primary);
+    text-shadow: 4px 1px 5px map-get($colors, primary);
+    margin-top: 0px;
+  }
+  #logoDiv {
     margin-top: 50px;
     display: block;
     padding-bottom: 0px;
     margin-bottom: 0px;
 
   }
-  #titleDiv{
+  #titleDiv {
     margin-top: 0px;
     padding-top: 0px;
     padding-bottom: 10px;

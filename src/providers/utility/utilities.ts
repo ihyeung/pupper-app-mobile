@@ -3,6 +3,7 @@ import { ToastController, AlertController, LoadingController } from 'ionic-angul
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
+import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class UtilityProvider {
@@ -10,12 +11,13 @@ export class UtilityProvider {
     public http: Http,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    public loadCtrl: LoadingController) { }
+    public loadCtrl: LoadingController, private storage: Storage) { }
 
     setAuthHeaders(response) {
       const jwtAccessToken = response.headers.get('Authorization');
       let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': jwtAccessToken });
       this.globalVars.setAuthHeaders(headers);
+      this.storage.set('auth', headers);
       return headers;
     }
 

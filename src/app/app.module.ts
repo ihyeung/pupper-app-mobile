@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
-import { SwipeCardsModule } from 'ng2-swipe-cards';
+// import { SwipeCardsModule } from 'ng2-swipe-cards';
 import { HttpModule } from '@angular/http';
 import { File } from '@ionic-native/file';
 import { FilePath } from '@ionic-native/file-path';
@@ -18,9 +18,7 @@ import { MatchProfilesProvider } from '../providers/http/matchProfiles';
 import { MatchesProvider } from '../providers/http/matches';
 import { MessagesProvider } from '../providers/http/messages';
 import { UtilityProvider } from '../providers/utility/utilities';
-
-import { ProfileValidator } from '../validators/profile';
-import { AccountValidator } from '../validators/account';
+import { ValidatorsModule } from '../validators/validators.module'
 
 @NgModule({
   declarations: [
@@ -31,7 +29,8 @@ import { AccountValidator } from '../validators/account';
     HttpModule,
     IonicModule.forRoot(AppComponent),
     IonicStorageModule.forRoot(),
-    SwipeCardsModule
+    // SwipeCardsModule,
+    ValidatorsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -48,8 +47,6 @@ import { AccountValidator } from '../validators/account';
     UsersProvider,
     MatchProfilesProvider,
     UtilityProvider,
-    AccountValidator,
-    ProfileValidator,
     MatchesProvider,
     MessagesProvider
   ]

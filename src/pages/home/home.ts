@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import { NavController, IonicPage } from 'ionic-angular';
 import { UtilityProvider } from '../../providers/utility/utilities';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -13,12 +14,11 @@ import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 })
 
 export class HomePage {
-  
+
   breedList: any;
 
   constructor(public navCtrl: NavController, public utilService: UtilityProvider,
-    public statusBar: StatusBar, public userService: UsersProvider,
-    public globalVars: GlobalVarsProvider) {
+    public statusBar: StatusBar, public userService: UsersProvider, private storage: Storage) {
 
       this.retrieveBreedList();
     }
@@ -26,12 +26,7 @@ export class HomePage {
     ionViewDidLoad() {}
 
     login(){
-      this.globalVars.setBreedData(this.breedList);
       this.navCtrl.push('LoginPage');
-    }
-
-    signup() {
-      this.navCtrl.push('SignupPage', { breedList: this.breedList });
     }
 
     retrieveBreedList() {
@@ -44,7 +39,8 @@ export class HomePage {
         const headers = this.utilService.setAuthHeaders(response);
         this.utilService.getBreeds(headers)
         .subscribe(breedResponse => {
-          this.breedList = JSON.parse(breedResponse['_body']);
+          const breedList = JSON.parse(breedResponse['_body']);
+           this.storage.set('breeds', breedList);
 
           this.statusBar.hide();
         }, error => console.log(error));
