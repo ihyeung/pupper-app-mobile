@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.ionic.pupper-app-mobile" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Pupper</name>
-    <description>Pupper Iconic App</description>
-    <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
+    <description>Ionic Framework and Cordova project.</description>
+    <author email="yeung.ireneh@gmail.com" href="https://www.github.com/ihyeung">Irene Yeung</author>
     <content src="index.html" />
-    <access origin="*" />
+    <access origin="*"></access>
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
