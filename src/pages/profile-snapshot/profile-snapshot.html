@@ -5,38 +5,30 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-
 <ion-content padding>
   <div id="profileMainTitle">
     <h2>Welcome Back!</h2>
   </div>
-  <ion-list no-lines>
 <ion-card>
-  <div id="profilePic">
-    <img src="assets/img/appLogo.png" />
-  </div>
-</ion-card>
-    <div>
+  <ion-list no-lines>
+    <ion-img src="assets/img/appLogo.png"></ion-img>
+  <ion-card-header>
+          <ion-card-title>PUPPER SUMMARY</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
       <ion-item>
         <ion-label color="primary">Location</ion-label>
         <!-- <ion-input [(ngModel)]="location" readonly="true"></ion-input> -->
       </ion-item>
-    </div>
-    <div>
       <ion-item>
         <ion-label color="primary">Active Match Profile</ion-label>
       </ion-item>
-    </div>
-    <div>
       <ion-item>
         <ion-label color="primary">Member Since</ion-label>
       </ion-item>
-    </div>
-    <div>
       <ion-item>
         <ion-label color="primary">Last Login</ion-label>
       </ion-item>
-    </div>
     <ion-item-sliding>
     <ion-item>
       MATCH PROFILES
@@ -46,7 +38,7 @@
         <ion-icon name="add" item-start></ion-icon>
         CREATE
       </button>
-      <button ion-button color="secondary">
+      <button ion-button color="secondary" (click)="viewMatchProfileModal()">
         <ion-icon name="create" item-start></ion-icon>
         VIEW/EDIT
       </button>
@@ -62,7 +54,7 @@
     USER PROFILE
   </ion-item>
   <ion-item-options>
-    <button ion-button color="primary">
+    <button ion-button color="primary" (click)="viewUserProfileModal()">
       <ion-icon name="person" item-start></ion-icon>
       VIEW/EDIT
     </button>
@@ -72,5 +64,8 @@
     </button>
   </ion-item-options>
 </ion-item-sliding>
+</ion-card-content>
+
 </ion-list>
+</ion-card>
 </ion-content>

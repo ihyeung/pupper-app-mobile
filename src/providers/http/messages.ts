@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { GlobalVarsProvider } from '../globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
+import { UtilityProvider } from '../../providers/utility/utilities';
 
 @Injectable()
 export class MessagesProvider {
   authHeaders: any;
 
-  constructor(public http: Http, public globalVars: GlobalVarsProvider) {
-    if (null != this.globalVars.getAuthHeaders()) {
-      this.authHeaders = this.globalVars.getAuthHeaders();
-    } else {
-      console.log('Auth headers are null');
-
-    }
+  constructor(public http: Http,
+    private utilService: UtilityProvider) {
+      this.utilService.getAuthHeadersFromStorage().then(val => this.authHeaders = val);
   }
 
   retrieveMessagesForInbox(matchProfileId) {

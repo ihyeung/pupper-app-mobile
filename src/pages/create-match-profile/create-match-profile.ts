@@ -9,8 +9,8 @@ import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
-  selector: 'page-createMatchProfile',
-  templateUrl: 'createMatchProfile.html'
+  selector: 'page-create-match-profile',
+  templateUrl: 'create-match-profile.html'
 })
 export class CreateMatchProfilePage {
   aboutMe: string;

@@ -26,7 +26,11 @@ export class HomePage {
     ionViewDidLoad() {}
 
     login(){
-      this.navCtrl.push('LoginPage');
+      this.navCtrl.push('LoginPage', { userAuthType: "log in" });
+    }
+
+    signup(){
+      this.navCtrl.push('LoginPage', { userAuthType: "sign up" });
     }
 
     retrieveBreedList() {
@@ -36,11 +40,13 @@ export class HomePage {
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
 
-        const headers = this.utilService.setAuthHeaders(response);
+        const headers = this.utilService.extractAndStoreAuthHeaders(response);
+
         this.utilService.getBreeds(headers)
         .subscribe(breedResponse => {
           const breedList = JSON.parse(breedResponse['_body']);
            this.storage.set('breeds', breedList);
+           this.storage.set('breedsString', JSON.stringify(breedList));
 
           this.statusBar.hide();
         }, error => console.log(error));

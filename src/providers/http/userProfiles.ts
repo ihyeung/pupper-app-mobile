@@ -37,58 +37,63 @@ export class UsersProvider {
 
     getUserAccountByEmail(username) {
       const getUserAccountByEmailUrl = ENV.BASE_URL + '/account?email=' + username;
-      if (this.globalVars.getAuthHeaders() == null) {
+      if (this.authHeaders === undefined || this.authHeaders == null) {
         this.authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
         .subscribe(response => {
-          this.utilService.setAuthHeaders(response);
-          return this.http.get(getUserAccountByEmailUrl, { headers: this.globalVars.getAuthHeaders() });
-          
-        }, error => console.log(error)
-      );
-    } else {
-      return this.http.get(getUserAccountByEmailUrl, { headers: this.globalVars.getAuthHeaders() });
-    }
-  }
+          this.utilService.extractAndStoreAuthHeaders(response);
 
-  updateUserAccount(username, password) {
+          this.utilService.getAuthHeadersFromStorage().then(val => {
+            this.authHeaders = this.utilService.createHeadersObjFromAuth(val);
 
-  }
+            return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
 
-  getUserProfile(userProfileId) {
+          });
 
-  }
-
-  getUserProfileByEmail(userEmail) {
-    const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
-
-    this.authHeaders = this.globalVars.getAuthHeaders();
-
-    return this.http.get(retrieveUserProfileUrl,
-      { headers: this.authHeaders });
+        }, error => console.log(error));
+      } else {
+        return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
+      }
     }
 
-    createUserProfile(userProfileObj) {
+    updateUserAccount(username, password) {
 
     }
 
-    updateUserProfile(userProfileObj) {
+    getUserProfile(userProfileId) {
 
     }
 
-    updateLastLogin(userProfileObj, date) {
-      const updateLastLoginUrlString = ENV.BASE_URL +
-      "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
+    getUserProfileByEmail(userEmail, headers) {
+      const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
 
-      return this.http.put(updateLastLoginUrlString, userProfileObj,
-        { headers: this.authHeaders })
+      this.authHeaders = headers;
+
+      return this.http.get(retrieveUserProfileUrl,
+        { headers: headers });
       }
 
-      uploadImage(userProfileId, file){
+      createUserProfile(userProfileObj) {
 
       }
 
-      deleteUser(userProfileObj) {
-        //TODO: 2 calls to delete user account and delete user profile endpoints
+      updateUserProfile(userProfileObj) {
+
       }
 
-    }
+      updateLastLogin(userProfileObj, date) {
+        const updateLastLoginUrlString = ENV.BASE_URL +
+        "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
+
+        return this.http.put(updateLastLoginUrlString, userProfileObj,
+          { headers: this.authHeaders });
+        }
+
+        uploadImage(userProfileId, file){
+
+        }
+
+        deleteUser(userProfileObj) {
+          //TODO: 2 calls to delete user account and delete user profile endpoints
+        }
+
+      }

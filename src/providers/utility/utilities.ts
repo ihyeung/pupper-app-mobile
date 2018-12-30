@@ -7,18 +7,52 @@ import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class UtilityProvider {
+
   constructor(public globalVars: GlobalVarsProvider,
     public http: Http,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    public loadCtrl: LoadingController, private storage: Storage) { }
+    public loadCtrl: LoadingController,
+    private storage: Storage) { }
 
-    setAuthHeaders(response) {
-      const jwtAccessToken = response.headers.get('Authorization');
-      let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': jwtAccessToken });
-      this.globalVars.setAuthHeaders(headers);
-      this.storage.set('auth', headers);
-      return headers;
+    extractAndStoreAuthHeaders(response) {
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        'Authorization': response.headers.get('Authorization')
+      }
+      this.storage.set('authHeaders', authHeaders);
+      return authHeaders;
+    }
+
+    getAuthHeadersFromStorage() {
+      return this.storage.get('authHeaders').then(val => {
+        // const jsonType = val['Content-Type'];
+        // const jwt = val['Authorization'];
+        return val;
+      });
+    }
+
+    storeUserProfile(userProfileObj) {
+      this.storage.set('user', userProfileObj);
+    }
+
+    getUserFromStorage() {
+        return this.storage.get('user').then(val => {return val;});
+    }
+
+    storeMatchProfile(matchProfileObj) {
+      this.storage.set('match', matchProfileObj);
+    }
+
+    getMatchProfileFromStorage() {
+        return this.storage.get('match').then(val => {return val;});
+    }
+
+    createHeadersObjFromAuth(authHeadersFromStorage) {
+      const jsonType = authHeadersFromStorage['Content-Type'];
+      const jwt = authHeadersFromStorage['Authorization'];
+
+      return new Headers({ 'Content-Type': jsonType, 'Authorization': jwt });
     }
 
     getCurrentDateInValidFormat() {
@@ -57,12 +91,12 @@ export class UtilityProvider {
       toast.present();
     }
 
-    presentLoadingIndicator() {
-      const loader = this.loadCtrl.create({
+    async presentLoadingIndicator() {
+      const loader = await this.loadCtrl.create({
         content: "Please wait...",
         duration: 3000
       });
-      loader.present();
+      return await loader.present();
     }
 
     displayAlertDialog(title, message, buttonLeft, buttonRight) {

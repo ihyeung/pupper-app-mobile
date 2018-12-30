@@ -3,6 +3,7 @@ import { NavController, App, IonicPage } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { UtilityProvider } from '../../providers/utility/utilities';
+import { Storage } from '@ionic/storage';
 // import { UsersProvider } from '../../providers/http/userProfiles';
 // import { MatchesProvider } from '../../providers/http/matches';
 // import { MessagesProvider } from '../../providers/http/messages';
@@ -16,9 +17,14 @@ import { UtilityProvider } from '../../providers/utility/utilities';
 export class SettingsPage {
 
   constructor(public navCtrl: NavController, public app: App,
-    public globalVars: GlobalVarsProvider, public utilService: UtilityProvider) {
+    public globalVars: GlobalVarsProvider, public utilService: UtilityProvider,
+    private storage: Storage) {
     // public userService: UsersProvider, public matchProfService: MatchProfilesProvider,
     // public matchService: MatchesProvider, public msgService: MessagesProvider) {
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad SettingsPage');
   }
 
   userProfile() {
@@ -34,7 +40,7 @@ export class SettingsPage {
     'Are you sure you want to log out?', 'Cancel','Confirm');
     // if (confirm) {
       console.log('logging out');
-      this.clearGlobalVars();
+      this.storage.clear();
       this.returnToHomeScreen();
     // }
 
@@ -46,7 +52,7 @@ export class SettingsPage {
     'Cancel','Delete my account');
     if (confirmDelete) {
       this.deleteAllUserData();
-      this.clearGlobalVars();
+      this.storage.clear();
       this.returnToHomeScreen();
     }
   }
@@ -59,12 +65,6 @@ export class SettingsPage {
     //3. delete match Profiles
     //4. delete user profile
     //5. delete user account
-  }
-
-  clearGlobalVars() {
-    this.globalVars.setAuthHeaders(null);
-    this.globalVars.setUserProfileObj(null);
-    this.globalVars.setMatchProfileObj(null);
   }
 
   returnToHomeScreen() {

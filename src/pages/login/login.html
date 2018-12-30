@@ -20,29 +20,29 @@
   </div>
 
   <p *ngIf="loginAttempted" style="color: #ea6153;">Please fill in all fields.</p>
-    <form #signForm="ngForm" [formGroup]="userAccountForm" (ngSubmit)="authenticateUser(signForm.value)">
+    <form #signForm="ngForm" [formGroup]="userForm" (ngSubmit)="authenticateUser(signForm.value)">
       <ion-list no-lines>
       <ion-item>
         <ion-label floating>USERNAME/EMAIL</ion-label>
-        <ion-input formControlName="email" type="text" [class.invalid]="!userAccountForm.controls.email.valid && (userAccountForm.controls.email.dirty || loginAttempted)" [(ngModel)]="email"></ion-input>
+        <ion-input formControlName="email" type="text" [class.invalid]="!userForm.controls.email.valid && (userForm.controls.email.dirty || loginAttempted)" [(ngModel)]="email"></ion-input>
       </ion-item>
-      <ion-item *ngIf="!userAccountForm.controls.email.valid  && (userAccountForm.controls.email.dirty || loginAttempted)">
-        <p class="input-error-message">Please enter a valid email.</p>
+      <ion-item *ngIf="!userForm.controls.email.valid  && (userForm.controls.email.dirty || loginAttempted)">
+        <p class="input-err">Please enter a valid email.</p>
       </ion-item>
 
       <ion-item>
         <ion-label floating>PASSWORD</ion-label>
-        <ion-input formControlName="password" type="password" [class.invalid]="!userAccountForm.controls.password.valid && (userAccountForm.controls.password.dirty || loginAttempted)" [(ngModel)]="password"></ion-input>
+        <ion-input formControlName="password" type="password" [class.invalid]="!userForm.controls.password.valid && (userForm.controls.password.dirty || loginAttempted)" [(ngModel)]="password"></ion-input>
       </ion-item>
-      <ion-item *ngIf="!userAccountForm.controls.password.valid  && (userAccountForm.controls.password.dirty || loginAttempted)">
-        <p class="input-error-message">A valid password is 8 or more characters.</p>
+      <ion-item *ngIf="!userForm.controls.password.valid  && (userForm.controls.password.dirty || loginAttempted)">
+        <p class="input-err">A valid password is 8 or more characters.</p>
       </ion-item>
       <ion-item *ngIf="userAuthType == 'sign up'">
         <ion-label floating>CONFIRM PASSWORD</ion-label>
-        <ion-input formControlName="confirm" type="password" [class.invalid]="!userAccountForm.controls.confirm.valid && (userAccountForm.controls.confirm.dirty || loginAttempted)"></ion-input>
+        <ion-input formControlName="confirm" type="password" [class.invalid]="!userForm.controls.confirm.valid && (userForm.controls.confirm.dirty || loginAttempted)"></ion-input>
       </ion-item>
-      <ion-item *ngIf="!(userAccountForm.controls.password.value == userAccountForm.controls.confirm.value)  && (userAccountForm.controls.confirm.dirty || loginAttempted)">
-        <p class="input-error-message">Passwords do not match.</p>
+      <ion-item *ngIf="userAuthType == 'sign up' && !(userForm.controls.password.value == userForm.controls.confirm.value)  && (userForm.controls.confirm.dirty || loginAttempted)">
+        <p class="input-err">Passwords do not match.</p>
       </ion-item>
   <button ion-button full color="primary" type="submit" class="btn">{{userAuthType}}</button>
 </ion-list>

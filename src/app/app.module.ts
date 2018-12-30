@@ -19,10 +19,12 @@ import { MatchesProvider } from '../providers/http/matches';
 import { MessagesProvider } from '../providers/http/messages';
 import { UtilityProvider } from '../providers/utility/utilities';
 import { ValidatorsModule } from '../validators/validators.module'
+import { Profile } from '../pages/profile-snapshot/profile-snapshot';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    Profile
   ],
   imports: [
     BrowserModule,
@@ -34,7 +36,8 @@ import { ValidatorsModule } from '../validators/validators.module'
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    AppComponent
+    AppComponent,
+    Profile
   ],
   providers: [
     File,

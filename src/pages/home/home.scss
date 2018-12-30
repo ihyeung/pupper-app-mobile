@@ -34,4 +34,48 @@ page-home {
     background: linear-gradient(to bottom,  #7EFFD4 0%, #2295FF 100%);
     max-width: 800px;
   }
+
+
+  .btn-home-fill {
+    display: block;
+    color: map-get($colors, secondary);
+    font-weight: bold;
+    background-color: map-get($colors, primary);
+    border-radius: 3px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    max-width: 300px;
+    width: 300px;
+    text-transform: uppercase;
+    border-width: medium;
+    border-color: map-get($colors, primary);
+
+  }
+
+  .btn-home-fill:hover{
+    background-color: none !important;
+    color: map-get($colors, primary);
+  }
+
+  .btn-home-outline {
+    display: block;
+    color: map-get($colors, primary);
+    font-weight: bold;
+    background-color: none;
+    border-radius: 3px;
+    border-width: medium;
+    border-color: map-get($colors, secondary);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    max-width: 300px;
+    width: 300px;
+    text-transform: uppercase;
+  }
+
+  .btn-home-outline:hover{
+    background-color: map-get($colors, secondary) !important;
+    color: map-get($colors, primary);
+  }
 }

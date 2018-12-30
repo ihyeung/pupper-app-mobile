@@ -31,8 +31,12 @@ export class MatchingPage {
 
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
     public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider,
-  public matchProfService: MatchProfilesProvider) {
-      console.log('Constructor for matching page');
+    public matchProfService: MatchProfilesProvider) {
+
+    }
+
+    ionViewDidLoad() {
+      console.log('ionViewDidLoad MatchProfilePage');
 
       this.userGeneratedMatchResults = new Map();
       // this.profileBatch = this.retrieveNextProfileBatch();
@@ -117,11 +121,11 @@ export class MatchingPage {
               console.log('Lets Chat Clicked');
               this.matchProfService.getMatchProfileById(1) //TODO: Figure out how to get the profileId for each card
               .subscribe(resp => {
-                  const matchProfileObj = JSON.parse(resp['_body']);
-                  this.navCtrl.push('MessagePage', {
-                    newMatch: true,
-                    matchProfileReceiver: matchProfileObj
-                  });
+                const matchProfileObj = JSON.parse(resp['_body']);
+                this.navCtrl.push('ChatPage', {
+                  newMatch: true,
+                  matchProfileReceiver: matchProfileObj
+                });
               }, error => console.log(error));
             }
           }

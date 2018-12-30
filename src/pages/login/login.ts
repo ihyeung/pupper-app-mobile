@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { NavController, IonicPage } from 'ionic-angular';
+import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,33 +17,31 @@ export class LoginPage {
   responseData: any;
   email: string;
   password: string;
-  userAccountForm: FormGroup;
+  userForm: FormGroup;
   loginAttempted: boolean = false;
-  userAuthType: string = "login";
+  userAuthType: string = "log in";
 
-  constructor(public navCtrl: NavController,
+  constructor(public navParams: NavParams, public navCtrl: NavController,
     public globalVarsProvider: GlobalVarsProvider,
     public formBuilder: FormBuilder, public utilService: UtilityProvider,
     public userService: UsersProvider, public accountValidator: AccountValidator,
     private storage: Storage) {
 
-      this.userAccountForm = formBuilder.group({
+      this.userAuthType = this.navParams.get('userAuthType');
+
+      this.userForm = formBuilder.group({
         email: ['', accountValidator.isValidEmail],
         password: ['', Validators.required],
-        confirm: ['', Validators.minLength(5)]
+        confirm: ['', ]
       });
     }
 
     authenticateUser() {
-      if(!this.userAccountForm.valid){
+      if(!this.userForm.valid){
         this.loginAttempted = true;
         return;
       }
-      if (this.userAuthType == 'login') {
-        this.login();
-      } else {
-        this.register();
-      }
+      return this.userAuthType == 'log in' ? this.login() : this.register();
     }
 
     register() {
@@ -58,7 +56,7 @@ export class LoginPage {
           }
           //login to get authentiation token
           this.login();
-          
+
           this.navCtrl.push('CreateUserProfilePage');
         }
       }, error => console.log(error));
@@ -71,10 +69,10 @@ export class LoginPage {
         //A response is only received if login is successful (only applies to this specific endpoint)
         this.utilService.presentAutoDismissToast("Login success! Please wait...");
 
-        const auth = this.utilService.setAuthHeaders(response);
-        this.storage.set('auth', auth);
+        const authObj = this.utilService.extractAndStoreAuthHeaders(response);
 
-        this.retrieveUserProfile();
+
+        this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
 
       }, error => {
         this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
@@ -82,15 +80,15 @@ export class LoginPage {
     );
   }
 
-  retrieveUserProfile() {
-    this.userService.getUserProfileByEmail(this.email)
+  retrieveUserProfile(headers) {
+    this.userService.getUserProfileByEmail(this.email, headers)
     .subscribe(resp => {
         let jsonResponseObj = JSON.parse(resp['_body']);
         let userProfileObj = jsonResponseObj['userProfiles'][0];
 
         //Store the retrieved user profile object
-        // this.globalVarsProvider.setUserProfileObj(userProfileObj);
         this.storage.set('user', userProfileObj);
+
         const currentDate = this.utilService.getCurrentDateInValidFormat();
 
         //Check if the lastLogin field needs to be updated

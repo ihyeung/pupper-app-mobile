@@ -7,10 +7,10 @@ import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
-  selector: 'page-message',
-  templateUrl: 'message.html'
+  selector: 'page-chat',
+  templateUrl: 'chat.html'
 })
-export class MessagePage {
+export class ChatPage {
 
   chatMessages: any = [];
   matchProfileReceiverObj: any;
@@ -38,6 +38,10 @@ export class MessagePage {
         this.matchProfileSenderObj = this.globalVarsProvider.getMatchProfileObj();
         this.matchProfileReceiverObj = this.navParams.get('matchProfileReceiver');
       }
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad ChatPage');
   }
 
   displayMessageHistory(messagesFromNavParams) {
@@ -145,7 +149,7 @@ export class MessagePage {
       if (createMatchProfile) {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
-        this.navCtrl.push('ProfileMainPage');
+        this.navCtrl.push('ProfileSnapshotPage');
       }
     }
 }

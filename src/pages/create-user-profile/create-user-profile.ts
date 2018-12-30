@@ -9,7 +9,7 @@ import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
-  templateUrl: 'createUserProfile.html'
+  templateUrl: 'create-user-profile.html'
 })
 
 export class CreateUserProfilePage {
@@ -38,6 +38,10 @@ export class CreateUserProfilePage {
       this.setUserAgeBounds();
     }
 
+    ionViewDidLoad() {
+      console.log('ionViewDidLoad CreateUserProfilePage');
+    }
+
     createUserProfile() {
       const today = this.utilService.getCurrentDateInValidFormat();
       let userProfileData = JSON.stringify({
@@ -54,7 +58,7 @@ export class CreateUserProfilePage {
 
       const createUserProfileUrl = ENV.BASE_URL + '/user';
       console.log('Creating a new user profile: ' + createUserProfileUrl);
-      const authHeaders = this.storage.get('auth');
+      const authHeaders = this.storage.get('authHeaders');
       console.log('auth headers: ' + authHeaders);
       this.http.post(createUserProfileUrl, userProfileData,
         { headers: this.globalVarsProvider.getAuthHeaders() })

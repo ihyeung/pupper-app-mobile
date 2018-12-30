@@ -47,26 +47,6 @@ $toast-width: 75%;
   color: map-get($colors, primary);
 }
 
-.btn-home {
-  display: block;
-  color: map-get($colors, secondary);
-  font-weight: bold;
-  background-color: map-get($colors, primary);
-  border-radius: 2px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 20px;
-  max-width: 300px;
-  width: 300px;
-  text-transform: uppercase;
-}
-
-.btn-home:hover{
-  background-color: map-get($colors, light) !important;
-  color: map-get($colors, primary);
-  border-radius: 4px;
-}
-
 .segmentButton {
   display: block;
   color: map-get($colors, dark);

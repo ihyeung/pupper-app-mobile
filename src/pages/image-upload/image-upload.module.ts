@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { ImageUploadPage } from './imageUpload';
+import { ImageUploadPage } from './image-upload';
 
 @NgModule({
   declarations: [

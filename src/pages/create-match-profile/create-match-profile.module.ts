@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { CreateMatchProfilePage } from './createMatchProfile';
+import { CreateMatchProfilePage } from './create-match-profile';
 
 @NgModule({
   declarations: [

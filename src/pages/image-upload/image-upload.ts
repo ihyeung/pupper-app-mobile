@@ -10,8 +10,8 @@ declare var cordova: any;
 
 @IonicPage()
 @Component({
-  selector: 'page-imageUpload',
-  templateUrl: 'imageUpload.html'
+  selector: 'page-image-upload',
+  templateUrl: 'image-upload.html'
 })
 export class ImageUploadPage {
   lastImage: string = null;
@@ -27,6 +27,10 @@ export class ImageUploadPage {
     public platform: Platform,
     public globalVarsProvider: GlobalVarsProvider) {
       this.imageFor = this.navParams.get('profileType');
+    }
+
+    ionViewDidLoad() {
+      console.log('ionViewDidLoad ImageUploadPage');
     }
 
   public takePicture(sourceType) {
@@ -76,9 +80,9 @@ export class ImageUploadPage {
       filePath: fileToUpload,
       filename: filename
     };
-    
+
     if (this.imageFor == 'user') {
-      this.navCtrl.push('SignupPage', fileData);
+      this.navCtrl.push('CreateUserProfilePage', fileData);
     } else {
       this.navCtrl.push('CreateMatchProfilePage', fileData);
     }

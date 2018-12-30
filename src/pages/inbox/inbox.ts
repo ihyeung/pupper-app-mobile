@@ -99,7 +99,7 @@ viewMessageHistory(inboxPreviewItem) {
 
   console.log('Retrieving message history for inboxMessagePreviews array element ' + listIndex);
 
-  this.navCtrl.push('MessagePage', this.inboxMessageRecentHistory[listIndex]);
+  this.navCtrl.push('ChatPage', this.inboxMessageRecentHistory[listIndex]);
 }
 
 
@@ -112,7 +112,7 @@ noMatchProfileFoundHandler() {
     if (createMatchProfile) {
       this.navCtrl.push('CreateMatchProfilePage');
     } else {
-      this.navCtrl.push('ProfileMainPage');
+      this.navCtrl.push('ProfileSnapshotPage');
     }
   }
 
