@@ -1,7 +1,7 @@
 {
-  "name": "Pupper",
-  "version": "0.0.1",
-  "author": "Kayla Cresswell & Irene Yeung",
+  "name": "pupper-app-mobile",
+  "version": "0.0.2",
+  "author": "Irene Yeung, Kayla Cresswell",
   "homepage": "https://www.github.com/ihyeung/pupper-app-mobile",
   "private": true,
   "scripts": {
@@ -60,7 +60,7 @@
     "@ionic/lab": "1.0.13",
     "typescript": "~2.6.2"
   },
-  "description": "An Ionic project",
+  "description": "Mobile/Front-end for Pupper",
   "cordova": {
     "plugins": {
       "cordova-plugin-file": {},
