@@ -1,9 +1,25 @@
 import { Component, EventEmitter } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
+import { MatchingResult } from '../../models/matching-result';
+import { GlobalVars, MatchProfiles, Utilities, Matches } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
+
+export interface Card {
+  profileId: number;
+  name: string;
+  breedName: string;
+  sex: string;
+  energyLevel: string;
+  lifeStage: string;
+  lastActive: string;
+  ageWithUnits: string;
+  aboutMe: string;
+  profileImage: string;
+  distance: string;
+  numDogs: number;
+  isMatch: boolean;
+}
 
 @IonicPage()
 @Component({
@@ -12,12 +28,9 @@ import { environment as ENV } from '../../environments/environment';
 })
 export class MatchingPage {
 
-  remainingProfiles: number;
-  userGeneratedMatchResults: Map<number, boolean>;
-  profileCardBatch: any = [];
-
+  matchingResults: MatchingResult[];
   nextBatchReady: boolean = false;
-  profiles = [];
+  deckOfCards = [];
   cardDirection = "xy";
   cardOverlay: any = {
     like: {
@@ -30,34 +43,39 @@ export class MatchingPage {
 
 
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
-    public navCtrl: NavController, public globalVarsProvider: GlobalVarsProvider,
-    public matchProfService: MatchProfilesProvider) {
+    public navCtrl: NavController, public globalVars: GlobalVars,
+    public matchProfService: MatchProfiles, public utilService: Utilities,
+  public matchesService: Matches) {
 
     }
 
-    ionViewDidLoad() {
+  ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfilePage');
 
-      this.userGeneratedMatchResults = new Map();
-      // this.profileBatch = this.retrieveNextProfileBatch();
+      this.matchingResults = new Array<MatchingResult>();
       this.retrieveNextProfileBatch();
-      this.addRetrievedProfileBatchIntoStack();
     }
 
     retrieveNextProfileBatch() {
+      console.log('retrieving next matcher data batch');
       //Check to make sure a matching profile has been created to start matching
-      if (null == this.globalVarsProvider.getMatchProfileObj()) {
+      this.utilService.getMatchProfileFromStorage().then(val => {
+        if (!val) {
         console.log('Please create a matching profile to begin matching.');
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
-        const matchProfileId = this.globalVarsProvider.getMatchProfileObj()['id'];
+        this.matchesService.getNextBatch(val['id']);
+        // .subscribe(() => {
+
+        // });
         //TODO: Retrieve next batch from database
-        this.remainingProfiles = 5;
       }
+    });
+
     }
 
     // addRetrievedProfileBatchIntoStack(profileBatchObj) {
-    addRetrievedProfileBatchIntoStack() {
+    addRetrievedProfileBatchIntoStack(nextBatch: any[]) {
       // let images = ["assets/img/indy.jpeg", "assets/img/jax.jpg", "assets/img/boston.jpeg", "assets/img/beagle.jpeg",
       // "assets/img/chihua.jpeg", "assets/img/collie.jpeg", "assets/img/doodle.jpeg", "assets/img/maltese.jpeg", "assets/img/sheltie.jpeg"]
 
@@ -68,37 +86,44 @@ export class MatchingPage {
       // });
       let pupInfo = [new Array("Indy", " Shiba Inu", " Female"), new Array("Jax", " Pomeranian", " Male"), new Array("Boston", " Shiba Inu", " Male")];
 
-      for (let i = 0; i < images.length; i++) {
-        this.profiles.push({
-          id: i + 1,
+      // nextBatch.forEach(profile => {
+      images.forEach(profile => {
+        this.deckOfCards.push({
+          id: profile['profileId'],
+          name:profile['names'],
+          // name: profile['name'],
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          image: this.sanitizer.bypassSecurityTrustStyle('url(' + images[i] + ')'),
-          info: pupInfo[i]
+          image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
+          info: profile['aboutMe']
+          // likedByProfile: profile['isMatch']
         });
-      }
+      });
+
       this.nextBatchReady = true;
     }
 
     onProfileMatchResult(event, profile) {
 
-      const listIndex = this.profiles.indexOf(profile);
+      const listIndex = this.deckOfCards.indexOf(profile);
       console.log('profile card #' + listIndex + ' of stack has been liked/disliked by user');
 
       if (event.like) {
         console.log("LIKE");
-        // const profileId = this.profileBatch
-        // this.userGeneratedMatchResults['']
-        //TODO: 1. add result to matchResult map to update database
-        //2. Check if mutual like
-        this.onMutualMatch();
+        this.matchingResults.push(new MatchingResult({id: profile['id'], isMatch: true}));
+        if (profile['likedByProfile']) {
+          console.log('active user was preivously liked by this profile, mutual match');
+          this.onMutualMatch();
+        }
       } else {
         console.log("NOT A LIKE");
-      }
-      this.remainingProfiles--;
+        this.matchingResults.push(new MatchingResult({id: profile['id'], isMatch: false}));
 
-      if (this.remainingProfiles <= 1) { //Retrieve next batch when 5 cards remain
+      }
+
+      if (this.deckOfCards.length == 1) { //Retrieve next batch when 5 cards remain
         // this.profileBatch = this.retrieveNextProfileBatch();
+        console.log('deck of cards has one card remaining');
         this.nextBatchReady = false;
         this.retrieveNextProfileBatch();
       }
@@ -126,7 +151,7 @@ export class MatchingPage {
                   newMatch: true,
                   matchProfileReceiver: matchProfileObj
                 });
-              }, error => console.log(error));
+              }, err => console.error('ERROR', err));
             }
           }
         ]

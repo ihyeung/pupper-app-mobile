@@ -1,19 +1,39 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController, LoadingController } from 'ionic-angular';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVars } from '../../providers/global/global-vars';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
 
 @Injectable()
-export class UtilityProvider {
+export class Utilities {
 
-  constructor(public globalVars: GlobalVarsProvider,
+  constructor(public globalVars: GlobalVars,
     public http: Http,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     public loadCtrl: LoadingController,
     private storage: Storage) { }
+
+    storeUserAccount(account: any) {
+      this.storage.set('account', account);
+    }
+
+    getUserAccountFromStorage() {
+      return this.storage.get('account').then(val => {
+        return val;
+      });
+    }
+
+    storeBreeds(breeds: any) {
+      this.storage.set('breeds', breeds);
+    }
+
+    getBreedsFromStorage() {
+      return this.storage.get('breeds').then(val => {
+        return val;
+      });
+    }
 
     extractAndStoreAuthHeaders(response) {
       const authHeaders = {

@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
-import { AlertController } from 'ionic-angular';
-import { ToastController } from 'ionic-angular'
-import { GlobalVars } from '../../providers/global/global-vars';
-import { Utilities } from '../../providers/utility/utilities';
+import { GlobalVars, Utilities } from '../../providers';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 

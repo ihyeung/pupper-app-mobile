@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { NavController, IonicPage, NavParams } from 'ionic-angular';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account.validator';
-import { UtilityProvider } from '../../providers/utility/utilities';
-import { UsersProvider } from '../../providers/http/userProfiles';
+import { Utilities, Users, GlobalVars } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -22,9 +20,9 @@ export class LoginPage {
   userAuthType: string = "log in";
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
-    public globalVarsProvider: GlobalVarsProvider,
-    public formBuilder: FormBuilder, public utilService: UtilityProvider,
-    public userService: UsersProvider, public accountValidator: AccountValidator,
+    public globalVars: GlobalVars,
+    public formBuilder: FormBuilder, public utilService: Utilities,
+    public userService: Users, public accountValidator: AccountValidator,
     private storage: Storage) {
 
       this.userAuthType = this.navParams.get('userAuthType');
@@ -41,7 +39,7 @@ export class LoginPage {
         this.loginAttempted = true;
         return;
       }
-      return this.userAuthType == 'log in' ? this.login() : this.register();
+      return this.userAuthType == 'log in' ? this.login(false) : this.register();
     }
 
     register() {
@@ -54,16 +52,18 @@ export class LoginPage {
             " Please login as an existing user or create a user profile using a unique username.");
             return;
           }
+
+          const userAccountObj = jsonResponseObj['userAccounts'][0];
+          this.utilService.storeUserAccount(userAccountObj);
           //login to get authentiation token
-          this.login();
+          this.login(true);
 
           this.navCtrl.push('CreateUserProfilePage');
         }
-      }, error => console.log(error));
+      }, err => console.error('ERROR', err));
     }
 
-      login() {
-
+    login(isNewUser: boolean) {
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
@@ -71,23 +71,23 @@ export class LoginPage {
 
         const authObj = this.utilService.extractAndStoreAuthHeaders(response);
 
-
+        if (!isNewUser) {
         this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
+        }
 
       }, error => {
         this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
-      }
-    );
-  }
+      });
+    }
 
-  retrieveUserProfile(headers) {
-    this.userService.getUserProfileByEmail(this.email, headers)
-    .subscribe(resp => {
+    retrieveUserProfile(headers) {
+      this.userService.getUserProfileByEmail(this.email, headers)
+      .subscribe(resp => {
         let jsonResponseObj = JSON.parse(resp['_body']);
         let userProfileObj = jsonResponseObj['userProfiles'][0];
 
         //Store the retrieved user profile object
-        this.storage.set('user', userProfileObj);
+        this.utilService.storeUserProfile(userProfileObj);
 
         const currentDate = this.utilService.getCurrentDateInValidFormat();
 
@@ -96,15 +96,15 @@ export class LoginPage {
           this.updateLastLogin(userProfileObj, currentDate);
         }
         this.navCtrl.push('TabsPage');
-    }, error => console.log(error));
-  }
+      }, err => console.error('ERROR', err));
+    }
 
-  updateLastLogin(userProfileObj, currentDate) {
-    this.userService.updateLastLogin(userProfileObj, currentDate)
-    .subscribe(resp => {
-      if (resp['status'] == 200) {
-        console.log('updated last login');
-      }
-    }, error => console.log(error));
+    updateLastLogin(userProfileObj, currentDate) {
+      this.userService.updateLastLogin(userProfileObj, currentDate)
+      .subscribe(resp => {
+        if (resp['status'] == 200) {
+          console.log('updated last login');
+        }
+      }, err => console.error('ERROR', err));
+    }
   }
-}

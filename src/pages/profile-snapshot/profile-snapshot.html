@@ -34,15 +34,19 @@
       MATCH PROFILES
     </ion-item>
     <ion-item-options>
-      <button ion-button color="primary">
+      <button ion-button color="primary" (click)="createMatchProfile()">
         <ion-icon name="add" item-start></ion-icon>
         CREATE
       </button>
       <button ion-button color="secondary" (click)="viewMatchProfileModal()">
-        <ion-icon name="create" item-start></ion-icon>
-        VIEW/EDIT
+        <ion-icon name="open" item-start></ion-icon>
+        VIEW
       </button>
-      <button ion-button color="dark">
+      <button ion-button color="light" (click)="updateMatchProfile()">
+        <ion-icon name="create" item-start></ion-icon>
+        EDIT
+      </button>
+      <button ion-button color="dark" (click)="deleteMatchProfile()">
         <ion-icon name="trash" item-start></ion-icon>
         DELETE
       </button>
@@ -56,9 +60,13 @@
   <ion-item-options>
     <button ion-button color="primary" (click)="viewUserProfileModal()">
       <ion-icon name="person" item-start></ion-icon>
-      VIEW/EDIT
+      VIEW
     </button>
-    <button ion-button color="secondary">
+  <button ion-button color="secondary" (click)="updateUserProfile()">
+    <ion-icon name="create" item-start></ion-icon>
+    EDIT
+  </button>
+    <button ion-button color="dark" (click)="deleteUserProfile()">
       <ion-icon name="trash" item-start></ion-icon>
       DELETE
     </button>

@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
-import { UtilityProvider } from '../../providers/utility/utilities';
+import { Utilities } from '../../providers/utility/utilities';
+import { Message } from '../../models/message';
+
 
 @Injectable()
-export class MessagesProvider {
+export class Messages {
   authHeaders: any;
 
   constructor(public http: Http,
-    private utilService: UtilityProvider) {
+    private utilService: Utilities) {
       this.utilService.getAuthHeadersFromStorage().then(val => this.authHeaders = val);
   }
 

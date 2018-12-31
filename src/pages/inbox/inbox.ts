@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { MatchesProvider } from '../../providers/http/matches';
-import { MessagesProvider } from '../../providers/http/messages';
-import { UtilityProvider } from '../../providers/utility/utilities';
+import { Utilities, Messages, Matches, GlobalVars } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -20,9 +17,9 @@ export class MessageInboxPage {
   matchesReady: boolean = false;
 
 
-  constructor(public navCtrl: NavController, public globalVars: GlobalVarsProvider,
-    public matchService: MatchesProvider, public msgService: MessagesProvider,
-    public utilService: UtilityProvider) {
+  constructor(public navCtrl: NavController, public globalVars: GlobalVars,
+    public matchService: Matches, public msgService: Messages,
+    public utilService: Utilities) {
       if (null == this.globalVars.getMatchProfileObj()) {
         this.noMatchProfileFoundHandler();
       }
@@ -47,8 +44,8 @@ export class MessageInboxPage {
           });
         });
         this.matchesReady = true;
-      }, err => console.log(err)
-    );
+      }, err => console.error('ERROR', err));
+   
   }
 
   retrieveMessageHistoriesWithMatches() {
@@ -83,7 +80,7 @@ export class MessageInboxPage {
       }
     });
     this.messagesReady = true;
-  }, err => console.log(err));
+  }, err => console.error('ERROR', err));
 }
 
 viewMatchProfile(matchListEntry) {
