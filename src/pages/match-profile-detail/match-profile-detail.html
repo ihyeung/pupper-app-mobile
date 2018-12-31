@@ -1,0 +1,18 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title *ngIf="profileReady">{{ profile.name }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
+  </div>
+
+  <div class="profile-detail" padding *ngIf="profileReady">
+    <h2>{{profile.names}}</h2>
+    <p>{{profile.aboutMe}}</p>
+  </div>
+</ion-content>
