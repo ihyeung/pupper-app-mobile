@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class GlobalVarsProvider {
+export class GlobalVars {
 
   userProfileObj: any;
   authHeaders: any;

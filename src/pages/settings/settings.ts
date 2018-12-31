@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController, App, IonicPage } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { UtilityProvider } from '../../providers/utility/utilities';
+import { GlobalVars, Utilities } from '../../providers';
 import { Storage } from '@ionic/storage';
-// import { UsersProvider } from '../../providers/http/userProfiles';
-// import { MatchesProvider } from '../../providers/http/matches';
-// import { MessagesProvider } from '../../providers/http/messages';
-// import { MatchProfilesProvider } from '../../providers/http/matchProfiles';
+// import { Users } from '../../providers/http/userProfiles';
+// import { Matches } from '../../providers/http/matches';
+// import { Messages } from '../../providers/http/messages';
+// import { MatchProfiles } from '../../providers/http/matchProfiles';
 
 @IonicPage()
 @Component({
@@ -17,10 +16,10 @@ import { Storage } from '@ionic/storage';
 export class SettingsPage {
 
   constructor(public navCtrl: NavController, public app: App,
-    public globalVars: GlobalVarsProvider, public utilService: UtilityProvider,
+    public globalVars: GlobalVars, public utilService: Utilities,
     private storage: Storage) {
-    // public userService: UsersProvider, public matchProfService: MatchProfilesProvider,
-    // public matchService: MatchesProvider, public msgService: MessagesProvider) {
+    // public userService: Users, public matchProfService: MatchProfiles,
+    // public matchService: Matches, public msgService: Messages) {
   }
 
   ionViewDidLoad() {

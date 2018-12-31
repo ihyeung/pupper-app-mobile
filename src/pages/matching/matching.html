@@ -10,13 +10,16 @@
 <ion-content padding>
   <ion-content padding>
     <div class="card-container" *ngIf="nextBatchReady">
-      <sc-card padding *ngFor="let profile of profiles" [orientation]="cardDirection" [tinder-card]="cardOverlay"
-      [callDestroy]="profile.destroyEvent" [callLike]="profile.likeEvent" (onLike)="onProfileMatchResult($event, profile)">
-      <div [style.background-image]="profile.image" id="profileImage"></div>
-      <div id ="profileCardTitle">
-        <ion-label placeholder="profile.info"></ion-label>
+      <sc-card padding *ngFor="let card of deckOfCards" [orientation]="cardDirection" [tinder-card]="cardOverlay"
+      [callDestroy]="card.destroyEvent" [callLike]="card.likeEvent" (onLike)="onProfileMatchResult($event, card)">
+      <div [style.background-image]="card.profileImage"></div>
+      <div>
+        <ion-label>{{card.name}}</ion-label>
       </div>
-      <div id="profileCardInfo">
+      <div>
+        <ion-label placeholder="card.info"></ion-label>
+      </div>
+      <div>
       </div>
     </sc-card>
   </div>

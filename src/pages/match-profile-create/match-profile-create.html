@@ -16,7 +16,7 @@
         <ion-label floating>BREED</ion-label>
         <ion-select [(ngModel)]="breed">
             <ion-option *ngFor="let breed of breedList" [value]="breed">
-              <p>{{breed}}</p>
+              <p>{{breed.name}}</p>
             </ion-option>
         </ion-select>
       </ion-item>

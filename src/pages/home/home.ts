@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { NavController, IonicPage } from 'ionic-angular';
-import { UtilityProvider } from '../../providers/utility/utilities';
 import { StatusBar } from '@ionic-native/status-bar';
 import { environment as ENV } from '../../environments/environment';
-import { UsersProvider } from '../../providers/http/userProfiles';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { Utilities, Users, GlobalVars } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -17,8 +15,8 @@ export class HomePage {
 
   breedList: any;
 
-  constructor(public navCtrl: NavController, public utilService: UtilityProvider,
-    public statusBar: StatusBar, public userService: UsersProvider, private storage: Storage) {
+  constructor(public navCtrl: NavController, public utilService: Utilities,
+    public statusBar: StatusBar, public userService: Users, private storage: Storage) {
 
       this.retrieveBreedList();
     }
@@ -43,13 +41,12 @@ export class HomePage {
         const headers = this.utilService.extractAndStoreAuthHeaders(response);
 
         this.utilService.getBreeds(headers)
+        .map(res => res.json())
         .subscribe(breedResponse => {
-          const breedList = JSON.parse(breedResponse['_body']);
-           this.storage.set('breeds', breedList);
-           this.storage.set('breedsString', JSON.stringify(breedList));
+           this.utilService.storeBreeds(breedResponse);
 
           this.statusBar.hide();
-        }, error => console.log(error));
-      }, error => console.log(error));
+        }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR', err));
     }
   }

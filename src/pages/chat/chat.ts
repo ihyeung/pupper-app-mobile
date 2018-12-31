@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage} from 'ionic-angular';
 import { Http } from '@angular/http';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { UtilityProvider } from '../../providers/utility/utilities';
+import { GlobalVars, Utilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
@@ -23,8 +22,8 @@ export class ChatPage {
   constructor(public navParams: NavParams,
     public navCtrl: NavController,
     public http: Http,
-    public globalVarsProvider: GlobalVarsProvider,
-    public utilService: UtilityProvider) {
+    public globalVars: GlobalVars,
+    public utilService: Utilities) {
       //There are three ways this page can be accessed:
       //1. When viewing match profiles and a match is established, and the user elects to send a message (in this case, there will be no message history to retrieve)
       //2. When in messaging inbox page and user clicks on a message inbox preview for a convo with a given user (in this case, messages need to be retrieved)
@@ -35,7 +34,7 @@ export class ChatPage {
         console.log('nav param newMatch undefined, retrieving message history');
       } else {
         //Scenario #1
-        this.matchProfileSenderObj = this.globalVarsProvider.getMatchProfileObj();
+        this.matchProfileSenderObj = this.globalVars.getMatchProfileObj();
         this.matchProfileReceiverObj = this.navParams.get('matchProfileReceiver');
       }
   }
@@ -45,7 +44,7 @@ export class ChatPage {
   }
 
   displayMessageHistory(messagesFromNavParams) {
-    const activeMatchProfile = this.globalVarsProvider.getMatchProfileObj();
+    const activeMatchProfile = this.globalVars.getMatchProfileObj();
     messagesFromNavParams.forEach(msg => {
 
       // if (messagesFromNavParams['matchProfileSender']['id'] == activeMatchProfile['id']) {
@@ -77,8 +76,8 @@ export class ChatPage {
 
   sendMessage(message) {
     const receiverUserProfileId = 2;
-    const senderId = this.globalVarsProvider.getUserProfileObj()['id'];
-    if (null == this.globalVarsProvider.getMatchProfileObj()) {
+    const senderId = this.globalVars.getUserProfileObj()['id'];
+    if (null == this.globalVars.getMatchProfileObj()) {
       //Theoretically this should never happen at this point
       this.noMatchProfileFoundHandler();
     } else {
@@ -91,7 +90,7 @@ export class ChatPage {
   retrieveReceiverAndSendMessage(receiverUserProfileId, message) {
     const getMatchProfileEndpointUrl = ENV.BASE_URL + "/user/" + receiverUserProfileId + "/matchProfile";
     console.log("Hitting endpoint to retrieve match profile for a given user id: " + getMatchProfileEndpointUrl);
-    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVarsProvider.getAuthHeaders() })
+    this.http.get(getMatchProfileEndpointUrl, { headers: this.globalVars.getAuthHeaders() })
       .subscribe(response => {
         if (response['status'] == 200) {
           let jsonResponseObj = JSON.parse((response['_body']));
@@ -100,8 +99,7 @@ export class ChatPage {
           this.sendMessageByMatchProfileReceiverObj(matchProfileObj, message);
         }
       },
-        error => console.log(error)
-      );
+        err => console.error('ERROR', err));
   }
 
   sendMessageByMatchProfileReceiverObj(matchProfileReceiverObj, message) {
@@ -113,7 +111,7 @@ export class ChatPage {
 
     let requestBody = JSON.stringify({
       matchProfileReceiver: matchProfileReceiverObj,
-      matchProfileSender: this.globalVarsProvider.getMatchProfileObj(),
+      matchProfileSender: this.globalVars.getMatchProfileObj(),
       message: message,
       timestamp: messageTimeStamp
     });
@@ -122,7 +120,7 @@ export class ChatPage {
       this.sendFrom + "&sendTo=" + this.sendTo;
 
     this.http.post(sendMessageUrl, requestBody,
-      { headers: this.globalVarsProvider.getAuthHeaders() })
+      { headers: this.globalVars.getAuthHeaders() })
       .subscribe(response => {
         const jsonResponseObj = JSON.parse((response['_body']));
         if (jsonResponseObj['isSuccess'] == 200) {
@@ -136,8 +134,8 @@ export class ChatPage {
             timestamp: messageTimeStamp
           });
 
-      }, error => console.log(error)
-      );
+      }, err => console.error('ERROR', err));
+
   }
 
   noMatchProfileFoundHandler() {

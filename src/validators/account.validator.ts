@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { UsersProvider } from '../providers/http/userProfiles';
+import { Users } from '../providers/http/userProfiles';
 
 @Injectable()
 export class AccountValidator {
 
   debouncer: any;
 
-  constructor(public userService: UsersProvider){
+  constructor(public userService: Users){
   }
 
   isValidEmail(control: FormControl): any {
@@ -40,12 +40,12 @@ export class AccountValidator {
 
       this.debouncer = setTimeout(() => {
 
-        this.userService.getUserAccountByEmail(control.value).subscribe(response => {
-          if(response.ok){
-            resolve(null);
-          }
-        }, err => { resolve({'usernameInUse': true});
-        });
+        // this.userService.getUserAccountByEmail(control.value).subscribe(response => {
+        //   if(response.ok){
+        //     resolve(null);
+        //   }
+        // }, err => { resolve({'usernameInUse': true});
+        // });
 
       }, 5000); //5 seconds of input field not being changed before http call to server is made
 

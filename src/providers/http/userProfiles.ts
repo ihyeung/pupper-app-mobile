@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
-import { UtilityProvider } from '../../providers/utility/utilities';
+import { GlobalVars, Utilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
+import { User } from '../../models/user';
 
 @Injectable()
-export class UsersProvider {
+export class Users {
   basicHeaders: any;
   authHeaders: any;
 
-  constructor(public http: Http, public globalVars: GlobalVarsProvider,
-    public utilService: UtilityProvider) {
+  constructor(public http: Http, public globalVars: GlobalVars,
+    public utilService: Utilities) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
 
@@ -20,7 +20,7 @@ export class UsersProvider {
         password: password
       });
 
-      const registerUrl = ENV.BASE_URL + '/account/register';
+      const registerUrl = `${ENV.BASE_URL}/account/register`;
 
       return this.http.post(registerUrl, signupData, { headers: this.basicHeaders });
     }
@@ -31,49 +31,56 @@ export class UsersProvider {
         password: password
       });
 
-      const loginUrl = ENV.BASE_URL + '/login';
+      const loginUrl = `${ENV.BASE_URL}/login`;
       return this.http.post(loginUrl, loginData, { headers: this.basicHeaders });
     }
 
-    getUserAccountByEmail(username) {
-      const getUserAccountByEmailUrl = ENV.BASE_URL + '/account?email=' + username;
-      if (this.authHeaders === undefined || this.authHeaders == null) {
-        this.authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
-        .subscribe(response => {
-          this.utilService.extractAndStoreAuthHeaders(response);
-
-          this.utilService.getAuthHeadersFromStorage().then(val => {
-            this.authHeaders = this.utilService.createHeadersObjFromAuth(val);
-
-            return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
-
-          });
-
-        }, error => console.log(error));
-      } else {
-        return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
-      }
+    /*
+    THIS ENDPOINT NEEDS TO BE IMPLEMENTED ON THE BACKEND!
+    */
+    getUserAccountByEmail(username, headers) {
+      const getUserAccountByEmailUrl = `${ENV.BASE_URL}/account?email=${username}`;
+      this.authHeaders = headers;
+      // if (!this.authHeaders) {
+      //   this.authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
+      //   .subscribe(response => {
+      //     this.utilService.extractAndStoreAuthHeaders(response);
+      //
+      //     this.utilService.getAuthHeadersFromStorage().then(val => {
+      //       this.authHeaders = this.utilService.createHeadersObjFromAuth(val);
+      //
+      //       return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
+      //
+      //     });
+      //
+      //   }, err => console.error('ERROR', err));
+      // } else {
+        return this.http.get(getUserAccountByEmailUrl, { headers: headers });
+      // }
     }
 
-    updateUserAccount(username, password) {
+    updateUserAccount(userAccount: any, headers: any) {
 
     }
 
-    getUserProfile(userProfileId) {
+    getUserProfile(userProfileId: number) {
 
     }
 
-    getUserProfileByEmail(userEmail, headers) {
-      const retrieveUserProfileUrl = ENV.BASE_URL + '/user?email=' + userEmail;
+    getUserProfileByEmail(userEmail: string, headers: any) {
+      const retrieveUserProfileUrl = `${ENV.BASE_URL}/user?email=${userEmail}`;
 
       this.authHeaders = headers;
 
-      return this.http.get(retrieveUserProfileUrl,
-        { headers: headers });
-      }
+      return this.http.get(retrieveUserProfileUrl, { headers: headers });
+    }
 
-      createUserProfile(userProfileObj) {
+    createUserProfile(userProfileObj, authHeaders) {
+        const createUserProfileUrl = `${ENV.BASE_URL}/user`;
+        console.log('Creating a new user profile: ' + createUserProfileUrl);
 
+        return this.http.post(createUserProfileUrl, userProfileObj,
+          { headers: authHeaders });
       }
 
       updateUserProfile(userProfileObj) {

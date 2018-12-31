@@ -4,7 +4,7 @@ import { ActionSheetController, Platform } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
-import { GlobalVarsProvider } from '../../providers/globalvars/globalvars';
+import { GlobalVars } from '../../providers/global/global-vars';
 
 declare var cordova: any;
 
@@ -25,7 +25,7 @@ export class ImageUploadPage {
     private filePath: FilePath,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
-    public globalVarsProvider: GlobalVarsProvider) {
+    public globalVars: GlobalVars) {
       this.imageFor = this.navParams.get('profileType');
     }
 
@@ -63,7 +63,7 @@ export class ImageUploadPage {
     this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, imageFileName)
     .then(() => {
       this.lastImage = imageFileName;
-    }, err => console.log(err));
+    }, err => console.error('ERROR', err));
   }
 
   public pathForImage(img) {
