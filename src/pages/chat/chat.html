@@ -1,19 +1,31 @@
 <ion-header>
   <ion-navbar color="secondary" class="nav">
-    <ion-title class="navTitle">
-      PUPPER CHAT
+    <ion-title class="navTitle" *ngIf="profileReady">
+      PUPPER CHAT WITH {{ toMatchProfile.names }}
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
     <ion-card>
-        <ion-card-content *ngFor="let message of chatMessages">
-          {{ message.message }}
+      <ion-card-header *ngIf="profileReady">
+      <ion-avatar>
+        <img src="{{ chatProfileImage }}">
+      </ion-avatar>
+      </ion-card-header>
+      <ion-card-content *ngIf="historyReady">
+        <ion-list *ngFor="let message of chatMessages">
+          <ion-item>
+            <h3>{{ message.message }}</h3>
+            <p>{{ message.timestamp }}</p>
+          </ion-item>
+        </ion-list>
         </ion-card-content>
       </ion-card>
+      <br>
   <ion-item>
-    <ion-input type="text" placeholder="Send a message .." #input></ion-input>
-        <button ion-button full item-right (click)="sendMessage(input.value)">SEND</button>
+    <ion-input type="text" placeholder="{{messagePlaceholder}}" [(ngModel)]="message"></ion-input>
+    <button ion-button expandable item-right (click)="sendMessage()">SEND</button>
+
   </ion-item>
 </ion-content>
