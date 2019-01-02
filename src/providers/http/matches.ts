@@ -28,7 +28,7 @@ export class Matches {
     `${ENV.BASE_URL}/matcher?matchProfileId=${matchProfileId}&zipRadius=${DEFAULT_RADIUS}`;
     console.log('Retrieving next matcher batch', fetchMatcherDataUrl);
 
-    // return this.http.get(fetchMatcherDataUrl, { headers: this.authHeaders });
+    return this.http.get(fetchMatcherDataUrl, { headers: this.authHeaders });
   }
 
   submitBatchResults(matchProfileId: number, matchingResultData: MatchingResult[]) {

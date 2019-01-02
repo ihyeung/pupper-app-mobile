@@ -6,32 +6,33 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
+  <div id="snapshotDiv" *ngIf="profileReady">
   <div id="profileMainTitle">
-    <h2>Welcome Back!</h2>
+     <!-- [(ngModel)]="welcome"> -->
+    <!-- <h2>{{welcome}}</h2> -->
+    <h2>WELCOME BACK!</h2>
+
   </div>
 <ion-card>
-  <ion-list no-lines>
-    <ion-img src="assets/img/appLogo.png"></ion-img>
-  <ion-card-header>
-          <ion-card-title>PUPPER SUMMARY</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-      <ion-item>
-        <ion-label color="primary">Location</ion-label>
-        <!-- <ion-input [(ngModel)]="location" readonly="true"></ion-input> -->
+        <ion-img src="assets/img/appLogo.png"></ion-img>
+      </ion-card>
+
+      <ion-list no lines>
+      <ion-item detail-push>
+        <ion-label color="primary" >Location</ion-label>
       </ion-item>
       <ion-item>
         <ion-label color="primary">Active Match Profile</ion-label>
       </ion-item>
-      <ion-item>
+      <!-- <ion-item>
         <ion-label color="primary">Member Since</ion-label>
-      </ion-item>
-      <ion-item>
+      </ion-item> -->
+      <!-- <ion-item>
         <ion-label color="primary">Last Login</ion-label>
-      </ion-item>
+      </ion-item> -->
     <ion-item-sliding>
     <ion-item>
-      MATCH PROFILES
+      <ion-label color="primary">MATCH PROFILES</ion-label>
     </ion-item>
     <ion-item-options>
       <button ion-button color="primary" (click)="createMatchProfile()">
@@ -55,7 +56,7 @@
 
   <ion-item-sliding>
   <ion-item>
-    USER PROFILE
+    <ion-label color="primary">USER PROFILE</ion-label>
   </ion-item>
   <ion-item-options>
     <button ion-button color="primary" (click)="viewUserProfileModal()">
@@ -66,14 +67,9 @@
     <ion-icon name="create" item-start></ion-icon>
     EDIT
   </button>
-    <button ion-button color="dark" (click)="deleteUserProfile()">
-      <ion-icon name="trash" item-start></ion-icon>
-      DELETE
-    </button>
   </ion-item-options>
 </ion-item-sliding>
-</ion-card-content>
 
 </ion-list>
-</ion-card>
+</div>
 </ion-content>

@@ -17,9 +17,10 @@
           <ion-label color="primary">Match Radius</ion-label>
           <ion-range [(ngModel)]="searchRadius" min="0" max="50" pin="true" color="secondary">
             <ion-label range-left>0 miles</ion-label>
-            <ion-label range-left>50 miles</ion-label>
+            <ion-label range-right>50 miles</ion-label>
           </ion-range>
         </ion-item>
+
         <ion-item>
           <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
           <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-toggle>
@@ -27,13 +28,17 @@
         <ion-item-divider>
           Profile Settings
         </ion-item-divider>
+        <ion-item>
+          <ion-label color="primary">Set timezone</ion-label>
+          <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="timezone"></ion-toggle>
+        </ion-item>
       </ion-list>
     </ion-card>
       <ion-list>
-        <button ion-item  full outline color="secondary" (click)="userProfile()">Edit user</button>
-        <button ion-item full outline color="secondary" (click)="matchProfiles()">Edit profiles</button>
-        <button ion-button full outline color="secondary" (click)="logout()">Log out</button>
-        <button ion-button full outline color="secondary" (click)="deleteAccount()">Delete Account</button>
+        <button ion-item  full color="secondary" (click)="userProfile()">Edit user</button>
+        <button ion-item outline color="secondary" (click)="matchProfiles()">Edit profiles</button>
+        <button ion-item full color="secondary" (click)="logout()">Log out</button>
+        <button ion-item outline color="secondary" (click)="deleteAccount()">Delete Account</button>
       </ion-list>
   </div>
 </ion-content>

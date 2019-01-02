@@ -41,3 +41,4 @@ Prior to starting the application locally, install the following Cordova plugins
     ionic cordova plugin add cordova-plugin-file
     ionic cordova plugin add cordova-plugin-file-transfer
     ionic cordova plugin add cordova-sqlite-storage
+    ionic cordova plugin add cordova-plugin-dialogs

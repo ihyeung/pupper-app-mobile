@@ -10,16 +10,25 @@ import { Storage } from '@ionic/storage';
 })
 export class ProfileSnapshotPage {
 
+  // welcome: string;
+  userObj: any = [];
+  profileReady: boolean = false;
+
   constructor(public navCtrl: NavController,
     public utilService: Utilities, public matchProfService: MatchProfiles,
-    public userService: Users) {}
+    public userService: Users) {
+    }
 
     retrieveMatchProfilesForUser(){
       this.utilService.getUserFromStorage().then(user => {
+        console.log("retrievd user from storage" + user);
+        // this.welcome = `Welcome back, ${user['name']}!`;
+        this.userObj = user;
+
         this.matchProfService.getMatchProfiles(user)
         .map(res => res.json())
         .subscribe(resp => {
-          // console.log(resp);
+          this.profileReady = true;
             //Check to see whether user has previously created match profiles
             if (resp['matchProfiles']) {
               let matchProfileObj = resp['matchProfiles'][0];
@@ -50,7 +59,6 @@ export class ProfileSnapshotPage {
     }
 
     deleteMatchProfile() {
-
     }
 
     viewUserProfileModal() {
@@ -58,10 +66,6 @@ export class ProfileSnapshotPage {
     }
 
     updateUserProfile() {
-
-    }
-
-    deleteUserProfile() {
 
     }
 
