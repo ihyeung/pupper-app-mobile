@@ -15,6 +15,20 @@ export class Utilities {
     public loadCtrl: LoadingController,
     private storage: Storage) { }
 
+    clearStorage() {
+      this.storage.clear();
+    }
+
+    storeData(key: string, val: any) {
+      this.storage.set(key, val);
+    }
+
+    getDataFromStorage(key: string) {
+      return this.storage.get(key).then(val => {
+        return val;
+      });
+    }
+
     storeUserAccount(account: any) {
       this.storage.set('account', account);
     }
@@ -32,6 +46,18 @@ export class Utilities {
     getBreedsFromStorage() {
       return this.storage.get('breeds').then(val => {
         return val;
+      });
+    }
+
+    getAuthHeaders() {
+      return this.storage.get('authHeaders').then(val => {
+        if (!val) {
+          return null;
+        }
+        const type = val['Content-Type'];
+        const jwt = val['Authorization'];
+
+        return new Headers({ 'Content-Type': type, 'Authorization': jwt });
       });
     }
 
@@ -117,22 +143,5 @@ export class Utilities {
         duration: 3000
       });
       return await loader.present();
-    }
-
-    displayAlertDialog(title, message, buttonLeft, buttonRight) {
-      const dialog = this.alertCtrl.create({
-        title: title,
-        message: message,
-        buttons: [
-          { text: buttonLeft,
-            handler: () => { return false; }
-          },
-          {
-            text: buttonRight,
-            handler: () => { return true; }
-          }
-        ]
-      });
-      dialog.present();
     }
   }

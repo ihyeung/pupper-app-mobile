@@ -11,12 +11,30 @@ export class Messages {
 
   constructor(public http: Http,
     private utilService: Utilities) {
-      this.utilService.getAuthHeadersFromStorage().then(val => this.authHeaders = val);
+      this.utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
+      });
   }
 
   retrieveMessagesForInbox(matchProfileId) {
-    const getMessagesUrl = ENV.BASE_URL + '/message?matchProfileId=' + matchProfileId;
+    const getMessagesUrl = `${ENV.BASE_URL}/message/recent?matchProfileId=${matchProfileId}`;
     console.log('Retrieving messages for matchProfile at ' + getMessagesUrl);
     return this.http.get(getMessagesUrl, {headers: this.authHeaders});
+  }
+
+  sendMessage(fromProfile: any, toProfile: any, message: string, timestamp: string) {
+    let requestBody = JSON.stringify({
+      matchProfileReceiver: toProfile,
+      matchProfileSender: fromProfile,
+      message: message,
+      timestamp: timestamp
+    });
+
+    const sendMessageUrl =
+    `${ENV.BASE_URL}/message?sendFrom=${fromProfile['id']}&sendTo=${toProfile['id']}`;
+
+    console.log('Sending message ' + sendMessageUrl);
+    return this.http.post(sendMessageUrl, requestBody,
+      { headers:  this.authHeaders });
   }
 }
