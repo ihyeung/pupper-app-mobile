@@ -31,11 +31,11 @@
       </ion-item>
 
       <ion-item>
-        <ion-label floating>PASSWORD</ion-label>
+        <ion-label>PASSWORD</ion-label>
         <ion-input formControlName="password" type="password" [class.invalid]="!userForm.controls.password.valid && (userForm.controls.password.dirty || loginAttempted)" [(ngModel)]="password"></ion-input>
       </ion-item>
       <ion-item *ngIf="!userForm.controls.password.valid  && (userForm.controls.password.dirty || loginAttempted)">
-        <p class="input-err">A valid password is 8 or more characters.</p>
+        <p class="input-err">A valid password is at least 8 characters in length, and contains a combination of letters, numbers, and special characters." </p>
       </ion-item>
       <ion-item *ngIf="userAuthType == 'sign up'">
         <ion-label floating>CONFIRM PASSWORD</ion-label>

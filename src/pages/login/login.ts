@@ -35,6 +35,11 @@ export class LoginPage {
     }
 
     authenticateUser() {
+      if (ENV.AUTO_FILL) {
+        this.email = ENV.VALIDATE_EMAIL_USER;
+        this.password = ENV.VALIDATE_EMAIL_PASS;
+        this.login(false);
+      }
       if(!this.userForm.valid){
         this.loginAttempted = true;
         return;
