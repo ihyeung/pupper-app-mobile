@@ -9,7 +9,7 @@ import { Utilities, Messages, Matches, GlobalVars } from '../../providers';
 })
 export class MessageInboxPage {
 
-  inboxSelector: string = 'matches';
+  inboxSelector: string = 'matches'; //Default view to show contents of matches tab
   matchProfileId: number;
   inboxMessagePreviews: any = []; //The latest PupperMessage exchanged between user and all of their matches
   inboxMessageRecentHistory: any = []; //The 5 most recent PupperMessages exchanged between user and all of their matches
@@ -28,7 +28,7 @@ export class MessageInboxPage {
       this.utilService.getDataFromStorage('match').then(val => {
         this.matchProfileId = val['id'];
 
-        this.retrieveMatches(); //Default view to show contents of matches tab
+        this.retrieveMatches();
       });
     }
 
@@ -40,16 +40,18 @@ export class MessageInboxPage {
       .subscribe(response => {
         const matchProfileList = JSON.parse(response['_body']);
         matchProfileList.forEach(match => {
+          console.log(match);
           this.matchesList.push({
             matchProfileId: match['id'],
             image: match['profileImage'] == null ? 'assets/img/appLogo.png' : match['profileImage'],
             matchProfileName: match['names'],
             breed: match['breed']['name'],
+            lifeStage: match['lifeStage'],
+            energyLevel: match['energyLevel'],
             about: match['aboutMe']
           });
         });
         this.matchesReady = true;
-        console.log('Matches are now ready');
       }, err => console.error('ERROR', err));
 
     }
@@ -66,10 +68,8 @@ export class MessageInboxPage {
             // console.log('No messages exchanged between these users yet');
           } else {
             let otherMatchProfile = history[0]['matchProfileSender'];
-            let incomingMessage = true;
             if ( otherMatchProfile['id'] == this.matchProfileId) { //Make sure to add the other user's id and name to message array
             otherMatchProfile = history[0]['matchProfileReceiver'];
-            incomingMessage = false;
           }
 
           this.inboxMessageRecentHistory.push(history);
@@ -78,8 +78,7 @@ export class MessageInboxPage {
             matchProfileName: otherMatchProfile['names'],
             image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : 'assets/img/appLogo.png',
             message: history[0]['message'],
-            timestamp: history[0]['timestamp'],
-            incomingMessage: incomingMessage
+            timestamp: history[0]['timestamp']
           });
         }
       });
@@ -87,8 +86,8 @@ export class MessageInboxPage {
     }, err => console.error('ERROR', err));
   }
 
-  viewMatchProfile(matchListEntry) {
-    const matchProfileId = matchListEntry['matchProfileObj']['id'];
+  viewMatchProfile(matchProfileId) {
+    // const matchProfileId = matchListEntry['matchProfileObj']['id'];
     console.log('clicked on match profile for matchProfileId=' + matchProfileId);
     this.navCtrl.push('MatchProfileDetailPage', {
       matchProfileId: matchProfileId
@@ -97,7 +96,6 @@ export class MessageInboxPage {
 
   viewMessageHistory(inboxPreviewItem) {
     const matchProfile = inboxPreviewItem['matchProfileObj'];
-    console.log('viewMessageHistory matchProfileObj: ' + matchProfile);
     const matchProfileId = matchProfile['id'];
     console.log('clicked to view message history for current user & matchProfileId=' + matchProfileId);
 
