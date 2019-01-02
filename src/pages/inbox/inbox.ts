@@ -87,7 +87,6 @@ export class MessageInboxPage {
   }
 
   viewMatchProfile(matchProfileId) {
-    // const matchProfileId = matchListEntry['matchProfileObj']['id'];
     console.log('clicked on match profile for matchProfileId=' + matchProfileId);
     this.navCtrl.push('MatchProfileDetailPage', {
       matchProfileId: matchProfileId
