@@ -27,7 +27,6 @@ export class CreateUserProfilePage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public http: Http,
     public globalVars: GlobalVars,
     public utilService: Utilities,
     public userService: Users,

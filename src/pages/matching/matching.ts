@@ -28,6 +28,7 @@ export interface Card {
 })
 export class MatchingPage {
 
+  matchProfileObj: any = [];
   matchingResults: MatchingResult[];
   nextBatchReady: boolean = false;
   deckOfCards = [];
@@ -64,9 +65,10 @@ export class MatchingPage {
         console.log('Please create a matching profile to begin matching.');
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
-        this.matchesService.getNextBatch(val['id']);
-        // .subscribe(() => {
+        this.matchProfileObj = val;
 
+        this.matchesService.getNextBatch(val['id'])
+        console.log('retrieveNextProfileBatch implementation is not completed yet.');
         // });
         //TODO: Retrieve next batch from database
       }
@@ -76,10 +78,10 @@ export class MatchingPage {
 
     // addRetrievedProfileBatchIntoStack(profileBatchObj) {
     addRetrievedProfileBatchIntoStack(nextBatch: any[]) {
-      // let images = ["assets/img/indy.jpeg", "assets/img/jax.jpg", "assets/img/boston.jpeg", "assets/img/beagle.jpeg",
-      // "assets/img/chihua.jpeg", "assets/img/collie.jpeg", "assets/img/doodle.jpeg", "assets/img/maltese.jpeg", "assets/img/sheltie.jpeg"]
+      let images = ["assets/img/indy.jpeg", "assets/img/jax.jpg", "assets/img/boston.jpeg", "assets/img/beagle.jpeg",
+      "assets/img/chihua.jpeg", "assets/img/collie.jpeg", "assets/img/doodle.jpeg", "assets/img/maltese.jpeg", "assets/img/sheltie.jpeg"]
 
-      let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
+      // let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
 
       // profileBatchObj.forEach( card => {
       //
@@ -87,15 +89,32 @@ export class MatchingPage {
       let pupInfo = [new Array("Indy", " Shiba Inu", " Female"), new Array("Jax", " Pomeranian", " Male"), new Array("Boston", " Shiba Inu", " Male")];
 
       // nextBatch.forEach(profile => {
-      images.forEach(profile => {
+      // images.forEach(profile => {
+      //   this.deckOfCards.push({
+      //     id: profile['profileId'],
+      //     name:profile['names'],
+      //     // name: profile['name'],
+      //     likeEvent: new EventEmitter(),
+      //     destroyEvent: new EventEmitter(),
+      //     image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
+      //     // info: profile['aboutMe']
+      //     info: pupInfo
+      //     // likedByProfile: profile['isMatch']
+      //   });
+
+      images.forEach(img => {
+        let i = images.indexOf(img);
         this.deckOfCards.push({
-          id: profile['profileId'],
-          name:profile['names'],
+          id: i,
+          name: pupInfo[i][0],
+          breed: pupInfo[i][1],
           // name: profile['name'],
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
-          info: profile['aboutMe']
+          image: this.sanitizer.bypassSecurityTrustStyle(`url('${img}')`),
+          // image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
+          // info: profile['aboutMe']
+          info: pupInfo[i][0]
           // likedByProfile: profile['isMatch']
         });
       });
