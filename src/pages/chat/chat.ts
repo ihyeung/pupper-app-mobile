@@ -11,7 +11,7 @@ import { environment as ENV } from '../../environments/environment';
 })
 export class ChatPage {
 
-  messagePlaceholder: string = 'Send a message...';
+  MESSAGE_PLACEHOLDER: string = 'Send a message...';
   message: string;
   chatMessages: any = [];
   fromMatchProfile: any = [];
@@ -62,16 +62,18 @@ export class ChatPage {
     if (!this.navParams.get('newMatch')) { //Exclude routing from matching page mutual match dialog
       const recentMessages = this.navParams.get('messages');
       this.displayMessageHistory(recentMessages);
-
     }
   }
 
   displayMessageHistory(recentMessages) {
-    recentMessages.forEach(msg => {
+    recentMessages.reverse() //Recent messages are most to least recent, flip order for message inbox page
+    .forEach(msg => {
+
+
       this.chatMessages.push({
         message: msg['message'],
         timestamp: msg['timestamp'],
-        incomingMessage: msg['incomingMessage']
+        incomingMessage: this.isIncomingMessage(msg)
       });
     });
     console.log('Total number of chat messages: ' + this.chatMessages.length);
@@ -95,9 +97,24 @@ export class ChatPage {
             timestamp: messageTimeStamp,
             incomingMessage: false
           });
-          this.message = this.messagePlaceholder;
+          this.message = this.MESSAGE_PLACEHOLDER;
 
       }, err => console.error('ERROR', err));
 
+  }
+
+  private isIncomingMessage(message: any) {
+    const senderId = message['matchProfileSender']['id'];
+    if (senderId == this.toMatchProfile['id']) {
+      console.log('incoming message');
+      return true;
+    }
+    else if (senderId == this.fromMatchProfile['id']) {
+      console.log('outgoing message');
+      return false;
+    } else {
+      console.error('isIncomingMessage ERROR');
+      return null;
+    }
   }
 }

@@ -35,12 +35,13 @@
     <div class="match-container" *ngIf="matchesReady">
       <!-- <ion-card> -->
       <ion-list *ngSwitchCase="'matches'">
-        <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)">
+        <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match.matchProfileId)">
           <ion-avatar item-start>
             <img src="{{match.image}}">
           </ion-avatar>
           <h2>{{match.matchProfileName}}</h2>
-          <h3>{{match.timestamp}}</h3>
+          <h3>{{match.breed}}</h3>
+          <h4>ENERGY LEVEL  {{match.energyLevel}}  |   AGE   {{match.lifeStage}}</h4>
           <p>{{match.about}}</p>
         </button>
 
