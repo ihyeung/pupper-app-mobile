@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Users } from '../providers/http/userProfiles';
+import { Users, Utilities } from '../providers';
 
 @Injectable()
 export class AccountValidator {
 
   debouncer: any;
+  authHeaders: any;
 
-  constructor(public userService: Users){
+  constructor(public userService: Users, public utils: Utilities){
+    this.utils.getAuthHeaders().then(val => {
+      this.authHeaders = val;
+    });
   }
 
   isValidEmail(control: FormControl): any {
@@ -20,8 +24,7 @@ export class AccountValidator {
     return null;
   }
 
-  isValidPassword(control: FormControl): any {
-
+  static isValidPassword(control: FormControl): any {
     let passwordRegEx =
             /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     if(!passwordRegEx.test(control.value)){
@@ -33,19 +36,24 @@ export class AccountValidator {
   }
 
   validateUniqueUserEmail(control: FormControl): any {
- //Debouncer so validation http call isnt triggered any time user types in field
+    //Debouncer so validation http call isnt triggered any time user types in field
     clearTimeout(this.debouncer);
 
     return new Promise(resolve => {
 
       this.debouncer = setTimeout(() => {
 
-        // this.userService.getUserAccountByEmail(control.value).subscribe(response => {
-        //   if(response.ok){
-        //     resolve(null);
-        //   }
-        // }, err => { resolve({'usernameInUse': true});
-        // });
+        this.userService.getUserAccountByEmail(control.value, this.authHeaders)
+        .map(res => res.json())
+        .subscribe(response => {
+          if(!response.isSuccess){
+            console.log('username available');
+            resolve(null);
+          } else {
+            resolve({'usernameInUse': true});
+          }
+        }, err => { resolve({'usernameInUse': true});
+        });
 
       }, 5000); //5 seconds of input field not being changed before http call to server is made
 

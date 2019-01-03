@@ -19,8 +19,8 @@
     </ion-segment>
   </div>
 
-  <p *ngIf="loginAttempted" style="color: #ea6153;">Please fill in all fields.</p>
-    <form #signForm="ngForm" [formGroup]="userForm" (ngSubmit)="authenticateUser(signForm.value)">
+  <p *ngIf="loginAttempted" style="color: #ea6153;">{{errorMessage}}</p>
+    <form #signForm="ngForm" [formGroup]="userForm" (ngSubmit)="authenticateUser()">
       <ion-list no-lines>
       <ion-item>
         <ion-label floating>USERNAME/EMAIL</ion-label>
@@ -29,9 +29,8 @@
       <ion-item *ngIf="!userForm.controls.email.valid  && (userForm.controls.email.dirty || loginAttempted)">
         <p class="input-err">Please enter a valid email.</p>
       </ion-item>
-
       <ion-item>
-        <ion-label>PASSWORD</ion-label>
+        <ion-label floating>PASSWORD</ion-label>
         <ion-input formControlName="password" type="password" [class.invalid]="!userForm.controls.password.valid && (userForm.controls.password.dirty || loginAttempted)" [(ngModel)]="password"></ion-input>
       </ion-item>
       <ion-item *ngIf="!userForm.controls.password.valid  && (userForm.controls.password.dirty || loginAttempted)">

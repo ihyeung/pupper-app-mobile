@@ -3,6 +3,7 @@ import { NavController, NavParams, IonicPage} from 'ionic-angular';
 import { Http } from '@angular/http';
 import { GlobalVars, Utilities, Messages } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
+import { DEFAULT_IMG } from '../';
 
 @IonicPage()
 @Component({
@@ -54,8 +55,7 @@ export class ChatPage {
       return;
     }
     this.chatProfileImage = this.toMatchProfile['profileImage'] ?
-                            this.toMatchProfile['profileImage'] :
-                            'assets/img/appLogo.png';
+                            this.toMatchProfile['profileImage'] : DEFAULT_IMG;
 
     this.profileReady = true;
 
