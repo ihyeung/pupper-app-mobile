@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ProfileSnapshotPage } from './profile-snapshot';
+import { Dialogs } from '@ionic-native/dialogs';
 
 @NgModule({
   declarations: [
@@ -11,6 +12,9 @@ import { ProfileSnapshotPage } from './profile-snapshot';
   ],
   exports: [
     ProfileSnapshotPage
+  ],
+  providers: [
+    Dialogs
   ]
 })
 export class ProfileSnapshotPageModule {}

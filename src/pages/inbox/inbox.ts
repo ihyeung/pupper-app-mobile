@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 import { Utilities, Messages, Matches, GlobalVars } from '../../providers';
+import { DEFAULT_IMG } from '../';
 
 @IonicPage()
 @Component({
@@ -43,7 +44,7 @@ export class MessageInboxPage {
           console.log(match);
           this.matchesList.push({
             matchProfileId: match['id'],
-            image: match['profileImage'] == null ? 'assets/img/appLogo.png' : match['profileImage'],
+            image: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
             matchProfileName: match['names'],
             breed: match['breed']['name'],
             lifeStage: match['lifeStage'],
@@ -76,7 +77,7 @@ export class MessageInboxPage {
           this.inboxMessagePreviews.push({
             matchProfileObj: otherMatchProfile,
             matchProfileName: otherMatchProfile['names'],
-            image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : 'assets/img/appLogo.png',
+            image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : DEFAULT_IMG,
             message: history[0]['message'],
             timestamp: history[0]['timestamp']
           });
@@ -99,8 +100,6 @@ export class MessageInboxPage {
     console.log('clicked to view message history for current user & matchProfileId=' + matchProfileId);
 
     const listIndex = this.inboxMessagePreviews.indexOf(inboxPreviewItem);
-
-    console.log('Retrieving message history for inboxMessagePreviews array element ' + listIndex);
 
     this.navCtrl.push('ChatPage', {
       matchProfileReceiver: matchProfile,
