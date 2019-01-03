@@ -4,6 +4,7 @@ import { NavController, IonicPage } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { environment as ENV } from '../../environments/environment';
 import { Utilities, Users, GlobalVars } from '../../providers';
+import { DEFAULT_IMG } from '../';
 
 @IonicPage()
 @Component({
@@ -13,6 +14,7 @@ import { Utilities, Users, GlobalVars } from '../../providers';
 
 export class HomePage {
 
+  image: string = DEFAULT_IMG;
   breedList: any;
 
   constructor(public navCtrl: NavController, public utilService: Utilities,
@@ -28,24 +30,22 @@ export class HomePage {
     }
 
     signup(){
-      this.navCtrl.push('LoginPage', { userAuthType: "sign up" });
+      this.navCtrl.push('LoginPage', {
+        userAuthType: "sign up"
+      });
     }
 
     retrieveBreedList() {
-      this.statusBar.show();
-
       this.userService
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
-
         const headers = this.utilService.extractAndStoreAuthHeaders(response);
 
-        this.utilService.getBreeds(headers)
+        this.utilService.getBreeds(this.utilService.createHeadersObjFromAuth(headers))
         .map(res => res.json())
         .subscribe(breedResponse => {
            this.utilService.storeBreeds(breedResponse);
 
-          this.statusBar.hide();
         }, err => console.error('ERROR', err));
       }, err => console.error('ERROR', err));
     }

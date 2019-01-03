@@ -13,6 +13,8 @@ import { Dialogs } from '@ionic-native/dialogs';
   exports: [
     SettingsPage
   ],
-  providers: [ Dialogs]
+  providers: [ 
+    Dialogs
+  ]
 })
 export class SettingsPageModule {}

@@ -1,75 +1,81 @@
 <ion-header>
   <ion-navbar color="primary" class="nav">
     <ion-title class="navTitle">
-      Pupper
+      PUPPER HOME
     </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <div id="snapshotDiv" *ngIf="profileReady">
-  <div id="profileMainTitle">
-     <!-- [(ngModel)]="welcome"> -->
-    <!-- <h2>{{welcome}}</h2> -->
-    <h2>WELCOME BACK!</h2>
-
+  <div id="profileMainTitle"  *ngIf="userReady">
+    <h2>{{welcome}}</h2>
+    <ion-card>
+      <img [src]="image" />
+    </ion-card>
   </div>
-<ion-card>
-        <ion-img src="assets/img/appLogo.png"></ion-img>
-      </ion-card>
 
-      <ion-list no lines>
-      <ion-item detail-push>
-        <ion-label color="primary" >Location</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label color="primary">Active Match Profile</ion-label>
-      </ion-item>
-      <!-- <ion-item>
-        <ion-label color="primary">Member Since</ion-label>
-      </ion-item> -->
-      <!-- <ion-item>
-        <ion-label color="primary">Last Login</ion-label>
-      </ion-item> -->
+  <ion-list no lines *ngIf="userReady || matchProfileReady">
     <ion-item-sliding>
-    <ion-item>
-      <ion-label color="primary">MATCH PROFILES</ion-label>
-    </ion-item>
-    <ion-item-options>
-      <button ion-button color="primary" (click)="createMatchProfile()">
-        <ion-icon name="add" item-start></ion-icon>
-        CREATE
-      </button>
-      <button ion-button color="secondary" (click)="viewMatchProfileModal()">
-        <ion-icon name="open" item-start></ion-icon>
-        VIEW
-      </button>
-      <button ion-button color="light" (click)="updateMatchProfile()">
-        <ion-icon name="create" item-start></ion-icon>
-        EDIT
-      </button>
-      <button ion-button color="dark" (click)="deleteMatchProfile()">
-        <ion-icon name="trash" item-start></ion-icon>
-        DELETE
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
+      <ion-item>
+        <ion-label color="primary" >YOUR ZIPCODE/LOCATION:   {{userProfileObj.zip}}</ion-label>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="secondary" (click)="updateZipCode()">
+          <ion-icon name="locate" item-content></ion-icon>
+          UPDATE LOCATION
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+    <ion-item-sliding *ngIf="hasMatchProfile">
+      <ion-item>
+        <ion-label color="primary">ACTIVE MATCHING PROFILE: {{activeMatchProfileObj.names}}, {{activeMatchProfileObj.breed.name}} </ion-label>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="primary" (click)="viewMatchProfileModal()">
+          <ion-icon name="swap" item-content></ion-icon>
+          SWITCH MATCH PROFILE
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
 
-  <ion-item-sliding>
-  <ion-item>
-    <ion-label color="primary">USER PROFILE</ion-label>
-  </ion-item>
-  <ion-item-options>
-    <button ion-button color="primary" (click)="viewUserProfileModal()">
-      <ion-icon name="person" item-start></ion-icon>
-      VIEW
-    </button>
-  <button ion-button color="secondary" (click)="updateUserProfile()">
-    <ion-icon name="create" item-start></ion-icon>
-    EDIT
-  </button>
-  </ion-item-options>
-</ion-item-sliding>
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label color="primary">MATCH PROFILES</ion-label>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="primary" (click)="createMatchProfile()">
+          <ion-icon name="add" item-start></ion-icon>
+          CREATE
+        </button>
+        <button ion-button color="secondary" (click)="matchProfileModal(true)" *ngIf="hasMatchProfile">
+          <ion-icon name="open" item-start></ion-icon>
+          VIEW
+        </button>
+        <button ion-button color="light" (click)="matchProfileModal(false)" *ngIf="hasMatchProfile">
+          <ion-icon name="create" item-start></ion-icon>
+          EDIT
+        </button>
+        <button ion-button color="dark" (click)="deleteMatchProfile()" *ngIf="hasMatchProfile">
+          <ion-icon name="trash" item-start></ion-icon>
+          DELETE
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
 
-</ion-list>
-</div>
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label color="primary">USER PROFILE</ion-label>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="primary" (click)="userProfileModal(true)">
+          <ion-icon name="person" item-start></ion-icon>
+          VIEW
+        </button>
+        <button ion-button color="secondary" (click)="userProfileModal(false)">
+          <ion-icon name="create" item-start></ion-icon>
+          EDIT
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
 </ion-content>

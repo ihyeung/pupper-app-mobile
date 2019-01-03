@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account.validator';
 import { Utilities, Users, GlobalVars } from '../../providers';
 
@@ -12,12 +12,13 @@ import { Utilities, Users, GlobalVars } from '../../providers';
   templateUrl: 'login.html'
 })
 export class LoginPage {
+  errorMessage: string = 'Please verify all fields are completed and are valid.';
   responseData: any;
   email: string;
   password: string;
   userForm: FormGroup;
   loginAttempted: boolean = false;
-  userAuthType: string = "log in";
+  userAuthType: string = 'log in';
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
     public globalVars: GlobalVars,
@@ -26,25 +27,37 @@ export class LoginPage {
     private storage: Storage) {
 
       this.userAuthType = this.navParams.get('userAuthType');
-
+      let username = new FormControl('', accountValidator.isValidEmail);
+      let password = new FormControl('', Validators.required);
+      let confirm = new FormControl('');
+      if (this.userAuthType == 'sign up') {
+        username = new FormControl('', [accountValidator.isValidEmail, accountValidator.validateUniqueUserEmail.bind(accountValidator)]);
+        password = new FormControl('', [Validators.required, AccountValidator.isValidPassword]);
+        confirm = new FormControl('', Validators.required);
+      }
       this.userForm = formBuilder.group({
-        email: ['', accountValidator.isValidEmail],
-        password: ['', Validators.required],
-        confirm: ['', ]
+        // email: ['', AccountValidator.isValidEmail, accountValidator.validateUniqueUserEmail],
+        // password: ['', accountValidator.isValidPassword],
+        // confirm: ['', Validators.required]
+        email: username,
+        password: password,
+        confirm: confirm
       });
+
     }
 
     authenticateUser() {
-      if (ENV.AUTO_FILL) {
-        this.email = ENV.VALIDATE_EMAIL_USER;
-        this.password = ENV.VALIDATE_EMAIL_PASS;
-        this.login(false);
-      }
-      if(!this.userForm.valid){
-        this.loginAttempted = true;
-        return;
-      }
-      return this.userAuthType == 'log in' ? this.login(false) : this.register();
+      // if (ENV.AUTO_FILL) {
+      //   console.log('AUTO FILL IS SET');
+      //   this.email = ENV.VALIDATE_EMAIL_USER;
+      //   this.password = ENV.VALIDATE_EMAIL_PASS;
+      //   this.login(false);
+      // }
+        if(!this.userForm.valid){
+          this.loginAttempted = true;
+          return;
+        }
+        return this.userAuthType == 'log in' ? this.login(false) : this.register();
     }
 
     register() {
@@ -70,6 +83,7 @@ export class LoginPage {
 
     login(isNewUser: boolean) {
       this.userService.authenticateUser(this.email, this.password)
+      .map(res => res.json())
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
         this.utilService.presentAutoDismissToast("Login success! Please wait...");
@@ -77,7 +91,7 @@ export class LoginPage {
         const authObj = this.utilService.extractAndStoreAuthHeaders(response);
 
         if (!isNewUser) {
-        this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
+          this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
         }
 
       }, error => {

@@ -1,18 +1,28 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title *ngIf="profileReady">{{ profile.name }}</ion-title>
+    <ion-title *ngIf="profileReady">{{ profile.names }}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content>
-  <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
+  <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profileImg + ')'" *ngIf="profileReady">
   </div>
 
   <div class="profile-detail" padding *ngIf="profileReady">
     <h2>{{profile.names}}</h2>
+    <h2>{{profile.sex}}</h2>
+    <h2>{{profile.birthdate}}</h2>
+    <h2>{{profile.energyLevel}}</h2>
+    <h2>{{profile.lifeStage}}</h2>
+    <h2>{{profile.birthdate}}</h2>
+    <h2>{{profile.breed.name}}</h2>
     <p>{{profile.aboutMe}}</p>
+    <button ion-item  full color="secondary" (click)="editMatchProfile()" *ngIf="!readOnly">Edit Profile</button>
+    <button ion-item  full color="secondary" (click)="viewUserProfile()" *ngIf="readOnly">View My Owner's Profile</button>
+
   </div>
+
 </ion-content>
