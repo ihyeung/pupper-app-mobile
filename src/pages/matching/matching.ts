@@ -2,8 +2,9 @@ import { Component, EventEmitter } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatchingResult } from '../../models/matching-result';
-import { GlobalVars, MatchProfiles, Utilities, Matches } from '../../providers';
+import { MatchProfiles, Utilities, Matches } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
+import { DEFAULT_IMG } from '../';
 
 export interface Card {
   profileId: number;
@@ -44,78 +45,57 @@ export class MatchingPage {
 
 
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
-    public navCtrl: NavController, public globalVars: GlobalVars,
+    public navCtrl: NavController,
     public matchProfService: MatchProfiles, public utilService: Utilities,
-  public matchesService: Matches) {
+    public matchesService: Matches) {
 
     }
 
-  ionViewDidLoad() {
+    ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfilePage');
 
       this.matchingResults = new Array<MatchingResult>();
-      this.retrieveNextProfileBatch();
+      this.utilService.getMatchProfileFromStorage().then(val => {
+        if (!val) {
+          console.log('Please create a matching profile to begin matching.');
+          this.navCtrl.push('CreateMatchProfilePage');
+        } else {
+          this.matchProfileObj = val;
+
+          this.retrieveNextProfileBatch();
+        }
+      });
     }
 
     retrieveNextProfileBatch() {
-      console.log('retrieving next matcher data batch');
       //Check to make sure a matching profile has been created to start matching
-      this.utilService.getMatchProfileFromStorage().then(val => {
-        if (!val) {
-        console.log('Please create a matching profile to begin matching.');
-        this.navCtrl.push('CreateMatchProfilePage');
-      } else {
-        this.matchProfileObj = val;
-
-        this.matchesService.getNextBatch(val['id'])
-        console.log('retrieveNextProfileBatch implementation is not completed yet.');
-        // });
-        //TODO: Retrieve next batch from database
-      }
-    });
-
+      const matchProfileId = this.matchProfileObj['id'];
+      this.matchesService.getNextBatch(matchProfileId)
+      .map(res => res.json())
+      .subscribe(resp => {
+        this.addToDeck(resp);
+      }, err => console.error('ERROR', err));
     }
 
-    // addRetrievedProfileBatchIntoStack(profileBatchObj) {
-    addRetrievedProfileBatchIntoStack(nextBatch: any[]) {
-      let images = ["assets/img/indy.jpeg", "assets/img/jax.jpg", "assets/img/boston.jpeg", "assets/img/beagle.jpeg",
-      "assets/img/chihua.jpeg", "assets/img/collie.jpeg", "assets/img/doodle.jpeg", "assets/img/maltese.jpeg", "assets/img/sheltie.jpeg"]
+    addToDeck(nextBatch: any) {
 
-      // let images = ["https://s3.us-east-1.amazonaws.com/pupper-mobile-app/user_1_bob_2018-12-03T03:02:36Z"];
-
-      // profileBatchObj.forEach( card => {
-      //
-      // });
-      let pupInfo = [new Array("Indy", " Shiba Inu", " Female"), new Array("Jax", " Pomeranian", " Male"), new Array("Boston", " Shiba Inu", " Male")];
-
-      // nextBatch.forEach(profile => {
-      // images.forEach(profile => {
-      //   this.deckOfCards.push({
-      //     id: profile['profileId'],
-      //     name:profile['names'],
-      //     // name: profile['name'],
-      //     likeEvent: new EventEmitter(),
-      //     destroyEvent: new EventEmitter(),
-      //     image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
-      //     // info: profile['aboutMe']
-      //     info: pupInfo
-      //     // likedByProfile: profile['isMatch']
-      //   });
-
-      images.forEach(img => {
-        let i = images.indexOf(img);
+      nextBatch.forEach(profile => {
+        console.log(profile);
+        let imageStr = profile['profileImage'];
+        if (!imageStr || !imageStr.startsWith('https://') || !imageStr.startsWith('http://')) {
+          imageStr = DEFAULT_IMG;
+        }
+        console.log(imageStr);
         this.deckOfCards.push({
-          id: i,
-          name: pupInfo[i][0],
-          breed: pupInfo[i][1],
-          // name: profile['name'],
+          id: profile['profileId'],
+          name:profile['name'],
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          image: this.sanitizer.bypassSecurityTrustStyle(`url('${img}')`),
-          // image: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
-          // info: profile['aboutMe']
-          info: pupInfo[i][0]
-          // likedByProfile: profile['isMatch']
+          // image: this.sanitizer.bypassSecurityTrustStyle('url(' + imageStr + ')'),
+          image: imageStr,
+          info: profile['aboutMe'],
+          isMatch: profile['isMatch'],
+          userId: profile['userId']
         });
       });
 
@@ -130,9 +110,9 @@ export class MatchingPage {
       if (event.like) {
         console.log("LIKE");
         this.matchingResults.push(new MatchingResult({id: profile['id'], isMatch: true}));
-        if (profile['likedByProfile']) {
+        if (profile['isMatch']) {
           console.log('active user was preivously liked by this profile, mutual match');
-          this.onMutualMatch();
+          this.onMutualMatch(profile['id'], profile['userId']);
         }
       } else {
         console.log("NOT A LIKE");
@@ -141,36 +121,43 @@ export class MatchingPage {
       }
 
       if (this.deckOfCards.length == 1) { //Retrieve next batch when 5 cards remain
-        // this.profileBatch = this.retrieveNextProfileBatch();
         console.log('deck of cards has one card remaining');
         this.nextBatchReady = false;
         this.retrieveNextProfileBatch();
       }
     }
 
-    onMutualMatch() {
+    submitMatchingResults() {
+
+    }
+
+    onMutualMatch(profileId: number, userId: number) {
       let matchDialog = this.alertCtrl.create({
         title: 'It\'s a match!',
         message: 'Would you like to send this pup a message?',
         buttons: [
           {
-            text: 'Continue',
+            text: 'Keep Matching',
             handler: () => {
               console.log('Continue Clicked');
             }
           },
           {
-            text: 'Send a message',
+            text: 'Send A Message',
             handler: () => {
               console.log('Lets Chat Clicked');
-              this.matchProfService.getMatchProfileById(1) //TODO: Figure out how to get the profileId for each card
+              this.matchProfService.getMatchProfileById(profileId, userId)
+              .map(res => res.json())
               .subscribe(resp => {
-                const matchProfileObj = JSON.parse(resp['_body']);
-                this.navCtrl.push('ChatPage', {
-                  newMatch: true,
-                  matchProfileReceiver: matchProfileObj
-                });
+                if (resp['matchProfiles']) {
+                  this.navCtrl.push('ChatPage', {
+                    newMatch: true,
+                    matchProfileReceiver: resp['matchProfiles'][0]
+                  });
+                }
+
               }, err => console.error('ERROR', err));
+
             }
           }
         ]

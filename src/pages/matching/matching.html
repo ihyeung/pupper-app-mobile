@@ -12,14 +12,12 @@
     <div class="card-container" *ngIf="nextBatchReady">
       <sc-card padding *ngFor="let card of deckOfCards" [orientation]="cardDirection" [tinder-card]="cardOverlay"
       [callDestroy]="card.destroyEvent" [callLike]="card.likeEvent" (onLike)="onProfileMatchResult($event, card)">
-      <div [style.background-image]="card.profileImage"></div>
+      <ion-card>
+        <div [style.background-image]="'url(' + card.image + ')'" *ngIf="nextBatchReady"></div>
+      </ion-card>
       <div>
         <ion-label>{{card.name}}</ion-label>
-      </div>
-      <div>
-        <ion-label placeholder="card.info"></ion-label>
-      </div>
-      <div>
+        <ion-label>{{card.info}}</ion-label>
       </div>
     </sc-card>
   </div>
