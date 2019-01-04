@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { Utilities, Messages, Matches, GlobalVars } from '../../providers';
+import { Utilities, Messages, Matches  } from '../../providers';
 import { DEFAULT_IMG } from '../';
 
 @IonicPage()
@@ -19,7 +19,7 @@ export class MessageInboxPage {
   matchesReady: boolean = false;
 
 
-  constructor(public navCtrl: NavController, public globalVars: GlobalVars,
+  constructor(public navCtrl: NavController,
     public matchService: Matches, public msgService: Messages,
     public utilService: Utilities) {
 
@@ -28,7 +28,6 @@ export class MessageInboxPage {
     ionViewDidLoad() {
       this.utilService.getDataFromStorage('match').then(val => {
         this.matchProfileId = val['id'];
-
         this.retrieveMatches();
       });
     }
@@ -44,12 +43,12 @@ export class MessageInboxPage {
           console.log(match);
           this.matchesList.push({
             matchProfileId: match['id'],
-            image: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
-            matchProfileName: match['names'],
+            profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
+            names: match['names'],
             breed: match['breed']['name'],
             lifeStage: match['lifeStage'],
             energyLevel: match['energyLevel'],
-            about: match['aboutMe']
+            aboutMe: match['aboutMe']
           });
         });
         this.matchesReady = true;
@@ -73,31 +72,33 @@ export class MessageInboxPage {
             otherMatchProfile = history[0]['matchProfileReceiver'];
           }
 
-          this.inboxMessageRecentHistory.push(history);
+          const previewTimestamp = this.utilService.getMessageAgeFromTimestamp(history[0]['timestamp']);
+
           this.inboxMessagePreviews.push({
             matchProfileObj: otherMatchProfile,
             matchProfileName: otherMatchProfile['names'],
             image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : DEFAULT_IMG,
             message: history[0]['message'],
-            timestamp: history[0]['timestamp']
+            timestamp: previewTimestamp
           });
+          this.inboxMessageRecentHistory.push(history.reverse());
         }
       });
       this.messagesReady = true;
     }, err => console.error('ERROR', err));
   }
 
-  viewMatchProfile(matchProfileId) {
-    console.log('clicked on match profile for matchProfileId=' + matchProfileId);
+  viewMatchProfile(matchProfile) {
+    console.log('clicked on match profile for matchProfileId=' + matchProfile['matchProfileId']);
     this.navCtrl.push('MatchProfileDetailPage', {
-      matchProfileId: matchProfileId
+      matchProfile: matchProfile,
+      readOnly: true
     });
   }
 
   viewMessageHistory(inboxPreviewItem) {
     const matchProfile = inboxPreviewItem['matchProfileObj'];
-    const matchProfileId = matchProfile['id'];
-    console.log('clicked to view message history for current user & matchProfileId=' + matchProfileId);
+    console.log('clicked to view message history for current user & matchProfileId=' + matchProfile['id']);
 
     const listIndex = this.inboxMessagePreviews.indexOf(inboxPreviewItem);
 
