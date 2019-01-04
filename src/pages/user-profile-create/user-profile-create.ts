@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
-import { Utilities, Users, GlobalVars } from '../../providers';
+import { Utilities, Users  } from '../../providers';
 
 import { Storage } from '@ionic/storage';
 
@@ -27,7 +27,7 @@ export class CreateUserProfilePage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public globalVars: GlobalVars,
+
     public utilService: Utilities,
     public userService: Users,
     private storage: Storage) {
@@ -55,7 +55,7 @@ export class CreateUserProfilePage {
         this.utilService.getAuthHeadersFromStorage().then(val => {
           const authHeaders = this.utilService.createHeadersObjFromAuth(val);
 
-          const today = this.utilService.getCurrentDateInValidFormat();
+          const today = this.utilService.currentDateToValidDateFormat();
           this.userProfileFormData = JSON.stringify({
             firstName: this.firstName,
             lastName: this.lastName,

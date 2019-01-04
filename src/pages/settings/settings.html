@@ -11,8 +11,24 @@
     <ion-card>
       <ion-list full>
         <ion-item-divider>
-          Matching Settings
+          Your Match Profiles
         </ion-item-divider>
+        <button ion-item *ngFor="let profile of profiles" (click)="viewMatchProfile(profile)">
+          <ion-avatar item-start>
+            <img src="{{profile.profileImage}}">
+          </ion-avatar>
+          <h2>{{profile.names}}</h2>
+        </button>
+        <ion-item-divider>
+          Profile Settings
+        </ion-item-divider>
+        <ion-item>
+          <ion-label color="primary">Active match profile goes here: </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
+          <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-toggle>
+        </ion-item>
         <ion-item>
           <ion-label color="primary">Match Radius</ion-label>
           <ion-range [(ngModel)]="searchRadius" min="0" max="50" pin="true" color="secondary">
@@ -20,25 +36,41 @@
             <ion-label range-right>50 miles</ion-label>
           </ion-range>
         </ion-item>
-
+        <ion-item-divider>
+          Matching Settings
+        </ion-item-divider>
         <ion-item>
-          <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
-          <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-toggle>
+          <ion-label color="primary">Dog Size Range</ion-label>
+          <!-- <ion-range [(ngModel)]="size" min="" max="50" pin="true" color="primary"> -->
+          <ion-range>
+            <ion-label range-left>TOY/PETITE</ion-label>
+            <ion-label range-right>EXTRA LARGE</ion-label>
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary">Show me match profiles similar to mine first</ion-label>
+          <!-- <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="profileVisibility"></ion-toggle> -->
+          <ion-toggle item-end right color="secondary" checked="true"></ion-toggle>
         </ion-item>
         <ion-item-divider>
-          Profile Settings
+          User Profile Settings
         </ion-item-divider>
         <ion-item>
           <ion-label color="primary">Set timezone</ion-label>
           <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="timezone"></ion-toggle>
         </ion-item>
       </ion-list>
+
+      <button ion-item (click)="saveSettings()">Save Settings</button>
+      <button ion-item (click)="updateActiveMatchProfile()">Select Active Match Profile </button>
+
     </ion-card>
+
       <ion-list>
-        <button ion-item  full color="secondary" (click)="userProfile()">Edit user</button>
-        <button ion-item outline color="secondary" (click)="matchProfiles()">Edit profiles</button>
-        <button ion-item full color="secondary" (click)="logout()">Log out</button>
-        <button ion-item outline color="secondary" (click)="deleteAccount()">Delete Account</button>
+        <button ion-item  full color="primary" (click)="userProfile()">Edit user</button>
+        <button ion-item outline color="primary" (click)="matchProfiles()">Edit profiles</button>
+        <button ion-item full color="primary" (click)="logout()">Log out</button>
+        <button ion-item outline color="primary" (click)="deleteAccount()">Delete Account</button>
       </ion-list>
   </div>
 </ion-content>
