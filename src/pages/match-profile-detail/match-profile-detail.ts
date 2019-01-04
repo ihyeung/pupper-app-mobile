@@ -10,7 +10,7 @@ import { DEFAULT_IMG } from '../';
   templateUrl: 'match-profile-detail.html',
 })
 export class MatchProfileDetailPage {
-  profileImage: string;
+
   id: number;
   profile: any;
   profileReady: boolean = false;
@@ -26,22 +26,24 @@ export class MatchProfileDetailPage {
     this.id = this.navParams.get('matchProfileId');
     this.readOnly = this.navParams.get('readOnly');
     this.matchProfiles = this.navParams.get('matchProfileList');
+    const matchProfile = this.navParams.get('matchProfile');
 
-    if (this.id) {
+    if (matchProfile) {
+      this.setProfile(matchProfile);
+    }
+    else if (this.id) {
       this.retrieveProfileData(this.id);
     }
     else if (this.matchProfiles) {
       console.log('multiple matchProfiles retrieved from navparms ' + this.matchProfiles.length);
-    }
-    else { //Otherwise retrieve active user's match profile stored in storage
+    } else { //Otherwise retrieve active user's match profile stored in storage
       this.utils.getDataFromStorage('match').then(val => {
         if (!val) {
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
-          this.profile = val;
-          this.profileReady = true;
+          this.setProfile(val);
         }
-      })
+      });
     }
   }
 
@@ -52,11 +54,14 @@ export class MatchProfileDetailPage {
     .subscribe(response => {
         console.log('successfully retrieved match profile by id');
         console.log(response);
-        this.profile = response;
-        this.profileImage = this.profile['profileImage'] ? this.profile['profileImage'] : DEFAULT_IMG;
-        this.profileReady = true;
 
+        this.setProfile(response);
     }, err => console.error('ERROR', err));
+  }
+
+  setProfile(profile: any) {
+    this.profile = profile;
+    this.profileReady = true;
   }
 
   editMatchProfile() {

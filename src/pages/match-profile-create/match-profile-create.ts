@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage } from 'ionic-angular';
-import { GlobalVars, Utilities } from '../../providers';
-import { Http, Headers } from '@angular/http';
-import { environment as ENV } from '../../environments/environment';
+import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
+import { Utilities, MatchProfiles } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -17,60 +15,46 @@ export class CreateMatchProfilePage {
   lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
   lifeStage: string;
   names: string;
-  imageFile: any;
   sex: string;
   size: string;
   breedList: any = [];
   imageFilePath: string;
   imageFileName: string;
-  profileFormData: string;
+  matchProfileFormData: any = [];
   userProfile: any;
+  dogPreferences: string[];
+  authHeaders: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public globalVars: GlobalVars, public http: Http,
-    public utilService: Utilities) {
+    public utilService: Utilities, public matchProfiles: MatchProfiles,
+  public loadCtr: LoadingController) {
 
+  }
+
+    ionViewDidLoad() {
       this.imageFilePath = this.navParams.get('filePath');
-      this.imageFileName = this.navParams.get('filename');
+      this.imageFileName = this.navParams.get('fileName');
 
-      this.utilService.getBreedsFromStorage().then(val => {
+      this.matchProfileFormData = this.navParams.get('formData');
+
+      this.utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
+      })
+
+      this.utilService.getDataFromStorage('breeds').then(val => {
         this.breedList = val;
       });
 
-      this.utilService.getUserFromStorage().then(val => {
+      this.utilService.getDataFromStorage('user').then(val => {
         this.userProfile = val;
-      })
+      });
     }
 
     public createMatchProfile() {
-      // if (this.userInputIsValid()) {
-      this.utilService.presentLoadingIndicator();
-
-      console.log(this.breed); //THIS SHOULD BE AN OBJECT, NOT A STRING
-
-      // const breedLookupUrl = ENV.BASE_URL + '/breed?name=' + this.breed;
-      // this.http.get(breedLookupUrl,
-      //   { headers: this.globalVars.getAuthHeaders() })
-      //   .subscribe(result => {
-      //     if (result['status'] != 200) {
-      //       console.log('ngModel is not passing breed name values correctly');
-      //       return;
-      //     }
-      //
-      //     let breedResponse = JSON.parse(result['_body']);
-      //     this.createMatchProfileFromWithBreedObj(breedResponse);
-      //   }, err => console.error('ERROR', err));
-
-    }
-
-    public createMatchProfileFromWithBreedObj() {
-      if (this.userProfile) {
-        this.utilService.getAuthHeadersFromStorage().then(val => {
-
-        });
+      console.log('createMatchProfileFromWithBreedObj');
       const userProfileId = this.userProfile['id'];
 
-      this.profileFormData = JSON.stringify({
+      this.matchProfileFormData = {
         aboutMe: this.aboutMe,
         birthdate: this.birthdate,
         breed: this.breed,
@@ -82,53 +66,55 @@ export class CreateMatchProfilePage {
         sex: this.sex,
         size: this.size,
         userProfile: this.userProfile
-      });
+      };
+      console.log(this.matchProfileFormData);
+      console.log('Dog preferences: ' + this.dogPreferences);
 
-      const createMatchProfileUrl = ENV.BASE_URL + '/user/' + userProfileId + '/matchProfile';
-      this.http.post(createMatchProfileUrl, this.profileFormData,
-        { headers: this.globalVars.getAuthHeaders() }) //For running back-end in AWS
-        .subscribe(result => {
-            let jsonResponseObj = JSON.parse((result['_body']));
-            let matchProfileObj = jsonResponseObj['matchProfiles'][0];
-            let matchProfileId = matchProfileObj['id'];
+      this.matchProfiles.createMatchProfile(
+        JSON.stringify(this.matchProfileFormData), userProfileId)
+        .map(res => res.json())
+        .subscribe(response => {
+          console.log(response);
+            // let jsonResponseObj = JSON.parse((result['_body']));
+            if (response['matchProfiles']) {
 
-              this.uploadProfileImage(this.imageFile,
-                //TODO: figure out how to get file object from filepath (this.imageFile is undefined)
-              matchProfileId, this.imageFilePath);
+              const matchProfileObj = response['matchProfiles'][0];
+              console.log('Match profile object;'  + matchProfileObj);
+              let matchProfileId = matchProfileObj['id'];
 
-              this.globalVars.setMatchProfileObj(matchProfileObj);
+                // this.uploadProfileImage(this.imageFile,
+                //   //TODO: figure out how to get file object from filepath (this.imageFile is undefined)
+                // matchProfileId, this.imageFilePath);
 
-              this.navCtrl.push('TabsPage');
+                this.utilService.storeData('match', matchProfileObj);
+                this.navCtrl.push('TabsPage');
+            }
           }, err => console.error('ERROR', err));
-}
       }
 
-      uploadProfileImage(file: Blob, matchProfileId, imageFilePath) {
-        let formData = new FormData();
-        formData.append('profilePic', file);
-
-        let authToken = this.globalVars.getAuthHeaders().get('Authorization');
-        const formheadersWithAuth = new Headers({
-          'Authorization': authToken
-        });
-
-        const userProfileId = this.globalVars.getUserProfileObj()['id'];
-
-        let imageUploadEndpoint = ENV.BASE_URL + '/user/' + userProfileId +
-        '/matchProfile/' + matchProfileId + '/upload';
-
-        this.http.put(imageUploadEndpoint, formData,
-          { headers: formheadersWithAuth })
-          .subscribe(() => {
-              console.log('Image uploaded successfully.');
-          }, err => console.error('ERROR', err));
+      uploadProfileImage(file: any, matchProfileId: number, imageFilePath: string) {
+        const userProfileId = this.userProfile['id'];
+        const reader = new FileReader();
+            reader.onloadend = () => {
+              const imgBlob = new Blob([reader.result], {type: file.type});
+              this.matchProfiles.uploadImage(userProfileId, matchProfileId, imgBlob, file)
+              .subscribe(res => {
+                console.log(res);
+          if (res['success']) {
+              console.log('File upload complete.')
+          } else {
+              console.log('File upload failed.')
+          }
+      });
+          }
+            reader.readAsArrayBuffer(file);
 
       }
 
       addProfileImage() {
         this.navCtrl.push('ImageUploadPage', {
           profileType: 'match',
-          formData: this.profileFormData
+          formData: this.matchProfileFormData
         });
       }
 

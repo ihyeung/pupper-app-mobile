@@ -6,11 +6,18 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <!-- <ion-card> -->
   <ion-list no-lines>
     <ion-item>
       <ion-label floating>DOG NAME</ion-label>
       <ion-input [(ngModel)]="names" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>GENDER</ion-label>
+      <ion-select [(ngModel)]="sex">
+        <ion-option value="FEMALE">FEMALE</ion-option>
+        <ion-option value="MALE">MALE</ion-option>
+        <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
+      </ion-select>
     </ion-item>
       <ion-item>
         <ion-label floating>BREED</ion-label>
@@ -21,14 +28,8 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label floating>ENERGY LEVEL</ion-label>
-        <ion-select [(ngModel)]="energyLevel">
-          <ion-option value="MIN">Minimal</ion-option>
-          <ion-option value="LOW">Low</ion-option>
-          <ion-option value="MED">Medium</ion-option>
-          <ion-option value="HIGH">High</ion-option>
-          <ion-option value="EXTREME">Extreme</ion-option>
-        </ion-select>
+        <ion-label floating>BIRTHDAY</ion-label>
+        <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate"></ion-datetime>
       </ion-item>
       <ion-item>
         <ion-label floating>LIFE STAGE</ion-label>
@@ -39,27 +40,38 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label floating>PUP SIZE</ion-label>
+        <ion-label floating>ENERGY LEVEL</ion-label>
+        <ion-select [(ngModel)]="energyLevel">
+          <ion-option value="MIN">MINIMAL</ion-option>
+          <ion-option value="LOW">LOW</ion-option>
+          <ion-option value="MED">MEDIUM</ion-option>
+          <ion-option value="HIGH">HIGH</ion-option>
+          <ion-option value="EXTREME">EXTREME</ion-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>DOG SIZE</ion-label>
         <ion-select [(ngModel)]="size">
-          <ion-option value="TOY">Toy</ion-option>
-          <ion-option value="SMALL">Small</ion-option>
-          <ion-option value="MID">Mid</ion-option>
-          <ion-option value="LARGE">Large</ion-option>
-          <ion-option value="XLARGE">X-Large</ion-option>
+          <ion-option value="TOY">TOY/PETITE (0-10 POUNDS)</ion-option>
+          <ion-option value="SMALL">SMALL (11-25 POUNDS)</ion-option>
+          <ion-option value="MID">MEDIUM (26-50 POUNDS)</ion-option>
+          <ion-option value="LARGE">LARGE (51-99 POUNDS)</ion-option>
+          <ion-option value="XLARGE">EXTRA LARGE (100+ POUNDS)</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label floating>GENDER</ion-label>
-        <ion-select [(ngModel)]="sex">
-          <ion-option value="FEMALE">FEMALE</ion-option>
-          <ion-option value="MALE">MALE</ion-option>
-          <ion-option value="UNKNOWN">PREFER NOT TO ANSWER</ion-option>
+        <ion-label floating>GETS ALONG WITH DOGS THAT ARE ...</ion-label>
+        <ion-select [(ngModel)]="dogPreferences" multiple="true">
+          <ion-option value="TOY">TOY/PETITE (0-10 POUNDS)</ion-option>
+          <ion-option value="SMALL">SMALL (11-25 POUNDS)</ion-option>
+          <ion-option value="MID">MEDIUM (26-50 POUNDS)</ion-option>
+          <ion-option value="LARGE">LARGE (51-99 POUNDS)</ion-option>
+          <ion-option value="XLARGE">EXTRA LARGE (100+ POUNDS)</ion-option>
+          <ion-option value="NONE">NONE OF THE ABOVE</ion-option>
+          <ion-option value="ALL">ALL OF THE ABOVE</ion-option>
         </ion-select>
       </ion-item>
-    <ion-item>
-      <ion-label floating>BIRTHDAY</ion-label>
-      <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate"></ion-datetime>
-    </ion-item>
     <ion-item text-wrap>
       <ion-label floating>ABOUT ME</ion-label><br>
       <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="150"></ion-textarea>
@@ -68,5 +80,4 @@
     <br><br>
     <button ion-button full class="btn" (click)="addProfileImage()">Add a profile image</button>
     <button ion-button full class="btn" (click)="createMatchProfile()">Create Profile</button>
-  <!-- </ion-card> -->
 </ion-content>
