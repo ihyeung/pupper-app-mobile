@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { GlobalVars, Utilities } from '../../providers';
+import { LoadingController } from 'ionic-angular';
+import { Utilities } from '../../providers';
 import { MatchProfile } from '../../models/match-profile';
 import { environment as ENV } from '../../environments/environment';
 
@@ -9,20 +10,25 @@ import { environment as ENV } from '../../environments/environment';
 export class MatchProfiles {
   authHeaders: any;
 
-    constructor(public http: Http, public globalVars: GlobalVars,
-    private utilService: Utilities) {
-      this.utilService.getAuthHeadersFromStorage().then(val => {
-        this.authHeaders = new Headers({ 'Content-Type': val['Content-Type'],
-        'Authorization': val['Authorization'] });
+    constructor(public http: Http,
+    private utilService: Utilities, private loadCtrl: LoadingController) {
+      this.utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
       });
     }
 
-    createMatchProfile(matchProfileObj: any) {
+    createMatchProfile(matchProfileObj: any, userId: number) {
+      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile`;
+      console.log("Creating match profile: " + url);
 
+      return this.http.post(url, matchProfileObj, { headers: this.authHeaders });
     }
 
-    updateMatchProfile(matchProfileObj: any) {
+    updateMatchProfile(matchProfileObj: any, userId: number) {
+      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile`;
+      console.log("Creating match profile: " + url);
 
+      return this.http.put(url, matchProfileObj, { headers: this.authHeaders });
     }
 
     deleteMatchProfileById(userId: number, matchProfileId: number) {
@@ -49,14 +55,33 @@ export class MatchProfiles {
         getMatchProfilesForUserUrl, { headers: this.authHeaders });
     }
 
-    getMatchProfileById(matchProfileId: number) {
+    getMatchProfileById(matchProfileId: number, userId: number) {
       const matchProfileByIdUrl =
-      `${ENV.BASE_URL}/matchProfile?matchProfileId=${matchProfileId}`;
+      `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
+      console.log(matchProfileByIdUrl);
       return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     }
 
-    uploadImage(userProfileId, matchProfileId, file){
+    uploadImage(userProfileId: number, matchProfileId: number, image: Blob, file: any) {
+      let formData = new FormData();
+      formData.append('profilePic', image, file.name);
 
+      const formheadersWithAuth = new Headers({
+        'Authorization': this.authHeaders.get('Authorization')
+      });
+      const url =
+      `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
+      console.log('uploading image: ' + url);
+
+      return this.http.put(url, formData, { headers: formheadersWithAuth });
+    }
+
+    deleteImageUpload(userProfileId: number, matchProfileId: number) {
+      const url =
+      `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
+      console.log('deleting uploaded image: ' + url);
+
+      return this.http.delete(url, { headers: this.authHeaders });
     }
 
 }

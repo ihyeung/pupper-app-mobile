@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController, LoadingController } from 'ionic-angular';
-import { GlobalVars } from '../../providers/global/global-vars';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
@@ -8,7 +7,7 @@ import { Storage } from '@ionic/storage';
 @Injectable()
 export class Utilities {
 
-  constructor(public globalVars: GlobalVars,
+  constructor(
     public http: Http,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
@@ -101,7 +100,10 @@ export class Utilities {
       return new Headers({ 'Content-Type': jsonType, 'Authorization': jwt });
     }
 
-    getCurrentDateInValidFormat() {
+    /*
+    Generates today's date as a string with the format yyyy-MM-dd
+    */
+    currentDateToValidDateFormat() {
       const today = new Date();
       //Months are 0 indexed so increment month by 1
       const monthVal = today.getMonth() + 1;
@@ -110,11 +112,56 @@ export class Utilities {
       return today.getFullYear() + "-" + monthString + "-" + dayString;
     }
 
-    convertUtcTimestampToDate(utcString) {
+    /*
+    Method that converts message or match timestamp (in utc or iso form)
+    from back-end to a standardized timestamp.
+    */
+    convertTimestampToDate(timestamp: string) {
+      if (timestamp.indexOf('Z') == -1) {
+        return new Date(timestamp + 'Z');
+      } else {
+        return new Date(timestamp);
+      }
+    }
+
+    /*
+    Converts ISO timestamp of the format 2019-01-04T01:40:55.487Z to
+    the format 2019-01-04 01:40:55.
+    */
+    isoStringToUTCTimestamp(isoStringDate: string) {
+      if (isoStringDate.indexOf('.') == -1) {
+        return isoStringDate;
+      }
+      return isoStringDate.replace('T', ' ').split('.')[0];
     }
 
     getBreeds(headers) {
       return this.http.get(ENV.BASE_URL + '/breed', { headers: headers });
+    }
+
+    getMessageAgeFromTimestamp(timestamp: string) {
+      const standardizedTimestamp = this.convertTimestampToDate(timestamp);
+      const now = new Date().getTime();
+      const difference = now - standardizedTimestamp.getTime();
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+      if (difference >= ONE_DAY_MS) {
+        const days = Math.round(difference/ONE_DAY_MS);
+        if (days >= 14) {
+          const weeks = Math.round(days/7);
+          return `${weeks} weeks ago`;
+        }
+        return `${days} days ago`;
+      }
+      else {
+        if (difference >= ONE_DAY_MS/24) {
+          const hours = Math.round(difference/(ONE_DAY_MS/24));
+          return `${hours} hours ago`;
+        } else {
+          const min = Math.round(difference/(ONE_DAY_MS/(24*60)));
+          console.log('minutes: ' + min);
+          return `${min} minutes ago`;
+        }
+      }
     }
 
     presentDismissableToast(message) {
@@ -140,7 +187,7 @@ export class Utilities {
     async presentLoadingIndicator() {
       const loader = await this.loadCtrl.create({
         content: "Please wait...",
-        duration: 3000
+        duration: 2000
       });
       return await loader.present();
     }
