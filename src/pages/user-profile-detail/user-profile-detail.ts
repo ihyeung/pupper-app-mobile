@@ -27,7 +27,6 @@ export class UserProfileDetailPage {
       this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
         const id = this.navParams.get('userId');
-        this.retrieveUserProfile(id);
       });
 
     }

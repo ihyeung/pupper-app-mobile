@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage} from 'ionic-angular';
 import { Http } from '@angular/http';
-import { GlobalVars, Utilities, Messages } from '../../providers';
+import { Utilities, Messages } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 import { DEFAULT_IMG } from '../';
 
@@ -41,7 +41,6 @@ export class ChatPage {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
       this.fromMatchProfile = val;
-
       this.extractNavParamData();
     }
   });
@@ -66,22 +65,20 @@ export class ChatPage {
   }
 
   displayMessageHistory(recentMessages) {
-    recentMessages.reverse() //Recent messages are most to least recent, flip order for message inbox page
-    .forEach(msg => {
+    recentMessages.forEach(msg => {
 
-
+      const message = this.utilService.getMessageAgeFromTimestamp(msg['timestamp']);
       this.chatMessages.push({
         message: msg['message'],
-        timestamp: msg['timestamp'],
+        timestamp: message,
         incomingMessage: this.isIncomingMessage(msg)
       });
     });
-    console.log('Total number of chat messages: ' + this.chatMessages.length);
     this.historyReady = true;
   }
 
   sendMessage() {
-    const messageTimeStamp = new Date().toISOString();
+    const messageTimeStamp = this.utilService.isoStringToUTCTimestamp(new Date().toISOString());
     console.log('message timestamp: ' + messageTimeStamp);
 
     this.msgService.sendMessage(this.fromMatchProfile, this.toMatchProfile, this.message,

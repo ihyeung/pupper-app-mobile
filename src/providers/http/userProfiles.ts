@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { GlobalVars, Utilities } from '../../providers';
+import { Utilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 import { User } from '../../models/user';
 
@@ -9,7 +9,7 @@ export class Users {
   basicHeaders: any;
   authHeaders: any;
 
-  constructor(public http: Http, public globalVars: GlobalVars,
+  constructor(public http: Http,
     public utilService: Utilities) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
@@ -38,23 +38,8 @@ export class Users {
 
     getUserAccountByEmail(username, headers) {
       const getUserAccountByEmailUrl = `${ENV.BASE_URL}/account?email=${username}`;
-      this.authHeaders = headers;
-      // if (!this.authHeaders) {
-      //   this.authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
-      //   .subscribe(response => {
-      //     this.utilService.extractAndStoreAuthHeaders(response);
-      //
-      //     this.utilService.getAuthHeadersFromStorage().then(val => {
-      //       this.authHeaders = this.utilService.createHeadersObjFromAuth(val);
-      //
-      //       return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
-      //
-      //     });
-      //
-      //   }, err => console.error('ERROR', err));
-      // } else {
-        return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
-      // }
+      console.log(getUserAccountByEmailUrl);
+      return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
     }
 
     updateUserAccount(userAccount: any, headers: any) {
@@ -89,27 +74,22 @@ export class Users {
     }
 
     updateUserProfile(userProfileObj) {
-      console.log(this.authHeaders);
-      // if (!this.authHeaders) {
-      //   return null;
-      // }
       const url = `${ENV.BASE_URL}/user`;
       console.log('Updating user profile: ' + url);
 
-      return this.http.post(url, userProfileObj,
-          { headers: this.authHeaders });
+      return this.http.post(url, userProfileObj, { headers: this.authHeaders });
     }
 
     updateLastLogin(userProfileObj, date) {
         const updateLastLoginUrlString = ENV.BASE_URL +
         "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
 
+        console.log('updating last login: ' + updateLastLoginUrlString);
         return this.http.put(updateLastLoginUrlString, userProfileObj,
           { headers: this.authHeaders });
     }
 
-    uploadImage(userProfileId, file){
-
+    uploadImage(userProfileId: number, file: File){
     }
 
     deleteUser(userProfileObj) {

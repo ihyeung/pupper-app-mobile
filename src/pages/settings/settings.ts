@@ -29,10 +29,18 @@ export class SettingsPage {
       });
     }
 
+    updateActiveMatchProfile() {
+      
+    }
+
     userProfile() {
       this.dialog.alert('User Profile button clicked')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
+    }
+
+    viewMatchProfile(profile: any) {
+      this.navCtrl.push('MatchProfileDetailPage', { matchProfile: profile });
     }
 
     matchProfile() {

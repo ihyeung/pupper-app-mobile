@@ -3,7 +3,7 @@ import { Storage } from '@ionic/storage';
 import { NavController, IonicPage } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { environment as ENV } from '../../environments/environment';
-import { Utilities, Users, GlobalVars } from '../../providers';
+import { Utilities, Users  } from '../../providers';
 import { DEFAULT_IMG } from '../';
 
 @IonicPage()
@@ -30,9 +30,7 @@ export class HomePage {
     }
 
     signup(){
-      this.navCtrl.push('LoginPage', {
-        userAuthType: "sign up"
-      });
+      this.navCtrl.push('LoginPage', { userAuthType: "sign up" });
     }
 
     retrieveBreedList() {
@@ -44,7 +42,7 @@ export class HomePage {
         this.utilService.getBreeds(this.utilService.createHeadersObjFromAuth(headers))
         .map(res => res.json())
         .subscribe(breedResponse => {
-           this.utilService.storeBreeds(breedResponse);
+           this.utilService.storeData('breeds', breedResponse);
 
         }, err => console.error('ERROR', err));
       }, err => console.error('ERROR', err));

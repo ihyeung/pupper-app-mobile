@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { GlobalVars, Utilities } from '../../providers';
+import { Utilities } from '../../providers';
 import { MatchingResult } from '../../models/matching-result';
 import { environment as ENV } from '../../environments/environment';
 
@@ -8,10 +8,10 @@ import { environment as ENV } from '../../environments/environment';
 export class Matches {
   authHeaders: any;
 
-  constructor(public http: Http, public globalVars: GlobalVars,
+  constructor(public http: Http,
     private utilService: Utilities) {
-      utilService.getAuthHeadersFromStorage().then(val => {
-        this.authHeaders = utilService.createHeadersObjFromAuth(val);
+      utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
       });
     }
 
@@ -23,7 +23,7 @@ export class Matches {
   }
 
   getNextBatch(matchProfileId: number) {
-    const DEFAULT_RADIUS = 5;
+    const DEFAULT_RADIUS = '15';
     const fetchMatcherDataUrl =
     `${ENV.BASE_URL}/matcher?matchProfileId=${matchProfileId}&zipRadius=${DEFAULT_RADIUS}`;
     console.log('Retrieving next matcher batch', fetchMatcherDataUrl);
