@@ -23,41 +23,46 @@ export class MatchProfileDetailPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MatchProfileDetailPage');
-    this.id = this.navParams.get('matchProfileId');
+    // this.id = this.navParams.get('matchProfileId');
     this.readOnly = this.navParams.get('readOnly');
-    this.matchProfiles = this.navParams.get('matchProfileList');
+    this.matchProfiles = this.navParams.get('matchProfiles');
     const matchProfile = this.navParams.get('matchProfile');
 
     if (matchProfile) {
       this.setProfile(matchProfile);
     }
-    else if (this.id) {
-      this.retrieveProfileData(this.id);
+    if (this.matchProfiles) {
+      console.log('User has ' + this.matchProfiles.length + ' match profiles');
+
+      //TODO: Display modal pane with match profiles you can swipe through
     }
-    else if (this.matchProfiles) {
-      console.log('multiple matchProfiles retrieved from navparms ' + this.matchProfiles.length);
-    } else { //Otherwise retrieve active user's match profile stored in storage
-      this.utils.getDataFromStorage('match').then(val => {
-        if (!val) {
-          this.navCtrl.push('CreateMatchProfilePage');
-        } else {
-          this.setProfile(val);
-        }
-      });
-    }
+    // else if (this.id) {
+      // this.retrieveProfileData(this.id);
+    // }
+    // else if (this.matchProfiles) {
+    //   console.log('multiple matchProfiles retrieved from navparms ' + this.matchProfiles.length);
+    // } else { //Otherwise retrieve active user's match profile stored in storage
+    //   this.utils.getDataFromStorage('match').then(val => {
+    //     if (!val) {
+    //       this.navCtrl.push('CreateMatchProfilePage');
+    //     } else {
+    //       this.setProfile(val);
+    //     }
+    //   });
+    // }
   }
 
-  retrieveProfileData(id: number) {
-    console.log('retrieving match profile detail for ' + id);
-    this.matchProfileService.getMatchProfileById(id)
-    .map(res => res.json())
-    .subscribe(response => {
-        console.log('successfully retrieved match profile by id');
-        console.log(response);
-
-        this.setProfile(response);
-    }, err => console.error('ERROR', err));
-  }
+  // retrieveProfileData(id: number) {
+  //   console.log('retrieving match profile detail for ' + id);
+  //   this.matchProfileService.getMatchProfileById(id)
+  //   .map(res => res.json())
+  //   .subscribe(response => {
+  //       console.log('successfully retrieved match profile by id');
+  //       console.log(response);
+  //
+  //       this.setProfile(response);
+  //   }, err => console.error('ERROR', err));
+  // }
 
   setProfile(profile: any) {
     this.profile = profile;
