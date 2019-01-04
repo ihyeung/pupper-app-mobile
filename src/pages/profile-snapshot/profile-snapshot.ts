@@ -33,7 +33,6 @@ export class ProfileSnapshotPage {
 
     retrieveMatchProfilesForUser(){
       this.utilService.getUserFromStorage().then(user => {
-        console.log("retrievd user from storage" + user);
         this.welcome = `Welcome back, ${user['firstName']}!`;
         this.userProfileObj = user;
         this.image = user['profileImage'];
@@ -42,7 +41,6 @@ export class ProfileSnapshotPage {
         this.matchProfService.getMatchProfiles(user)
         .map(res => res.json())
         .subscribe(resp => {
-          // console.log(resp);
           console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
           if (resp['matchProfiles'] === undefined || resp['matchProfiles'].length == 0) {
             console.log("No match profiles for user");
