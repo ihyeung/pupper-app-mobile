@@ -35,7 +35,7 @@ export class ProfileSnapshotPage {
       this.utilService.getUserFromStorage().then(user => {
         this.welcome = `Welcome back, ${user['firstName']}!`;
         this.userProfileObj = user;
-        this.image = user['profileImage'];
+        this.image = user['profileImage'] ? user['profileImage'] : DEFAULT_IMG;
         this.userReady = true;
 
         this.matchProfService.getMatchProfiles(user)

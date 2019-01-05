@@ -92,30 +92,40 @@ export class CreateMatchProfilePage {
           }, err => console.error('ERROR', err));
       }
 
-      uploadProfileImage(file: any, matchProfileId: number, imageFilePath: string) {
-        const userProfileId = this.userProfile['id'];
-        const reader = new FileReader();
-            reader.onloadend = () => {
-              const imgBlob = new Blob([reader.result], {type: file.type});
-              this.matchProfiles.uploadImage(userProfileId, matchProfileId, imgBlob, file)
-              .subscribe(res => {
-                console.log(res);
-          if (res['success']) {
-              console.log('File upload complete.')
-          } else {
-              console.log('File upload failed.')
-          }
-      });
-          }
-            reader.readAsArrayBuffer(file);
-
-      }
+      // uploadProfileImage(file: any, matchProfileId: number, imageFilePath: string) {
+      //   const userProfileId = this.userProfile['id'];
+      //   const reader = new FileReader();
+      //       reader.onloadend = () => {
+      //         const imgBlob = new Blob([reader.result], {type: file.type});
+      //         this.matchProfiles.uploadImage(userProfileId, matchProfileId, imgBlob, imageFilePath)
+      //         .subscribe(res => {
+      //           console.log(res);
+      //     if (res['success']) {
+      //         console.log('File upload complete.')
+      //     } else {
+      //         console.log('File upload failed.')
+      //     }
+      // });
+      //     }
+      //       reader.readAsArrayBuffer(file);
+      // }
 
       addProfileImage() {
-        this.navCtrl.push('ImageUploadPage', {
-          profileType: 'match',
-          formData: this.matchProfileFormData
-        });
-      }
+        const filepath = "/Users/iyeung/School/pupper stuff/CAPSTONE_DEMO_IMG.jpg";
+        this.matchProfiles.uploadImage(this.userProfile['id'], 100, filepath)
+        .subscribe(res => {
+                  console.log(res);
+                } , err => console.error('ERROR ', err));
+        }
+        //     if (res['success']) {
+        //         console.log('File upload complete.')
+        //     } else {
+        //         console.log('File upload failed.')
+        //     }
+        // });)
+        // this.navCtrl.push('ImageUploadPage', {
+        //   profileType: 'match',
+        //   formData: this.matchProfileFormData
+        // });
 
     }
