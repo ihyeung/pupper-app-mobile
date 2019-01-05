@@ -20,6 +20,7 @@ export interface Card {
   distance: string;
   numDogs: number;
   isMatch: boolean;
+  userId: number;
 }
 
 @IonicPage()
@@ -55,7 +56,7 @@ export class MatchingPage {
       console.log('ionViewDidLoad MatchProfilePage');
 
       this.matchingResults = new Array<MatchingResult>();
-      this.utilService.getMatchProfileFromStorage().then(val => {
+      this.utilService.getDataFromStorage('match').then(val => {
         if (!val) {
           console.log('Please create a matching profile to begin matching.');
           this.navCtrl.push('CreateMatchProfilePage');
@@ -70,10 +71,14 @@ export class MatchingPage {
     retrieveNextProfileBatch() {
       //Check to make sure a matching profile has been created to start matching
       const matchProfileId = this.matchProfileObj['id'];
-      this.matchesService.getNextBatch(matchProfileId)
+      this.matchesService.getNextBatch(matchProfileId, true, false)
       .map(res => res.json())
       .subscribe(resp => {
-        this.addToDeck(resp);
+        if (resp.length == 0) {
+          this.displayErrorModal();
+        } else {
+          this.addToDeck(resp);
+        }
       }, err => console.error('ERROR', err));
     }
 
@@ -82,20 +87,25 @@ export class MatchingPage {
       nextBatch.forEach(profile => {
         console.log(profile);
         let imageStr = profile['profileImage'];
-        if (!imageStr || !imageStr.startsWith('https://') || !imageStr.startsWith('http://')) {
+        console.log(imageStr);
+        if (!imageStr || !(imageStr.startsWith('https://') || imageStr.startsWith('http://'))) {
+          console.log('Invalid profile image, setting to default');
           imageStr = DEFAULT_IMG;
         }
-        console.log(imageStr);
+
         this.deckOfCards.push({
           id: profile['profileId'],
           name:profile['name'],
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          // image: this.sanitizer.bypassSecurityTrustStyle('url(' + imageStr + ')'),
-          image: imageStr,
+          imageUrl: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
           info: profile['aboutMe'],
-          isMatch: profile['isMatch'],
-          userId: profile['userId']
+          sex: profile['sex'],
+          isMatch: profile['match'],
+          userId: profile['userId'],
+          location: profile['distance'],
+          age: profile['ageWithUnits'],
+          lastActive: profile['lastActive']
         });
       });
 
@@ -105,33 +115,50 @@ export class MatchingPage {
     onProfileMatchResult(event, profile) {
 
       const listIndex = this.deckOfCards.indexOf(profile);
+      const cardsRemaining = this.deckOfCards.length - 1 - listIndex;
+      console.log('Cards remaining: ', cardsRemaining);
+      if (cardsRemaining == 1) {
+        this.retrieveNextProfileBatch();
+      }
       console.log('profile card #' + listIndex + ' of stack has been liked/disliked by user');
 
       if (event.like) {
         console.log("LIKE");
         this.matchingResults.push(new MatchingResult({id: profile['id'], isMatch: true}));
         if (profile['isMatch']) {
-          console.log('active user was preivously liked by this profile, mutual match');
-          this.onMutualMatch(profile['id'], profile['userId']);
+          console.log('active user was previously liked by this profile, mutual match');
+          this.onMutualMatch(profile['id']);
         }
       } else {
         console.log("NOT A LIKE");
         this.matchingResults.push(new MatchingResult({id: profile['id'], isMatch: false}));
 
       }
-
-      if (this.deckOfCards.length == 1) { //Retrieve next batch when 5 cards remain
-        console.log('deck of cards has one card remaining');
-        this.nextBatchReady = false;
-        this.retrieveNextProfileBatch();
+      if (this.matchingResults.length >= 5) {
+        this.submitMatchingResults();
       }
     }
 
     submitMatchingResults() {
-
+      console.log(`${this.matchingResults.length} match result records to submit for update`);
+      console.log("Not implemented yet");
+      // this.matchingResults = new Array<MatchingResult>();
     }
 
-    onMutualMatch(profileId: number, userId: number) {
+    viewProfile(id: number) {
+      console.log('Viewing Match Profile ' + id);
+      this.navCtrl.push('MatchProfileDetailPage', {
+        matchProfileId: id,
+        readOnly: true
+      });
+    }
+
+    private displayErrorModal() {
+      console.log('No more profiles left');
+      //TODO: Implement this
+    }
+
+    onMutualMatch(profileId: number) {
       let matchDialog = this.alertCtrl.create({
         title: 'It\'s a match!',
         message: 'Would you like to send this pup a message?',
@@ -146,7 +173,7 @@ export class MatchingPage {
             text: 'Send A Message',
             handler: () => {
               console.log('Lets Chat Clicked');
-              this.matchProfService.getMatchProfileById(profileId, userId)
+              this.matchProfService.getMatchProfileByMatchProfileId(profileId)
               .map(res => res.json())
               .subscribe(resp => {
                 if (resp['matchProfiles']) {
