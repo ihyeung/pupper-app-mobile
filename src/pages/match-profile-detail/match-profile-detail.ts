@@ -23,7 +23,7 @@ export class MatchProfileDetailPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MatchProfileDetailPage');
-    // this.id = this.navParams.get('matchProfileId');
+    this.id = this.navParams.get('matchProfileId');
     this.readOnly = this.navParams.get('readOnly');
     this.matchProfiles = this.navParams.get('matchProfiles');
     const matchProfile = this.navParams.get('matchProfile');
@@ -36,9 +36,9 @@ export class MatchProfileDetailPage {
 
       //TODO: Display modal pane with match profiles you can swipe through
     }
-    // else if (this.id) {
-      // this.retrieveProfileData(this.id);
-    // }
+    else if (this.id) {
+      this.retrieveProfileData(this.id);
+    }
     // else if (this.matchProfiles) {
     //   console.log('multiple matchProfiles retrieved from navparms ' + this.matchProfiles.length);
     // } else { //Otherwise retrieve active user's match profile stored in storage
@@ -52,17 +52,17 @@ export class MatchProfileDetailPage {
     // }
   }
 
-  // retrieveProfileData(id: number) {
-  //   console.log('retrieving match profile detail for ' + id);
-  //   this.matchProfileService.getMatchProfileById(id)
-  //   .map(res => res.json())
-  //   .subscribe(response => {
-  //       console.log('successfully retrieved match profile by id');
-  //       console.log(response);
-  //
-  //       this.setProfile(response);
-  //   }, err => console.error('ERROR', err));
-  // }
+  retrieveProfileData(id: number) {
+    console.log('retrieving match profile detail for ' + id);
+    this.matchProfileService.getMatchProfileByMatchProfileId(id)
+    .map(res => res.json())
+    .subscribe(response => {
+        console.log('successfully retrieved match profile by id');
+        console.log(response);
+
+        this.setProfile(response);
+    }, err => console.error('ERROR', err));
+  }
 
   setProfile(profile: any) {
     this.profile = profile;

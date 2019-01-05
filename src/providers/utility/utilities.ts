@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController, LoadingController } from 'ionic-angular';
-import { Http, Headers } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
 
@@ -13,6 +13,21 @@ export class Utilities {
     private alertCtrl: AlertController,
     public loadCtrl: LoadingController,
     private storage: Storage) { }
+
+    uploadUserImage(userProfileId: number, formData: any, headers: any) {
+
+      const formheadersWithAuth = new Headers({
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+        'Authorization': headers.get('Authorization')
+      });
+      const url =
+      `${ENV.BASE_URL}/user/${userProfileId}/upload`;
+      console.log('uploading image: ' + url);
+
+      const options = new RequestOptions({headers: formheadersWithAuth});
+
+      return this.http.put(url, formData, options);
+    }
 
     clearStorage() {
       this.storage.clear();

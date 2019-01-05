@@ -79,7 +79,7 @@ export class ChatPage {
 
   sendMessage() {
     const messageTimeStamp = this.utilService.isoStringToUTCTimestamp(new Date().toISOString());
-    console.log('message timestamp: ' + messageTimeStamp);
+    const messageTimeStampFormatted = this.utilService.getMessageAgeFromTimestamp(messageTimeStamp);
 
     this.msgService.sendMessage(this.fromMatchProfile, this.toMatchProfile, this.message,
       messageTimeStamp)
@@ -87,15 +87,16 @@ export class ChatPage {
       .subscribe(response => {
         console.log(response);
         if (response['isSuccess'] == 200) {
-          console.log("Message successfully sent.");
-        }
+
           this.chatMessages.push({
             message: this.message,
-            timestamp: messageTimeStamp,
+            timestamp: messageTimeStampFormatted,
             incomingMessage: false
           });
           this.message = this.MESSAGE_PLACEHOLDER;
-
+        } else {
+          console.log('Error sending message');
+        }
       }, err => console.error('ERROR', err));
 
   }

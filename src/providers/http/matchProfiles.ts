@@ -55,25 +55,38 @@ export class MatchProfiles {
         getMatchProfilesForUserUrl, { headers: this.authHeaders });
     }
 
-    getMatchProfileById(matchProfileId: number, userId: number) {
+    getMatchProfileByMatchProfileId(matchProfileId: number) {
       const matchProfileByIdUrl =
-      `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
+      `${ENV.BASE_URL}/matchProfile?matchProfileId=${matchProfileId}`;
       console.log(matchProfileByIdUrl);
       return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     }
 
-    uploadImage(userProfileId: number, matchProfileId: number, image: Blob, file: any) {
+    // getMatchProfileByIds(matchProfileId: number, userId: number) {
+    //   const matchProfileByIdUrl =
+    //   `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
+    //   console.log(matchProfileByIdUrl);
+    //   return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
+    // }
+
+    uploadImage(userProfileId: number, matchProfileId: number, fileName: string) {
       let formData = new FormData();
-      formData.append('profilePic', image, file.name);
+      // formData.append('profilePic', imageFile, fileName);
+      formData.append('profilePic', fileName);
+
 
       const formheadersWithAuth = new Headers({
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
         'Authorization': this.authHeaders.get('Authorization')
       });
       const url =
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
       console.log('uploading image: ' + url);
 
-      return this.http.put(url, formData, { headers: formheadersWithAuth });
+      return this.http.put(url, formData, {
+        headers: formheadersWithAuth,
+        withCredentials: true
+      });
     }
 
     deleteImageUpload(userProfileId: number, matchProfileId: number) {
