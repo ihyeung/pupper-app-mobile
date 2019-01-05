@@ -22,10 +22,10 @@ export class Matches {
     return this.http.get(getMatchesUrl, { headers: this.authHeaders });
   }
 
-  getNextBatch(matchProfileId: number) {
-    const DEFAULT_RADIUS = '15';
+  getNextBatch(matchProfileId: number, randomize: boolean, calculateDistances: boolean) {
     const fetchMatcherDataUrl =
-    `${ENV.BASE_URL}/matcher?matchProfileId=${matchProfileId}&zipRadius=${DEFAULT_RADIUS}`;
+    `${ENV.BASE_URL}/matcher?matchProfileId=${matchProfileId}` +
+    `&randomize=${randomize}&calculateDistances=${calculateDistances}`;
     console.log('Retrieving next matcher batch', fetchMatcherDataUrl);
 
     return this.http.get(fetchMatcherDataUrl, { headers: this.authHeaders });
@@ -39,10 +39,10 @@ export class Matches {
       timestamp: timestamp
     });
 
-    console.log('timestamp: ' + timestamp);
     const submitUrl = `${ENV.BASE_URL}/result/submit?matchProfileId=${matchProfileId}`;
 
     console.log(submitUrl);
+    console.log('Not implemented yet');
     // return this.http.post(submitUrl, requestBody, { headers: this.authHeaders });
   }
 
