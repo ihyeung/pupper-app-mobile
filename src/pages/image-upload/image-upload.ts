@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { ActionSheetController, Platform } from 'ionic-angular';
 import { File } from '@ionic-native/file';
-import { FilePath } from '@ionic-native/file-path';
+import { FilePath } from '@ionic-native/file-path'; //For resolving filepath for Android
 import { Camera, CameraOptions } from '@ionic-native/camera';
 
 declare var cordova: any;
@@ -75,7 +75,8 @@ export class ImageUploadPage {
 
       console.log(imagePath);
 
-      if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+      if (this.platform.is('android') && //If android and select an existing photo
+      sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
         this.filePath.resolveNativePath(imagePath)
           .then(filePath => {
             console.log('file path: ', filePath);
@@ -87,7 +88,12 @@ export class ImageUploadPage {
 
             this.copyFileToLocalDir(path, name);
           });
+      }
+      else if (this.platform.is('android') && //If android and take a photo with camera
+      sourceType === this.camera.PictureSourceType.CAMERA) {
+        console.log("Android platform and photo taken with camera");
       } else { //ios
+        console.log("iOS platform");
         const name = imagePath.substr(imagePath.lastIndexOf('/') + 1);
         const path = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
         console.log('Path from filePath substring: ' + path);
@@ -114,8 +120,8 @@ export class ImageUploadPage {
 
   public uploadImage() {
     const fileToUpload = this.pathForImage(this.lastImage);
-    console.log('Path for image: ' + fileToUpload);
-    console.log('File name for most recent image: ' + this.lastImage);
+    console.log('FilePath for image: ' + fileToUpload);
+    console.log('Filename for most recent image: ' + this.lastImage);
 
     const profileData = {
       filePath: fileToUpload,

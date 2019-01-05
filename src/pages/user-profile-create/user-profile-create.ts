@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
 import { Utilities, Users  } from '../../providers';
-
 import { Storage } from '@ionic/storage';
+import { File } from '@ionic-native/file';
+import { FilePath } from '@ionic-native/file-path';
 
 @IonicPage()
 @Component({
@@ -24,13 +25,16 @@ export class CreateUserProfilePage {
   imageFileName: string;
   userAccount: any;
   userProfileFormData: any;
+  authHeaders: any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
 
     public utilService: Utilities,
     public userService: Users,
-    private storage: Storage) {
+    private storage: Storage,
+    private file: File,
+    private filePath: FilePath) {
 
       this.imageFilePath = navParams.get('filePath');
       this.imageFileName = navParams.get('filename');
@@ -47,45 +51,41 @@ export class CreateUserProfilePage {
       .then(val => {
         this.userAccount = val;
       });
+
+      this.utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
+      })
     }
 
     createUserProfile() {
-      if(this.userAccount) { //Only proceed if userAccount has been loaded
+      if(this.userAccount && this.authHeaders) { //Only proceed if userAccount has been loaded
 
-        this.utilService.getAuthHeadersFromStorage().then(val => {
-          const authHeaders = this.utilService.createHeadersObjFromAuth(val);
-
-          const today = this.utilService.currentDateToValidDateFormat();
-          this.userProfileFormData = JSON.stringify({
-            firstName: this.firstName,
-            lastName: this.lastName,
-            birthdate: this.birthdate,
-            zip: this.zip,
-            maritalStatus: this.maritalStatus,
-            sex: this.sex,
-            dateJoin: today,
-            lastLogin: today,
-            userAccount: this.userAccount
-          });
-
-          this.userService.createUserProfile(this.userProfileFormData, authHeaders)
-          .map(res => res.json())
-          .subscribe(result => {
-            // if (result['status'] == 200) {
-            //   let jsonResponseObj = JSON.parse(result['_body']);
-            if (result['isSuccess']) {
-              this.utilService.presentAutoDismissToast("User Profile Created! Please wait ...");
-
-              // let userProfileObj = jsonResponseObj['userProfiles'][0];
-              const userProfileObj = result['userProfiles'][0];
-
-              this.utilService.storeUserProfile(userProfileObj);
-
-              //Redirect newly created user to create a new match profile
-              this.navCtrl.push('CreateMatchProfilePage');
-            }
-          }, err => console.error('ERROR', err));
+        const today = this.utilService.currentDateToValidDateFormat();
+        this.userProfileFormData = JSON.stringify({
+          firstName: this.firstName,
+          lastName: this.lastName,
+          birthdate: this.birthdate,
+          zip: this.zip,
+          maritalStatus: this.maritalStatus,
+          sex: this.sex,
+          dateJoin: today,
+          lastLogin: today,
+          userAccount: this.userAccount
         });
+
+        this.userService.createUserProfile(this.userProfileFormData, this.authHeaders)
+        .map(res => res.json())
+        .subscribe(result => {
+          if (result['isSuccess']) {
+            this.utilService.presentAutoDismissToast("User Profile Created! Please wait ...");
+            const userProfileObj = result['userProfiles'][0];
+
+            this.utilService.storeUserProfile(userProfileObj);
+
+            //Redirect newly created user to create a new match profile
+            this.navCtrl.push('CreateMatchProfilePage');
+          }
+        }, err => console.error('ERROR', err));
       }
     }
 
@@ -96,11 +96,48 @@ export class CreateUserProfilePage {
       this.maxDate = minAgeLim.toISOString();
     }
 
-    addProfileImage() {
-      this.navCtrl.push('ImageUploadPage', {
-        profileType : 'user',
-        formData: this.userProfileFormData //Pass form data so data can be restored upon return
-      });
-    }
+    // addProfileImage() {
+    // this.navCtrl.push('ImageUploadPage', {
+    //   profileType : 'user',
+    //   formData: this.userProfileFormData //Pass form data so data can be restored upon return
+    // });
 
+    addProfileImage() {
+      const filepath = "/Users/iyeung/School/pupperstuff/CAPSTONE_DEMO_IMG.jpg";
+      this.filePath.resolveNativePath(filepath)
+      .then(filePath => {
+        console.log('file path: ', filePath);
+      });
+      let formData = new FormData();
+      formData.append('name', 'profilePic');
+      formData.append('filename', filepath);
+      this.utilService.uploadUserImage(67, formData, this.authHeaders)
+      .subscribe(res => {
+        console.log(res);
+      } , err => console.error('ERROR ', err));
+    }
   }
+
+//     private processImageUpload(file: any) {
+//
+//       const reader = new FileReader();
+//
+//       reader.onloadend = () => {
+//
+//         const formData = new FormData();
+//
+//         const blobFile = new Blob([reader.result], {type: file.type});
+//
+//         formData.append('profilePic', blobFile);
+//
+//         // POST formData call
+//
+//       },
+//
+//       error => { }
+//
+//     );
+//
+//   };
+//
+//   reader.readAsArrayBuffer(file);
