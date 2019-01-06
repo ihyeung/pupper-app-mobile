@@ -10,20 +10,18 @@
       <sc-card padding *ngFor="let card of deckOfCards" [orientation]="cardDirection" [tinder-card]="cardOverlay"
       [callDestroy]="card.destroyEvent" [callLike]="card.likeEvent" (onLike)="onProfileMatchResult($event, card)"
       (click)="viewProfile(card.id)">
-      <!-- <ion-card> -->
-        <div [style.background-image]="card.imageUrl" *ngIf="nextBatchReady"></div>
-        <!-- <div [style.background-image]="card.image" *ngIf="nextBatchReady"></div> -->
-      <!-- </ion-card> -->
-      <div>
-        <ion-label>{{card.name}}</ion-label>
-        <ion-label>{{card.sex}}</ion-label>
-        <ion-label>{{card.age}}</ion-label>
-        <ion-label>{{card.location}}</ion-label>
-        <ion-label>{{card.lastActive}}</ion-label>
-        <ion-label>{{card.info}}</ion-label>
-        <ion-label>IS MATCH: {{card.isMatch}}</ion-label>
-
-
+        <div class="card_img" [style.background-image]="card.imageUrl" *ngIf="nextBatchReady">
+          <ion-list no-lines *ngIf="nextBatchReady">
+          <ion-label>{{card.name}}</ion-label>
+          <ion-label>{{card.sex}}</ion-label>
+          <ion-label>{{card.age}}</ion-label>
+          <ion-label>{{card.location}}</ion-label>
+          <ion-label>{{card.lastActive}}</ion-label>
+          <ion-label>{{card.info}}</ion-label>
+          <ion-label>IS MATCH: '{{card.isMatch}}'</ion-label>
+          </ion-list>
+        </div>
+      <div clas="card_info">  
       </div>
     </sc-card>
   </div>
