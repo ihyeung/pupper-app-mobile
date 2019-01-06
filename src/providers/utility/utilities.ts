@@ -43,26 +43,6 @@ export class Utilities {
       });
     }
 
-    storeUserAccount(account: any) {
-      this.storage.set('account', account);
-    }
-
-    getUserAccountFromStorage() {
-      return this.storage.get('account').then(val => {
-        return val;
-      });
-    }
-
-    storeBreeds(breeds: any) {
-      this.storage.set('breeds', breeds);
-    }
-
-    getBreedsFromStorage() {
-      return this.storage.get('breeds').then(val => {
-        return val;
-      });
-    }
-
     getAuthHeaders() {
       return this.storage.get('authHeaders').then(val => {
         if (!val) {
@@ -82,30 +62,6 @@ export class Utilities {
       }
       this.storage.set('authHeaders', authHeaders);
       return authHeaders;
-    }
-
-    getAuthHeadersFromStorage() {
-      return this.storage.get('authHeaders').then(val => {
-        // const jsonType = val['Content-Type'];
-        // const jwt = val['Authorization'];
-        return val;
-      });
-    }
-
-    storeUserProfile(userProfileObj) {
-      this.storage.set('user', userProfileObj);
-    }
-
-    getUserFromStorage() {
-        return this.storage.get('user').then(val => {return val;});
-    }
-
-    storeMatchProfile(matchProfileObj) {
-      this.storage.set('match', matchProfileObj);
-    }
-
-    getMatchProfileFromStorage() {
-        return this.storage.get('match').then(val => {return val;});
     }
 
     createHeadersObjFromAuth(authHeadersFromStorage) {
@@ -199,11 +155,4 @@ export class Utilities {
       toast.present();
     }
 
-    async presentLoadingIndicator() {
-      const loader = await this.loadCtrl.create({
-        content: "Please wait...",
-        duration: 2000
-      });
-      return await loader.present();
-    }
   }
