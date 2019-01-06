@@ -75,7 +75,7 @@ export class ProfileSnapshotPage {
           // });
 
           console.log(this.activeMatchProfileObj);
-          // this.utilService.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
+          this.utilService.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
           this.hasMatchProfile = true;
           this.matchProfileReady = true;
         }, err => console.error('ERROR', err));
