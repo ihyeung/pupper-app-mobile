@@ -71,7 +71,7 @@ export class LoginPage {
           }
 
           const userAccountObj = response['userAccounts'][0];
-          this.utilService.storeUserAccount(userAccountObj);
+          this.utilService.storeData('account', userAccountObj);
           //login to get authentiation token
           this.login(true);
 
@@ -103,7 +103,7 @@ export class LoginPage {
         let userProfileObj = resp['userProfiles'][0];
 
         //Store the retrieved user profile object
-        this.utilService.storeUserProfile(userProfileObj);
+        this.utilService.storeData('user', userProfileObj);
 
         const currentDate = this.utilService.currentDateToValidDateFormat();
         // Check if the lastLogin field needs to be updated

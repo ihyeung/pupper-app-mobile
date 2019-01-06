@@ -42,8 +42,11 @@ export class Users {
       return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
     }
 
-    updateUserAccount(userAccount: any, headers: any) {
-
+    updateUserAccount(userAccount: any) {
+      const email = userAccount['username'];
+      const url = `${ENV.BASE_URL}/account?email=${email}`;
+      console.log(url);
+      return this.http.put(url, userAccount, { headers: this.authHeaders });
     }
 
     getUserProfile(userProfileId: number, headers: any) {
@@ -92,8 +95,15 @@ export class Users {
     uploadImage(userProfileId: number, file: File){
     }
 
-    deleteUser(userProfileObj) {
-          //TODO: 2 calls to delete user account and delete user profile endpoints
+    deleteUserAccount(email: string) {
+      const url = `${ENV.BASE_URL}/account?email=${email}`;
+      console.log(url);
+      return this.http.delete(url, { headers: this.authHeaders });
+    }
+
+    deleteUserProfile(email: string) {
+      const url = `${ENV.BASE_URL}/user?email=${email}`;
+      return this.http.delete(url, { headers: this.authHeaders });
     }
 
 }

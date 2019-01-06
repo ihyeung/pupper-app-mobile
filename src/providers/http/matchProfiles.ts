@@ -69,10 +69,10 @@ export class MatchProfiles {
     //   return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     // }
 
-    uploadImage(userProfileId: number, matchProfileId: number, fileName: string) {
+    uploadImage(userProfileId: number, matchProfileId: number, file: File) {
       let formData = new FormData();
       // formData.append('profilePic', imageFile, fileName);
-      formData.append('profilePic', fileName);
+      formData.append('profilePic', file);
 
 
       const formheadersWithAuth = new Headers({
@@ -83,17 +83,13 @@ export class MatchProfiles {
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
       console.log('uploading image: ' + url);
 
-      return this.http.put(url, formData, {
-        headers: formheadersWithAuth,
-        withCredentials: true
-      });
+      return this.http.put(url, formData, { headers: formheadersWithAuth });
     }
 
     deleteImageUpload(userProfileId: number, matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
       console.log('deleting uploaded image: ' + url);
-
       return this.http.delete(url, { headers: this.authHeaders });
     }
 

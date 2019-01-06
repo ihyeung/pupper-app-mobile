@@ -23,21 +23,36 @@ export class ProfileSnapshotPage {
 
   constructor(public navCtrl: NavController, public utilService: Utilities,
     public matchProfService: MatchProfiles, public dialogs: Dialogs,
-    public users: Users) {
-    }
+    public users: Users) {}
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad ProfileSnapshotPage');
-      this.retrieveMatchProfilesForUser();
+      this.retrieveMatchProfile();
     }
 
-    retrieveMatchProfilesForUser(){
-      this.utilService.getUserFromStorage().then(user => {
-        this.welcome = `Welcome back, ${user['firstName']}!`;
-        this.userProfileObj = user;
-        this.image = user['profileImage'] ? user['profileImage'] : DEFAULT_IMG;
-        this.userReady = true;
+    initUserData(user: any) {
+      this.welcome = `Welcome back, ${user['firstName']}!`;
+      this.userProfileObj = user;
+      this.image = user['profileImage'] ? user['profileImage'] : DEFAULT_IMG;
+      this.userReady = true;
+    }
 
+    retrieveMatchProfile() {
+      this.utilService.getDataFromStorage('match').then(match => {
+        if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
+          this.utilService.getDataFromStorage('user').then(user => {
+            this.initUserData(user);
+            this.retrieveMatchProfilesForUser(user);
+        });
+      } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
+          const userProfile = match.userProfile;
+          this.initUserData(userProfile);
+          this.retrieveMatchProfilesForUser(userProfile);
+      }
+    });
+    }
+
+    retrieveMatchProfilesForUser(user: any){
         this.matchProfService.getMatchProfiles(user)
         .map(res => res.json())
         .subscribe(resp => {
@@ -51,20 +66,19 @@ export class ProfileSnapshotPage {
           this.matchProfilesList = resp['matchProfiles'];
 
           //Uncomment the code below after activeMatchProfile field has been added on backend
-          this.activeMatchProfileObj = resp['matchProfiles'][0];
+          this.activeMatchProfileObj = resp['matchProfiles'][0]; //Set default to first result for now
 
           // this.matchProfilesList.forEach(profile => {
-          //   if (profile['id'] == this.userProfileObj['activeMatchProfile']) {
+          //   if (profile['id'] == this.userProfileObj['activeMatchProfileId']) {
           //     this.activeMatchProfileObj = profile;
           //   }
           // });
 
           console.log(this.activeMatchProfileObj);
-          this.utilService.storeMatchProfile(this.activeMatchProfileObj);
+          // this.utilService.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
           this.hasMatchProfile = true;
           this.matchProfileReady = true;
         }, err => console.error('ERROR', err));
-      });
     }
 
     matchProfileModal(readOnly: boolean) {
