@@ -111,21 +111,21 @@ export class CreateMatchProfilePage {
       // }
 
       addProfileImage() {
-        const filepath = "/Users/iyeung/School/pupper stuff/CAPSTONE_DEMO_IMG.jpg";
-        this.matchProfiles.uploadImage(this.userProfile['id'], 100, filepath)
-        .subscribe(res => {
-                  console.log(res);
-                } , err => console.error('ERROR ', err));
-        }
+        // const filepath = "/Users/iyeung/School/pupper stuff/CAPSTONE_DEMO_IMG.jpg";
+        // this.matchProfiles.uploadImage(this.userProfile['id'], 100, filepath)
+        // .subscribe(res => {
+        //           console.log(res);
+        //         } , err => console.error('ERROR ', err));
+        // }
         //     if (res['success']) {
         //         console.log('File upload complete.')
         //     } else {
         //         console.log('File upload failed.')
         //     }
         // });)
-        // this.navCtrl.push('ImageUploadPage', {
-        //   profileType: 'match',
-        //   formData: this.matchProfileFormData
-        // });
-
+        this.navCtrl.push('ImageUploadPage', {
+          profileType: 'match',
+          formData: this.matchProfileFormData
+        });
+      }
     }
