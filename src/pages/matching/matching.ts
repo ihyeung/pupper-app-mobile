@@ -3,7 +3,6 @@ import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatchingResult } from '../../models/matching-result';
 import { MatchProfiles, Utilities, Matches } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
 import { DEFAULT_IMG } from '../';
 
 export interface Card {
@@ -49,7 +48,7 @@ export class MatchingPage {
     public navCtrl: NavController,
     public matchProfService: MatchProfiles, public utilService: Utilities,
     public matchesService: Matches) {
-
+      console.log('constructor');
     }
 
     ionViewDidLoad() {
@@ -83,11 +82,9 @@ export class MatchingPage {
     }
 
     addToDeck(nextBatch: any) {
-
       nextBatch.forEach(profile => {
         console.log(profile);
         let imageStr = profile['profileImage'];
-        console.log(imageStr);
         if (!imageStr || !(imageStr.startsWith('https://') || imageStr.startsWith('http://'))) {
           console.log('Invalid profile image, setting to default');
           imageStr = DEFAULT_IMG;
@@ -98,7 +95,7 @@ export class MatchingPage {
           name:profile['name'],
           likeEvent: new EventEmitter(),
           destroyEvent: new EventEmitter(),
-          imageUrl: this.sanitizer.bypassSecurityTrustStyle('url(' + profile['profileImage'] + ')'),
+          imageUrl: this.sanitizer.bypassSecurityTrustStyle('url(' + imageStr + ')'),
           info: profile['aboutMe'],
           sex: profile['sex'],
           isMatch: profile['match'],

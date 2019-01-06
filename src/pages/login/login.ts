@@ -53,11 +53,11 @@ export class LoginPage {
       //   this.password = ENV.VALIDATE_EMAIL_PASS;
       //   this.login(false);
       // }
-        if(!this.userForm.valid){
-          this.loginAttempted = true;
-          return;
-        }
-        return this.userAuthType == 'log in' ? this.login(false) : this.register();
+      if(!this.userForm.valid){
+        this.loginAttempted = true;
+        return;
+      }
+      return this.userAuthType == 'log in' ? this.login(false) : this.register();
     }
 
     register() {
@@ -65,17 +65,17 @@ export class LoginPage {
       .map(res => res.json())
       .subscribe(response => {
         console.log(response);
-          if (response.responseCode == 409) {
-            this.utilService.presentDismissableToast("Email is in use for an existing account.");
-            return;
-          }
+        if (response.responseCode == 409) {
+          this.utilService.presentDismissableToast("Email is in use for an existing account.");
+          return;
+        }
 
-          const userAccountObj = response['userAccounts'][0];
-          this.utilService.storeData('account', userAccountObj);
-          //login to get authentiation token
-          this.login(true);
+        const userAccountObj = response['userAccounts'][0];
+        this.utilService.storeData('account', userAccountObj);
+        //login to get authentiation token
+        this.login(true);
 
-          this.navCtrl.push('CreateUserProfilePage');
+        this.navCtrl.push('CreateUserProfilePage');
       }, err => console.error('ERROR', err));
     }
 
@@ -83,7 +83,9 @@ export class LoginPage {
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
-        this.utilService.presentAutoDismissToast("Login success! Please wait...");
+        if (!isNewUser) {
+          this.utilService.presentAutoDismissToast("Login success! Please wait...");
+        }
 
         const authObj = this.utilService.extractAndStoreAuthHeaders(response);
 
@@ -92,15 +94,20 @@ export class LoginPage {
         }
 
       }, error => { console.error('ERROR ', error);
-        this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
-      });
-    }
+      this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
+    });
+  }
 
-    retrieveUserProfile(headers) {
-      this.userService.getUserProfileByEmail(this.email, headers)
-      .map(res => res.json())
-      .subscribe(resp => {
-        let userProfileObj = resp['userProfiles'][0];
+  retrieveUserProfile(headers: any) {
+    this.userService.getUserProfileByEmail(this.email, headers)
+    .map(res => res.json())
+    .subscribe(resp => {
+      console.log(resp);
+      if (!resp.isSuccess) {
+        //Happens when user created user account but never created user profile
+        //TODO: Fix this
+      } else {
+        const userProfileObj = resp['userProfiles'][0];
 
         //Store the retrieved user profile object
         this.utilService.storeData('user', userProfileObj);
@@ -111,16 +118,17 @@ export class LoginPage {
           this.updateLastLogin(userProfileObj, currentDate);
         }
         this.navCtrl.push('TabsPage');
-      }, err => console.error('ERROR', err));
-    }
-
-    updateLastLogin(userProfileObj, currentDate) {
-      this.userService.updateLastLogin(userProfileObj, currentDate)
-      .map(res => res.json())
-      .subscribe(resp => {
-        if (resp.isSuccess) {
-          console.log('updated last login');
-        }
-      }, err => console.error('ERROR', err));
-    }
+      }
+    }, err => console.error('ERROR', err));
   }
+
+  updateLastLogin(userProfileObj, currentDate) {
+    this.userService.updateLastLogin(userProfileObj, currentDate)
+    .map(res => res.json())
+    .subscribe(resp => {
+      if (resp.isSuccess) {
+        console.log('updated last login');
+      }
+    }, err => console.error('ERROR', err));
+  }
+}
