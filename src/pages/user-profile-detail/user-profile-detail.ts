@@ -27,6 +27,7 @@ export class UserProfileDetailPage {
       this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
         const id = this.navParams.get('userId');
+        this.retrieveUserProfile(id);
       });
 
     }
@@ -56,6 +57,7 @@ export class UserProfileDetailPage {
 
     editProfile(id: number) {
       console.log('Editing user profile by id ' + id);
+      console.log('Not implemented yet');
     }
 
 

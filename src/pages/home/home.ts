@@ -23,7 +23,9 @@ export class HomePage {
       this.retrieveBreedList();
     }
 
-    ionViewDidLoad() {}
+    ionViewDidLoad() {
+      this.storage.clear();
+    }
 
     login(){
       this.navCtrl.push('LoginPage', { userAuthType: "log in" });
