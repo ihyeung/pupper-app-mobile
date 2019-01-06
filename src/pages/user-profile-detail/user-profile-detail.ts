@@ -43,7 +43,7 @@ export class UserProfileDetailPage {
         }, err => console.error('ERROR', err));
       } else {
         console.log('userId is undefined, loading user from storage');
-        this.utils.getUserFromStorage().then(val => {
+        this.utils.getDataFromStorage('user').then(val => {
           if (!val) {
             console.log('no object found in storage for user');
           } else {

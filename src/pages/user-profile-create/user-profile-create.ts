@@ -47,7 +47,7 @@ export class CreateUserProfilePage {
 
       this.setDatePickerBounds();
 
-      this.utilService.getUserAccountFromStorage()
+      this.utilService.getDataFromStorage('account')
       .then(val => {
         this.userAccount = val;
       });
@@ -80,7 +80,7 @@ export class CreateUserProfilePage {
             this.utilService.presentAutoDismissToast("User Profile Created! Please wait ...");
             const userProfileObj = result['userProfiles'][0];
 
-            this.utilService.storeUserProfile(userProfileObj);
+            this.utilService.storeData('user', userProfileObj);
 
             //Redirect newly created user to create a new match profile
             this.navCtrl.push('CreateMatchProfilePage');
