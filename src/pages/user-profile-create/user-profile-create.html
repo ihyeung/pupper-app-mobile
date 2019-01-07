@@ -19,8 +19,8 @@
       <ion-datetime displayFormat="MMM DD, YYYY" pickerFormat="MMM DD, YYYY" [(ngModel)]="birthdate" [min]="minDate" [max]="maxDate"></ion-datetime>
     </ion-item>
     <ion-item>
-      <ion-label floating>ZIPCODE</ion-label>
-      <ion-input [(ngModel)]="zip" type="text" placeholder="5 digit US zip code">
+      <ion-label floating>ZIP CODE</ion-label>
+      <ion-input [(ngModel)]="zip" type="text" placeholder="A valid 5 digit US zip code">
       </ion-input>
     </ion-item>
       <ion-item>
@@ -43,5 +43,5 @@
       </ion-item>
     <br><br>
     <button ion-button full class="btn" (click)="addProfileImage()">Upload a profile image</button>
-    <button ion-button full class="btn" (click)="createUserProfile()">CREATE A PROFILE</button>
+    <button ion-button full class="btn" (click)="createUser()">CREATE A PROFILE</button>
 </ion-content>
