@@ -23,12 +23,15 @@ export class MatchProfileDetailPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MatchProfileDetailPage');
-    this.id = this.navParams.get('matchProfileId');
+    this.id = this.navParams.get('matchProfileId');//Only sent from matching page
     this.readOnly = this.navParams.get('readOnly');
     this.matchProfiles = this.navParams.get('matchProfiles');
-    const matchProfile = this.navParams.get('matchProfile');
+    const matchProfile = this.navParams.get('matchProfile'); //Passed inbox page
 
-    if (matchProfile) {
+    if (this.id) {
+      this.retrieveProfileData(this.id);
+    }
+    else if (matchProfile) {
       this.setProfile(matchProfile);
     }
     if (this.matchProfiles) {
@@ -36,49 +39,38 @@ export class MatchProfileDetailPage {
 
       //TODO: Display modal pane with match profiles you can swipe through
     }
-    else if (this.id) {
-      this.retrieveProfileData(this.id);
-    }
-    // else if (this.matchProfiles) {
-    //   console.log('multiple matchProfiles retrieved from navparms ' + this.matchProfiles.length);
-    // } else { //Otherwise retrieve active user's match profile stored in storage
-    //   this.utils.getDataFromStorage('match').then(val => {
-    //     if (!val) {
-    //       this.navCtrl.push('CreateMatchProfilePage');
-    //     } else {
-    //       this.setProfile(val);
-    //     }
-    //   });
-    // }
+
   }
 
   retrieveProfileData(id: number) {
     console.log('retrieving match profile detail for ' + id);
     this.matchProfileService.getMatchProfileByMatchProfileId(id)
     .map(res => res.json())
-    .subscribe(response => {
+    .subscribe(response => { //Directly maps to matchProfile object
         console.log('successfully retrieved match profile by id');
-        console.log(response);
-
         this.setProfile(response);
     }, err => console.error('ERROR', err));
   }
 
   setProfile(profile: any) {
     this.profile = profile;
+    this.id = this.profile['id'];
+    if (this.profile['profileImage'] === undefined || this.profile['profileImage'] == null) {
+      this.profile['profileImage'] = DEFAULT_IMG;
+    }
     this.profileReady = true;
   }
 
-  editMatchProfile() {
-    console.log("retrieving match profile for edit/update with id = " + this.id);
+  editMatchProfile(matchProfile: any) {
+    console.log("retrieving match profile for edit/update with id = " + matchProfile['id']);
     console.log("Not implemented yet");
 
   }
 
-  viewUserProfile() {
-    const userId = this.profile['userProfile']['id'];
+  viewUserProfile(matchProfile: any) {
+    console.log(matchProfile);
+    const userId = matchProfile['userProfile']['id'];
     console.log("retrieving user profile with id = " + userId);
-
     this.navCtrl.push('UserProfileDetailPage', {
       userId: userId,
       readOnly : true
