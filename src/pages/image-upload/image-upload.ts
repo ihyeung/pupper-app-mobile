@@ -16,8 +16,10 @@ export class ImageUploadPage {
   lastImage: string = null;
   imageFor: string;
   profileData: any = [];
-  imageURI: any;
+  imageURI: string = '';
   imageFileName: any;
+  uriReady: boolean = false;
+
 
 
   constructor(public navCtrl: NavController,
@@ -64,7 +66,7 @@ export class ImageUploadPage {
     const cameraDialogOptions = {
       quality: 100,
       sourceType: sourceType,
-      saveToPhotoAlbum: false,
+      saveToPhotoAlbum: true,
       correctOrientation: true,
       destinationType: this.camera.DestinationType.FILE_URI
 
@@ -72,6 +74,7 @@ export class ImageUploadPage {
 
     this.camera.getPicture(cameraDialogOptions).then((imagePath) => {
       this.imageURI = imagePath;
+      this.uriReady = true;
 
       console.log(imagePath);
 

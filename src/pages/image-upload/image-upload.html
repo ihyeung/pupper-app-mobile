@@ -13,6 +13,9 @@
   <ion-card>
   <img src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null">
   </ion-card>
+  <ion-item [hidden]="lastImage === null">{{lastImage}}</ion-item>
+  <ion-item *ngIf="uriReady">{{imageURI}}</ion-item>
+
 </ion-content>
 
 <ion-footer>
