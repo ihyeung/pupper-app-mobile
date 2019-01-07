@@ -36,8 +36,10 @@ export class Users {
       return this.http.post(loginUrl, loginData, { headers: this.basicHeaders });
     }
 
-    getUserAccountByEmail(username, headers) {
+    getUserAccountByEmail(username: string, headers: any) {
       const getUserAccountByEmailUrl = `${ENV.BASE_URL}/account?email=${username}`;
+
+      this.authHeaders = headers;
       console.log(getUserAccountByEmailUrl);
       return this.http.get(getUserAccountByEmailUrl, { headers: this.authHeaders });
     }
@@ -76,14 +78,14 @@ export class Users {
           { headers: authHeaders });
     }
 
-    updateUserProfile(userProfileObj) {
-      const url = `${ENV.BASE_URL}/user`;
+    updateUserProfileById(userProfileObj: any, userId: number) {
+      const url = `${ENV.BASE_URL}/user/${userId}`;
       console.log('Updating user profile: ' + url);
 
-      return this.http.post(url, userProfileObj, { headers: this.authHeaders });
+      return this.http.put(url, userProfileObj, { headers: this.authHeaders });
     }
 
-    updateLastLogin(userProfileObj, date) {
+    updateLastLogin(userProfileObj: any, date: string) {
         const updateLastLoginUrlString = ENV.BASE_URL +
         "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
 
