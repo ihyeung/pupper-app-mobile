@@ -19,6 +19,7 @@ export class LoginPage {
   userForm: FormGroup;
   loginAttempted: boolean = false;
   userAuthType: string = 'log in';
+  authHeaders: any;
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
 
@@ -43,7 +44,12 @@ export class LoginPage {
         // password: password,
         // confirm: confirm
       });
+    }
 
+    ionViewDidLoad() {
+      this.utilService.getAuthHeaders().then(val => {
+        this.authHeaders = val;
+      });
     }
 
     authenticateUser() {
@@ -57,78 +63,85 @@ export class LoginPage {
         this.loginAttempted = true;
         return;
       }
-      return this.userAuthType == 'log in' ? this.login(false) : this.register();
+      return this.userAuthType == 'log in' ? this.login() : this.register();
     }
 
     register() {
-      this.userService.createUserAccount(this.email, this.password)
+      //Validate username is available but don't actually register until create user profile page
+      this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
       .subscribe(response => {
         console.log(response);
-        if (response.responseCode == 409) {
+        if(response.isSuccess){ //Username is taken
+          this.errorMessage = "Please enter a unique email to create a user account."
           this.utilService.presentDismissableToast("Email is in use for an existing account.");
           return;
+        } else {
+          this.navCtrl.push('CreateUserProfilePage', {
+            email: this.email,
+            password: this.password
+          });
         }
 
-        const userAccountObj = response['userAccounts'][0];
-        this.utilService.storeData('account', userAccountObj);
-        //login to get authentiation token
-        this.login(true);
-
-        this.navCtrl.push('CreateUserProfilePage');
       }, err => console.error('ERROR', err));
     }
 
-    login(isNewUser: boolean) {
+    login() {
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
-        if (!isNewUser) {
-          this.utilService.presentAutoDismissToast("Login success! Please wait...");
-        }
-
         const authObj = this.utilService.extractAndStoreAuthHeaders(response);
 
-        if (!isNewUser) {
-          this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
+        this.utilService.presentAutoDismissToast("Login success! Please wait...");
+        this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
+
+      }, error => {
+        console.error('ERROR ', error);
+        this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
+      });
+    }
+
+    retrieveUserProfile(headers: any) {
+      this.userService.getUserProfileByEmail(this.email, headers)
+      .map(res => res.json())
+      .subscribe(resp => {
+        console.log(resp);
+        if (!resp.isSuccess) {
+          //Happens when user created user account but never created user profile (only possible with old flow)
+          this.utilService.presentDismissableToast("Please create a user profile to get started");
+          this.navCtrl.push('CreateUserProfilePage', {
+            email: this.email,
+            password: this.password
+          });
+        } else {
+          const userProfileObj = resp['userProfiles'][0];
+          this.updateLastLogin(userProfileObj);//Update lastLogin if needed and store user object
+          this.navCtrl.push('TabsPage');
         }
+      }, err => console.error('ERROR', err));
+    }
 
-      }, error => { console.error('ERROR ', error);
-      this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
-    });
-  }
+    updateLastLogin(userProfileObj: any) {
 
-  retrieveUserProfile(headers: any) {
-    this.userService.getUserProfileByEmail(this.email, headers)
-    .map(res => res.json())
-    .subscribe(resp => {
-      console.log(resp);
-      if (!resp.isSuccess) {
-        //Happens when user created user account but never created user profile
-        //TODO: Fix this
+      const currentDate = this.utilService.currentDateToValidDateFormat();
+      // Check if the lastLogin field needs to be updated
+      if (userProfileObj.lastLogin != currentDate) {
+        this.userService.updateLastLogin(userProfileObj, currentDate)
+        .map(res => res.json())
+        .subscribe(resp => {
+          console.log(resp);
+          if (resp.isSuccess) {
+            console.log('updated last login');
+
+            // const userProfileObj = resp['userProfiles'][0];
+
+            // this.utilService.storeData('user', userProfileObj);//Store user with updated login
+
+          }
+        }, err => console.error('ERROR', err));
       } else {
-        const userProfileObj = resp['userProfiles'][0];
-
-        //Store the retrieved user profile object
-        this.utilService.storeData('user', userProfileObj);
-
-        const currentDate = this.utilService.currentDateToValidDateFormat();
-        // Check if the lastLogin field needs to be updated
-        if (userProfileObj.lastLogin != currentDate) {
-          this.updateLastLogin(userProfileObj, currentDate);
-        }
-        this.navCtrl.push('TabsPage');
+        this.utilService.storeData('user', userProfileObj);//Store user
       }
-    }, err => console.error('ERROR', err));
-  }
+    }
 
-  updateLastLogin(userProfileObj, currentDate) {
-    this.userService.updateLastLogin(userProfileObj, currentDate)
-    .map(res => res.json())
-    .subscribe(resp => {
-      if (resp.isSuccess) {
-        console.log('updated last login');
-      }
-    }, err => console.error('ERROR', err));
-  }
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
-import { Utilities, MatchProfiles } from '../../providers';
+import { NavController, NavParams, IonicPage } from 'ionic-angular';
+import { Utilities, MatchProfiles, Users } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -23,11 +23,13 @@ export class CreateMatchProfilePage {
   matchProfileFormData: any = [];
   userProfile: any;
   dogPreferences: string[];
+  radius: number = 5;
   authHeaders: any;
+  isActiveMatchProfile: boolean = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utilService: Utilities, public matchProfiles: MatchProfiles,
-  public loadCtr: LoadingController) {
+    public users: Users) {
 
   }
 
@@ -36,6 +38,9 @@ export class CreateMatchProfilePage {
       this.imageFileName = this.navParams.get('fileName');
 
       this.matchProfileFormData = this.navParams.get('formData');
+      console.log(this.imageFilePath);
+      console.log(this.imageFileName);
+      console.log(this.matchProfileFormData);
 
       this.utilService.getAuthHeaders().then(val => {
         this.authHeaders = val;
@@ -65,7 +70,8 @@ export class CreateMatchProfilePage {
         profileImage: null,
         sex: this.sex,
         size: this.size,
-        userProfile: this.userProfile
+        userProfile: this.userProfile,
+        zipRadius: this.radius
       };
       console.log(this.matchProfileFormData);
       console.log('Dog preferences: ' + this.dogPreferences);
@@ -75,21 +81,41 @@ export class CreateMatchProfilePage {
         .map(res => res.json())
         .subscribe(response => {
           console.log(response);
-            // let jsonResponseObj = JSON.parse((result['_body']));
-            if (response['matchProfiles']) {
-
+            if (response.matchProfiles) {
               const matchProfileObj = response['matchProfiles'][0];
               console.log('Match profile object;'  + matchProfileObj);
-              let matchProfileId = matchProfileObj['id'];
+              this.updateActiveMatchProfile(matchProfileObj);
 
                 // this.uploadProfileImage(this.imageFile,
                 //   //TODO: figure out how to get file object from filepath (this.imageFile is undefined)
                 // matchProfileId, this.imageFilePath);
 
-                this.utilService.storeData('match', matchProfileObj);
+
                 this.navCtrl.push('TabsPage');
             }
           }, err => console.error('ERROR', err));
+      }
+
+      private updateActiveMatchProfile(matchProfileObj: any) {
+        if(this.isActiveMatchProfile) {
+          let matchProfileId = matchProfileObj['id'];
+
+          this.userProfile['activeMatchProfileId'] = matchProfileId;
+          this.users.updateUserProfileById(this.userProfile, this.userProfile['id'])
+          .map(res => res.json())
+          .subscribe(response => {
+            console.log(response);
+              // let jsonResponseObj = JSON.parse((result['_body']));
+              if (response.userProfiles) {
+
+                const userProfileObj = response['userProfiles'][0];
+                this.utilService.storeData('user', userProfileObj); //Update user obj in storage
+
+              }
+            }, err => console.error('ERROR', err));
+
+          this.utilService.storeData('match', matchProfileObj); //Update default match obj in storage
+        }
       }
 
       // uploadProfileImage(file: any, matchProfileId: number, imageFilePath: string) {

@@ -8,7 +8,7 @@
 <ion-content padding>
   <div id="profileMainTitle"  *ngIf="userReady">
     <h2>{{welcome}}</h2>
-    <ion-card>
+    <ion-card *ngIf="userReady">
       <img [src]="image" />
     </ion-card>
   </div>
@@ -54,7 +54,7 @@
           <ion-icon name="create" item-start></ion-icon>
           EDIT
         </button>
-        <button ion-button color="dark" (click)="deleteMatchProfile()" *ngIf="hasMatchProfile">
+        <button ion-button color="dark" (click)="deleteActiveMatchProfile()" *ngIf="hasMatchProfile">
           <ion-icon name="trash" item-start></ion-icon>
           DELETE
         </button>

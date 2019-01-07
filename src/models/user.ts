@@ -3,14 +3,15 @@ export class User {
   id: number;
   firstName: string;
   lastName: string;
-  zipCode: string;
+  zip: string;
   sex: string;
   birthdate: string;
   maritalStatus: string;
   profileImage: string;
   dateJoin: string;
   lastLogin: string;
-  aboutMe: string;
+  activeMatchProfileId: number;
+  userAccount: any;
 
 
   constructor(fields: any) {
@@ -22,6 +23,6 @@ export class User {
 
 }
 
-export interface MatchProfile {
+export interface User {
   [prop: string]: any;
 }

@@ -2,7 +2,7 @@ export class MatchProfile {
 
   id: number;
   names: string;
-  breed: string;
+  breed: any;
   birthdate: string;
   aboutMe: string;
   profileImage: string;
@@ -10,6 +10,9 @@ export class MatchProfile {
   lifeStage: string;
   energyLevel: string;
   userProfile: any;
+  sex: string;
+  size: string;
+  zipRadius: number;
 
   constructor(fields: any) {
     // Quick and dirty extend/assign fields to this model

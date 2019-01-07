@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Utilities, Users } from '../../providers';
-import { DEFAULT_IMG } from '../';
+import { DEFAULT_USER_IMG } from '../';
 
 @IonicPage()
 @Component({
@@ -14,7 +14,6 @@ export class UserProfileDetailPage {
   profileReady: boolean = false;
   readOnly: boolean = true;
   authHeaders: any;
-  profileImage: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public users: Users) {
@@ -35,11 +34,18 @@ export class UserProfileDetailPage {
     retrieveUserProfile(userId: number) {
       if (userId) {
         this.users.getUserProfile(userId, this.authHeaders)
+        .map(res => res.json())
         .subscribe(response => {
           console.log(response);
-          this.profile = response;
-          this.profileImage = this.profile['profileImage'] ? this.profile['profileImage'] : DEFAULT_IMG;
+          if (response.isSuccess) {
+            console.log('user profile found');
+          this.profile = response['userProfiles'][0];
+          console.log('proflie image: ' + this.profile.profileImage);
+          if (this.profile['profileImage'] === undefined || this.profile['profileImage'] == null) {
+            this.profile.profileImage = DEFAULT_USER_IMG;
+          }
           this.profileReady = true;
+        }
 
         }, err => console.error('ERROR', err));
       } else {
@@ -49,6 +55,9 @@ export class UserProfileDetailPage {
             console.log('no object found in storage for user');
           } else {
             this.profile = val;
+            if (this.profile['profileImage'] === undefined || !this.profile['profileImage']) {
+              this.profile['profileImage'] = DEFAULT_USER_IMG;
+            }
             this.profileReady = true;
           }
         });

@@ -42,13 +42,16 @@ export class MessageInboxPage {
         matchProfileList.forEach(match => {
           console.log(match);
           this.matchesList.push({
-            matchProfileId: match['id'],
+            id: match['id'],
             profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
             names: match['names'],
-            breed: match['breed']['name'],
+            breed: match['breed'],
             lifeStage: match['lifeStage'],
             energyLevel: match['energyLevel'],
-            aboutMe: match['aboutMe']
+            aboutMe: match['aboutMe'],
+            birthdate: match['birthdate'],
+            sex: match['sex'],
+            userProfile: match['userProfile']
           });
         });
         this.matchesReady = true;
@@ -88,8 +91,8 @@ export class MessageInboxPage {
     }, err => console.error('ERROR', err));
   }
 
-  viewMatchProfile(matchProfile) {
-    console.log('clicked on match profile for matchProfileId=' + matchProfile['matchProfileId']);
+  viewMatchProfile(matchProfile: any) {
+    console.log('clicked on match profile for matchProfileId=' + matchProfile['id']);
     this.navCtrl.push('MatchProfileDetailPage', {
       matchProfile: matchProfile,
       readOnly: true
