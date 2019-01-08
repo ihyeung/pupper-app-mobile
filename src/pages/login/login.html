@@ -43,7 +43,7 @@
       <ion-item *ngIf="userAuthType == 'sign up' && !(userForm.controls.password.value == userForm.controls.confirm.value)  && (userForm.controls.confirm.dirty || loginAttempted)">
         <p class="input-err">Passwords do not match.</p>
       </ion-item>
-  <button ion-button full color="primary" type="submit" class="btn">{{userAuthType}}</button>
+  <button ion-button full color="primary" type="submit" class="btn" [disabled]="userAuthType == 'sign up' && !(userForm.controls.password.value == userForm.controls.confirm.value)">{{userAuthType}}</button>
 </ion-list>
 
 </form>
