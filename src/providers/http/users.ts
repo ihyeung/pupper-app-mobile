@@ -65,7 +65,6 @@ export class Users {
       console.log(retrieveUserProfileUrl);
 
       this.authHeaders = headers;
-
       return this.http.get(retrieveUserProfileUrl, { headers: this.authHeaders });
     }
 

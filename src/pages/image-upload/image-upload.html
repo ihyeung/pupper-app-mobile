@@ -6,27 +6,31 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding class="image-upload-preview">
   <div>
   <h2 [hidden]="lastImage !== null">SELECT A IMAGE FILE FOR UPLOAD</h2>
   </div>
-  <ion-card>
-  <img src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null">
-  </ion-card>
-  <ion-item [hidden]="lastImage === null">{{lastImage}}</ion-item>
-  <ion-item *ngIf="uriReady">{{imageURI}}</ion-item>
+  <ion-item [hidden]="lastImage === null">YOUR IMAGE BELOW:</ion-item>
 
+  <ion-card *ngIf="uriReady">
+  <!-- <img id="image" src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null"> -->
+  <div [hidden]="lastImage === null"> {{pathForImage(lastImage)}} </div>
+</ion-card>
+<ion-card *ngIf="uriReady">
+=  <img [src]="imageURI" [hidden]="lastImage === null" />
+  </ion-card>
+  <ion-card>
+  <ion-item *ngIf="uriReady">URI: '{{imageURI}}' <br> LAST IMAGE: '{{lastImage}}'</ion-item>
+  </ion-card>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar color="primary">
-    <!-- <ion-buttons> -->
         <button ion-button class="btn" full icon-left (click)="selectImageForUpload()">
         <ion-icon name="camera"></ion-icon>Select Image
       </button>
       <button ion-button class="btn" full icon-left (click)="uploadImage()" [disabled]="lastImage === null">
         <ion-icon name="cloud-upload"></ion-icon>Upload
       </button>
-    <!-- </ion-buttons> -->
   </ion-toolbar>
 </ion-footer>
