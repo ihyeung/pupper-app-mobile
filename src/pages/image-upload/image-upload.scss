@@ -1,13 +1,11 @@
 page-image-upload {
-  .block {
-    position: relative;
-    .deleteIcon {
-      position: absolute !important;
-      color: #ffffff !important;
-      margin-left: 80% !important;
+  .image-upload-preview {
+
+    ion-card {
+      position: relative;
+      text-align: center;
+      
     }
-    .deleteIcon:before {
-      font-size: 30px !important;
-    }
+
   }
 }
