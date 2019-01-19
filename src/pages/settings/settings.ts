@@ -30,7 +30,7 @@ export class SettingsPage {
     }
 
     updateActiveMatchProfile() {
-      
+
     }
 
     userProfile() {
@@ -62,15 +62,16 @@ export class SettingsPage {
     deleteAccount() {
       this.dialog.prompt(
         'Are you sure you want to permanently delete your account and all associated user data? This action cannot be undone.',
-        'Delete Account', ['Confirm', 'Cancel'], 'Enter your email to confirm.')
+        'Delete Account', ['Confirm', 'Cancel'], 'Enter your account email to confirm.')
       .then(obj => {
         if (obj.buttonIndex != 1) {
           return;
         }
-          if (obj.input1 === undefined || obj.input1 != this.userObj['userAccount']['username']) {
-            console.log('does not match');
+          if (obj.input1 === undefined || !obj.input1 ||
+                      obj.input1 != this.userObj['userAccount']['username']) {
+            console.log('Email address does not match');
           } else {
-            console.log('deleting account');
+            console.log('Deleting account (NOT IMPLEMENTED YET)');
             this.deleteAllUserData();
             this.utilService.clearStorage();
             this.returnToHomeScreen();

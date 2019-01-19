@@ -55,9 +55,8 @@ export class MatchProfileDetailPage {
   setProfile(profile: any) {
     this.profile = profile;
     this.id = this.profile['id'];
-    if (this.profile['profileImage'] === undefined || this.profile['profileImage'] == null) {
-      this.profile['profileImage'] = DEFAULT_IMG;
-    }
+    this.profile['profileImage'] =
+      this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
     this.profileReady = true;
   }
 

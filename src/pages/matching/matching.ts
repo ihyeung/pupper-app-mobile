@@ -4,7 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatchingResult } from '../../models/matching-result';
 import { MatchProfiles, Utilities, Matches } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
-import { DEFAULT_IMG } from '../';
+import { DEFAULT_IMG, MATCH_PROFILE_ERROR } from '../../pages';
+
 
 export interface Card {
   profileId: number;
@@ -53,11 +54,10 @@ export class MatchingPage {
       this.matchingResults = new Array<MatchingResult>();
       this.utilService.getDataFromStorage('match').then(val => {
         if (!val) {
-          this.utilService.presentDismissableToast('Please create a matching profile to begin matching.');
+          this.utilService.presentDismissableToast(MATCH_PROFILE_ERROR);
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
           this.matchProfileObj = val;
-
           this.retrieveNextProfileBatch();
         }
       });
@@ -66,15 +66,14 @@ export class MatchingPage {
     retrieveNextProfileBatch() {
       const matchProfileId = this.matchProfileObj['id'];
 
-      let httpRequest;
+      let httpGet;
       if (ENV.RETRIEVE_WITH_ZIP_DATA) {
-        httpRequest = this.matchesService.getNextBatch(matchProfileId, false, true);
+        httpGet = this.matchesService.getNextBatch(matchProfileId, false, true);
       } else {
-        httpRequest = this.matchesService.getNextBatch(matchProfileId, true, false);
+        httpGet = this.matchesService.getNextBatch(matchProfileId, true, false);
       }
-      httpRequest
-      .map(res => res.json())
-      .subscribe(resp => {
+      httpGet.map(res => res.json())
+        .subscribe(resp => {
         if (resp.length == 0) {
           this.displayErrorModal();
         } else {
@@ -86,11 +85,7 @@ export class MatchingPage {
     addToDeck(nextBatch: any) {
       nextBatch.forEach(profile => {
         console.log(profile);
-        let imageStr = profile['profileImage'];
-        if (!imageStr || !(imageStr.startsWith('https://') || imageStr.startsWith('http://'))) {
-          console.log('Invalid profile image, setting to default');
-          imageStr = DEFAULT_IMG;
-        }
+        let imageStr = this.utilService.validateImageUri(profile['profileImage'], DEFAULT_IMG);
 
         this.deckOfCards.push({
           id: profile['profileId'],

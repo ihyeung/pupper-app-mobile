@@ -41,9 +41,8 @@ export class UserProfileDetailPage {
             console.log('user profile found');
           this.profile = response['userProfiles'][0];
           console.log('proflie image: ' + this.profile.profileImage);
-          if (this.profile['profileImage'] === undefined || this.profile['profileImage'] == null) {
-            this.profile.profileImage = DEFAULT_USER_IMG;
-          }
+          this.profile.profileImage =
+              this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
           this.profileReady = true;
         }
 
@@ -55,9 +54,8 @@ export class UserProfileDetailPage {
             console.log('no object found in storage for user');
           } else {
             this.profile = val;
-            if (this.profile['profileImage'] === undefined || !this.profile['profileImage']) {
-              this.profile['profileImage'] = DEFAULT_USER_IMG;
-            }
+            this.profile.profileImage =
+                this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
             this.profileReady = true;
           }
         });

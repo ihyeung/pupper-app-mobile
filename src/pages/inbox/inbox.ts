@@ -41,9 +41,12 @@ export class MessageInboxPage {
         const matchProfileList = JSON.parse(response['_body']);
         matchProfileList.forEach(match => {
           console.log(match);
+
+          const img = this.utilService.validateImageUri(match['profileImage'], DEFAULT_IMG);
           this.matchesList.push({
             id: match['id'],
-            profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
+            // profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
+            profileImage: img,
             names: match['names'],
             breed: match['breed'],
             lifeStage: match['lifeStage'],
@@ -67,8 +70,7 @@ export class MessageInboxPage {
       .subscribe(response => {
         const messageHistoryList = JSON.parse(response['_body']);
         messageHistoryList.forEach(history => {
-          if (history === undefined || history.length == 0) {
-            // console.log('No messages exchanged between these users yet');
+          if (history === undefined || !history || history.length == 0) {
           } else {
             let otherMatchProfile = history[0]['matchProfileSender'];
             if ( otherMatchProfile['id'] == this.matchProfileId) { //Make sure to add the other user's id and name to message array
@@ -77,10 +79,14 @@ export class MessageInboxPage {
 
           const previewTimestamp = this.utilService.getMessageAgeFromTimestamp(history[0]['timestamp']);
 
+          let previewImage =
+            this.utilService.validateImageUri(otherMatchProfile['profileImage'], DEFAULT_IMG);
+
           this.inboxMessagePreviews.push({
             matchProfileObj: otherMatchProfile,
             matchProfileName: otherMatchProfile['names'],
-            image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : DEFAULT_IMG,
+            image: previewImage,
+            // image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : DEFAULT_IMG,
             message: history[0]['message'],
             timestamp: previewTimestamp
           });
