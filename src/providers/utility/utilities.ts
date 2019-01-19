@@ -3,6 +3,7 @@ import { ToastController, AlertController, LoadingController } from 'ionic-angul
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
+import { DEFAULT_IMG, DEFAULT_USER_IMG } from '../../pages';
 
 @Injectable()
 export class Utilities {
@@ -30,6 +31,7 @@ export class Utilities {
     }
 
     clearStorage() {
+      console.log("Clearing storage");
       this.storage.clear();
     }
 
@@ -108,6 +110,25 @@ export class Utilities {
 
     getBreeds(headers) {
       return this.http.get(ENV.BASE_URL + '/breed', { headers: headers });
+    }
+
+    validateImageUri(imageUri: string, defaultImg: string) {
+      if (imageUri === undefined || !imageUri) {
+        console.log('Error: undefined or null');
+        return defaultImg;
+      }
+      else if (!imageUri.startsWith('https://') || !imageUri.startsWith('http://')) {
+        console.log('Error: Invalid image URI, setting to default');
+        return defaultImg;
+      }
+      const invalidPrefixes = ['https://goo.gl/images/', 'https://bit.ly/'];
+      invalidPrefixes.forEach(each => {
+        if (imageUri.startsWith(each)) {
+          console.log('Error: Invalid URL shortened image URI');
+          return defaultImg;
+        }
+      });
+      return imageUri;
     }
 
     getMessageAgeFromTimestamp(timestamp: string) {

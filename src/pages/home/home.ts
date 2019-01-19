@@ -24,7 +24,7 @@ export class HomePage {
     }
 
     ionViewDidLoad() {
-      this.storage.clear();
+      this.utilService.clearStorage();
     }
 
     login(){

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 import { Utilities, MatchProfiles, Users } from '../../providers';
-import { DEFAULT_USER_IMG } from '../';
+import { DEFAULT_USER_IMG, USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 import { Dialogs } from '@ionic-native/dialogs';
 
 @IonicPage()
@@ -33,11 +33,8 @@ export class ProfileSnapshotPage {
     initUserData(user: any) {
       this.welcome = `Welcome back, ${user['firstName']}!`;
       this.userProfileObj = user;
-      if (user['profileImage'] === undefined || user['profileImage'] == null) {
-        this.image = DEFAULT_USER_IMG;
-      } else {
-        this.image = user['profileImage'];
-      }
+      this.image =
+        this.utilService.validateImageUri(user['profileImage'], DEFAULT_USER_IMG);
       this.userReady = true;
     }
 
@@ -46,7 +43,7 @@ export class ProfileSnapshotPage {
         if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
           this.utilService.getDataFromStorage('user').then(user => {
             if (!user) {
-              this.utilService.presentDismissableToast("Please create a user profile to get started.");
+              this.utilService.presentDismissableToast(USER_PROFILE_ERROR);
               this.navCtrl.push('CreateUserProfilePage');
             } else {
               console.log(user);
@@ -66,7 +63,7 @@ export class ProfileSnapshotPage {
         this.matchProfService.getMatchProfiles(user)
         .map(res => res.json())
         .subscribe(resp => {
-          if (resp['matchProfiles'] === undefined) {
+          if (resp['matchProfiles'] === undefined || !resp['matchProfiles']) {
             console.log("No match profiles for user");
             this.numMatchProfiles = 0;
             this.promptCreateMatchProfile();
@@ -76,17 +73,16 @@ export class ProfileSnapshotPage {
           this.numMatchProfiles = resp['matchProfiles'].length;
           this.matchProfilesList = resp['matchProfiles'];
           this.utilService.storeData('profiles', this.matchProfilesList);
+
           //Uncomment the code below after activeMatchProfile field has been added on backend
           this.matchProfilesList.forEach(profile => {
             console.log(profile);
-            if (profile['id'] == this.userProfileObj['activeMatchProfileId']) {
+            if (profile['isDefault']) {
               console.log('found active match profile');
               this.activeMatchProfileObj = profile;
-              console.log(this.activeMatchProfileObj);
-
             }
           });
-          if (!this.activeMatchProfileObj) { //No active match profile set, default to first
+          if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
             console.log("no active match profile found, set to first profile in list");
             this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
 
@@ -110,7 +106,7 @@ export class ProfileSnapshotPage {
     }
 
     private promptCreateMatchProfile() {
-      this.utilService.presentDismissableToast("Please create a matching profile to get started.");
+      this.utilService.presentDismissableToast(MATCH_PROFILE_ERROR);
       this.navCtrl.push('CreateMatchProfilePage');
     }
 
@@ -134,7 +130,7 @@ export class ProfileSnapshotPage {
         if (obj.buttonIndex != 1) { //Cancel button pressed or user clicked outside dialog box
           return;
         }
-        if (obj.input1 === undefined || obj.input1 != this.activeMatchProfileObj['names']) {
+        if (obj.input1 === undefined || !obj.input1 || obj.input1 != this.activeMatchProfileObj['names']) {
           console.log('does not match');
         } else {
           console.log('deleting matching profile ', this.activeMatchProfileObj['names']);
@@ -210,7 +206,8 @@ export class ProfileSnapshotPage {
         if (obj.buttonIndex != 1) { //Cancel button pressed or user clicked outside dialog box
           return;
         }
-        if (obj.input1 === undefined || !zipRegEx.test(obj.input1)) {
+        if (obj.input1 === undefined || !obj.input1 || !zipRegEx.test(obj.input1)) {
+          this.utilService.presentDismissableToast("Please enter a valid US 5-digit zip code.");
           console.log('Invalid zipcode');
           return;
         }

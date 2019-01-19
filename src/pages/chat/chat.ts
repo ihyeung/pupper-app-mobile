@@ -53,8 +53,10 @@ export class ChatPage {
       console.log("ERROR RETRIEVING MATCH PROFILE RECEIVER");
       return;
     }
-    this.chatProfileImage = this.toMatchProfile['profileImage'] ?
-                            this.toMatchProfile['profileImage'] : DEFAULT_IMG;
+    // this.chatProfileImage = this.toMatchProfile['profileImage'] ?
+    //                         this.toMatchProfile['profileImage'] : DEFAULT_IMG;
+    this.chatProfileImage =
+        this.utilService.validateImageUri(this.toMatchProfile['profileImage'], DEFAULT_IMG);
 
     this.profileReady = true;
 
