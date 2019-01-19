@@ -17,14 +17,14 @@ export class HomePage {
   image: string = DEFAULT_IMG;
   breedList: any;
 
-  constructor(public navCtrl: NavController, public utilService: Utilities,
+  constructor(public navCtrl: NavController, public utils: Utilities,
     public statusBar: StatusBar, public userService: Users, private storage: Storage) {
 
       this.retrieveBreedList();
     }
 
     ionViewDidLoad() {
-      this.utilService.clearStorage();
+      this.utils.clearStorage();
     }
 
     login(){
@@ -39,14 +39,14 @@ export class HomePage {
       this.userService
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
-        const headers = this.utilService.extractAndStoreAuthHeaders(response);
+        const headers = this.utils.extractAndStoreAuthHeaders(response);
 
-        this.utilService.getBreeds(this.utilService.createHeadersObjFromAuth(headers))
+        this.utils.getBreeds(this.utils.createHeadersObjFromAuth(headers))
         .map(res => res.json())
         .subscribe(breedResponse => {
-           this.utilService.storeData('breeds', breedResponse);
+           this.utils.storeData('breeds', breedResponse);
 
-        }, err => console.error('ERROR', err));
-      }, err => console.error('ERROR', err));
+        }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', err.body));
     }
   }

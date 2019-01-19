@@ -16,14 +16,14 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController, public app: App,
     public alertCtrl: AlertController,
-    private utilService: Utilities, private dialog: Dialogs) {
+    private utils: Utilities, private dialog: Dialogs) {
       // public userService: Users, public matchProfService: MatchProfiles,
       // public matchService: Matches, public msgService: Messages) {
     }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad SettingsPage');
-      this.utilService.getDataFromStorage('match').then(val => {
+      this.utils.getDataFromStorage('match').then(val => {
         this.matchProfileObj = val;
         this.userObj = val['userProfile'];
       });
@@ -51,7 +51,7 @@ export class SettingsPage {
       this.dialog.confirm('Are you sure you want to log out?', 'Log out')
       .then(index => {
         if (index == 1) {
-          this.utilService.clearStorage();
+          this.utils.clearStorage();
           this.returnToHomeScreen();
         }
       })
@@ -73,7 +73,7 @@ export class SettingsPage {
           } else {
             console.log('Deleting account (NOT IMPLEMENTED YET)');
             this.deleteAllUserData();
-            this.utilService.clearStorage();
+            this.utils.clearStorage();
             this.returnToHomeScreen();
           }
       })

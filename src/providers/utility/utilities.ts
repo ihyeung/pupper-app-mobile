@@ -15,21 +15,6 @@ export class Utilities {
     public loadCtrl: LoadingController,
     private storage: Storage) { }
 
-    uploadUserImage(userProfileId: number, formData: any, headers: any) {
-
-      const formheadersWithAuth = new Headers({
-        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-        'Authorization': headers.get('Authorization')
-      });
-      const url =
-      `${ENV.BASE_URL}/user/${userProfileId}/upload`;
-      console.log('uploading image: ' + url);
-
-      const options = new RequestOptions({headers: formheadersWithAuth});
-
-      return this.http.put(url, formData, options);
-    }
-
     clearStorage() {
       console.log("Clearing storage");
       this.storage.clear();
@@ -42,6 +27,14 @@ export class Utilities {
     getDataFromStorage(key: string) {
       return this.storage.get(key).then(val => {
         return val;
+      });
+    }
+
+    getJwt() {
+      return this.storage.get('authHeaders').then(val => {
+        if (val) {
+          return { 'Authorization': val['Authorization']};
+        }
       });
     }
 
@@ -109,7 +102,7 @@ export class Utilities {
     }
 
     getBreeds(headers) {
-      return this.http.get(ENV.BASE_URL + '/breed', { headers: headers });
+      return this.http.get(`${ENV.BASE_URL}/breed`, { headers: headers });
     }
 
     validateImageUri(imageUri: string, defaultImg: string) {

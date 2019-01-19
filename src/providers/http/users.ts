@@ -10,7 +10,7 @@ export class Users {
   authHeaders: any;
 
   constructor(public http: Http,
-    public utilService: Utilities) {
+    public utils: Utilities) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
 

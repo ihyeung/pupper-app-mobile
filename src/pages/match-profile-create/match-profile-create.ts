@@ -28,7 +28,7 @@ export class CreateMatchProfilePage {
   isActiveMatchProfile: boolean = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public utilService: Utilities, public matchProfiles: MatchProfiles,
+    public utils: Utilities, public matchProfiles: MatchProfiles,
     public users: Users) {
 
   }
@@ -42,17 +42,17 @@ export class CreateMatchProfilePage {
       console.log(this.imageFileName);
       console.log(this.matchProfileFormData);
 
-      this.utilService.getAuthHeaders().then(val => {
+      this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
       })
 
-      this.utilService.getDataFromStorage('breeds').then(val => {
+      this.utils.getDataFromStorage('breeds').then(val => {
         this.breedList = val;
       });
 
-      this.utilService.getDataFromStorage('user').then(val => {
+      this.utils.getDataFromStorage('user').then(val => {
         if (!val) {
-          this.utilService.presentAutoDismissToast("No user profile found, please create one");
+          this.utils.presentAutoDismissToast("No user profile found, please create one");
           this.navCtrl.push('CreateUserProfilePage');
         }
       });
@@ -96,7 +96,7 @@ export class CreateMatchProfilePage {
 
                 this.navCtrl.push('TabsPage');
             }
-          }, err => console.error('ERROR', err));
+          }, err => console.error('ERROR: ', err.body));
       }
 
       private updateActiveMatchProfile(matchProfileObj: any) {
@@ -112,12 +112,12 @@ export class CreateMatchProfilePage {
               if (response.userProfiles) {
 
                 const userProfileObj = response['userProfiles'][0];
-                this.utilService.storeData('user', userProfileObj); //Update user obj in storage
+                this.utils.storeData('user', userProfileObj); //Update user obj in storage
 
               }
-            }, err => console.error('ERROR', err));
+            }, err => console.error('ERROR: ', err.body));
 
-          this.utilService.storeData('match', matchProfileObj); //Update default match obj in storage
+          this.utils.storeData('match', matchProfileObj); //Update default match obj in storage
         }
       }
 
