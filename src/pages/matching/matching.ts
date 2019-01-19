@@ -3,6 +3,7 @@ import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatchingResult } from '../../models/matching-result';
 import { MatchProfiles, Utilities, Matches } from '../../providers';
+import { environment as ENV } from '../../environments/environment';
 import { DEFAULT_IMG } from '../';
 
 export interface Card {
@@ -43,21 +44,16 @@ export class MatchingPage {
     }
   };
 
-
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
-    public navCtrl: NavController,
-    public matchProfService: MatchProfiles, public utilService: Utilities,
-    public matchesService: Matches) {
-      console.log('constructor');
-    }
+    public navCtrl: NavController, public matchProfService: MatchProfiles,
+    public utilService: Utilities, public matchesService: Matches) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfilePage');
-
       this.matchingResults = new Array<MatchingResult>();
       this.utilService.getDataFromStorage('match').then(val => {
         if (!val) {
-          console.log('Please create a matching profile to begin matching.');
+          this.utilService.presentDismissableToast('Please create a matching profile to begin matching.');
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
           this.matchProfileObj = val;
@@ -68,9 +64,15 @@ export class MatchingPage {
     }
 
     retrieveNextProfileBatch() {
-      //Check to make sure a matching profile has been created to start matching
       const matchProfileId = this.matchProfileObj['id'];
-      this.matchesService.getNextBatch(matchProfileId, true, false)
+
+      let httpRequest;
+      if (ENV.RETRIEVE_WITH_ZIP_DATA) {
+        httpRequest = this.matchesService.getNextBatch(matchProfileId, false, true);
+      } else {
+        httpRequest = this.matchesService.getNextBatch(matchProfileId, true, false);
+      }
+      httpRequest
       .map(res => res.json())
       .subscribe(resp => {
         if (resp.length == 0) {
@@ -181,7 +183,6 @@ export class MatchingPage {
                 }
 
               }, err => console.error('ERROR', err));
-
             }
           }
         ]

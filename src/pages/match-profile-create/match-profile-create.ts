@@ -51,7 +51,10 @@ export class CreateMatchProfilePage {
       });
 
       this.utilService.getDataFromStorage('user').then(val => {
-        this.userProfile = val;
+        if (!val) {
+          this.utilService.presentAutoDismissToast("No user profile found, please create one");
+          this.navCtrl.push('CreateUserProfilePage');
+        }
       });
     }
 
