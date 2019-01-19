@@ -10,8 +10,8 @@ export class Messages {
   authHeaders: any;
 
   constructor(public http: Http,
-    private utilService: Utilities) {
-      this.utilService.getAuthHeaders().then(val => {
+    private utils: Utilities) {
+      this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
       });
   }

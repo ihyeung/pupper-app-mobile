@@ -9,8 +9,8 @@ export class Matches {
   authHeaders: any;
 
   constructor(public http: Http,
-    private utilService: Utilities) {
-      utilService.getAuthHeaders().then(val => {
+    private utils: Utilities) {
+      utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
       });
     }
