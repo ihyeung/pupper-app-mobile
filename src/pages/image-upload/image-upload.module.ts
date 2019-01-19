@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ImageUploadPage } from './image-upload';
 import { File } from '@ionic-native/file';
-import { FilePath } from '@ionic-native/file-path';
-import { Camera } from '@ionic-native/camera';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { Camera } from '@ionic-native/camera';
   providers: [
     File,
     Camera,
-    FilePath
+    FileTransfer
   ]
 })
 export class ImageUploadPageModule {}
