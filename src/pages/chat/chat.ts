@@ -25,7 +25,7 @@ export class ChatPage {
   constructor(public navParams: NavParams,
     public navCtrl: NavController,
     public http: Http,
-    public utilService: Utilities,
+    public utils: Utilities,
     public msgService: Messages) {
       //There are three ways this page can be accessed:
       //1. When viewing match profiles and a match is established, and the user elects to send a message (in this case, there will be no message history to retrieve)
@@ -36,7 +36,7 @@ export class ChatPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChatPage');
 
-    this.utilService.getDataFromStorage('match').then(val => {
+    this.utils.getDataFromStorage('match').then(val => {
       if (!val) {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
@@ -56,7 +56,7 @@ export class ChatPage {
     // this.chatProfileImage = this.toMatchProfile['profileImage'] ?
     //                         this.toMatchProfile['profileImage'] : DEFAULT_IMG;
     this.chatProfileImage =
-        this.utilService.validateImageUri(this.toMatchProfile['profileImage'], DEFAULT_IMG);
+        this.utils.validateImageUri(this.toMatchProfile['profileImage'], DEFAULT_IMG);
 
     this.profileReady = true;
 
@@ -69,7 +69,7 @@ export class ChatPage {
   displayMessageHistory(recentMessages) {
     recentMessages.forEach(msg => {
 
-      const message = this.utilService.getMessageAgeFromTimestamp(msg['timestamp']);
+      const message = this.utils.getMessageAgeFromTimestamp(msg['timestamp']);
       this.chatMessages.push({
         message: msg['message'],
         timestamp: message,
@@ -80,8 +80,8 @@ export class ChatPage {
   }
 
   sendMessage() {
-    const messageTimeStamp = this.utilService.isoStringToUTCTimestamp(new Date().toISOString());
-    const messageTimeStampFormatted = this.utilService.getMessageAgeFromTimestamp(messageTimeStamp);
+    const messageTimeStamp = this.utils.isoStringToUTCTimestamp(new Date().toISOString());
+    const messageTimeStampFormatted = this.utils.getMessageAgeFromTimestamp(messageTimeStamp);
 
     this.msgService.sendMessage(this.fromMatchProfile, this.toMatchProfile, this.message,
       messageTimeStamp)
@@ -99,7 +99,7 @@ export class ChatPage {
         } else {
           console.log('Error sending message');
         }
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
 
   }
 

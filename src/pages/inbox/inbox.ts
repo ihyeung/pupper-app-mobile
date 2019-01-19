@@ -21,12 +21,12 @@ export class MessageInboxPage {
 
   constructor(public navCtrl: NavController,
     public matchService: Matches, public msgService: Messages,
-    public utilService: Utilities) {
+    public utils: Utilities) {
 
     }
 
     ionViewDidLoad() {
-      this.utilService.getDataFromStorage('match').then(val => {
+      this.utils.getDataFromStorage('match').then(val => {
         this.matchProfileId = val['id'];
         this.retrieveMatches();
       });
@@ -42,7 +42,7 @@ export class MessageInboxPage {
         matchProfileList.forEach(match => {
           console.log(match);
 
-          const img = this.utilService.validateImageUri(match['profileImage'], DEFAULT_IMG);
+          const img = this.utils.validateImageUri(match['profileImage'], DEFAULT_IMG);
           this.matchesList.push({
             id: match['id'],
             // profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
@@ -58,7 +58,7 @@ export class MessageInboxPage {
           });
         });
         this.matchesReady = true;
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
 
     }
 
@@ -77,10 +77,10 @@ export class MessageInboxPage {
             otherMatchProfile = history[0]['matchProfileReceiver'];
           }
 
-          const previewTimestamp = this.utilService.getMessageAgeFromTimestamp(history[0]['timestamp']);
+          const previewTimestamp = this.utils.getMessageAgeFromTimestamp(history[0]['timestamp']);
 
           let previewImage =
-            this.utilService.validateImageUri(otherMatchProfile['profileImage'], DEFAULT_IMG);
+            this.utils.validateImageUri(otherMatchProfile['profileImage'], DEFAULT_IMG);
 
           this.inboxMessagePreviews.push({
             matchProfileObj: otherMatchProfile,
@@ -94,7 +94,7 @@ export class MessageInboxPage {
         }
       });
       this.messagesReady = true;
-    }, err => console.error('ERROR', err));
+    }, err => console.error('ERROR: ', err.body));
   }
 
   viewMatchProfile(matchProfile: any) {

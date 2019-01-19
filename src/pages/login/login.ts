@@ -5,6 +5,8 @@ import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account.validator';
 import { Utilities, Users  } from '../../providers';
+import { USER_PROFILE_ERROR } from '../';
+
 
 @IonicPage()
 @Component({
@@ -23,7 +25,7 @@ export class LoginPage {
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
 
-    public formBuilder: FormBuilder, public utilService: Utilities,
+    public formBuilder: FormBuilder, public utils: Utilities,
     public userService: Users, public accountValidator: AccountValidator,
     private storage: Storage) {
 
@@ -47,7 +49,7 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
-      this.utilService.getAuthHeaders().then(val => {
+      this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
       });
     }
@@ -74,7 +76,7 @@ export class LoginPage {
         console.log(response);
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
-          this.utilService.presentDismissableToast("Email is in use for an existing account.");
+          this.utils.presentDismissableToast("Email is in use for an existing account.");
           return;
         } else {
           this.navCtrl.push('CreateUserProfilePage', {
@@ -83,21 +85,21 @@ export class LoginPage {
           });
         }
 
-      }, err => console.error('ERROR', err));
+      }, error => console.error('ERROR: ', error.body));
     }
 
     login() {
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
-        const authObj = this.utilService.extractAndStoreAuthHeaders(response);
+        const authObj = this.utils.extractAndStoreAuthHeaders(response);
 
-        this.utilService.presentAutoDismissToast("Login success! Please wait...");
-        this.retrieveUserProfile(this.utilService.createHeadersObjFromAuth(authObj));
+        this.utils.presentAutoDismissToast("Login success! Please wait...");
+        this.retrieveUserProfile(this.utils.createHeadersObjFromAuth(authObj));
 
       }, error => {
-        console.error('ERROR ', error);
-        this.utilService.presentDismissableToast("Invalid login credentials, please try again.");
+        console.error('ERROR: ', error.body);
+        this.utils.presentDismissableToast("Invalid login credentials, please try again.");
       });
     }
 
@@ -108,7 +110,7 @@ export class LoginPage {
         console.log(resp);
         if (!resp.isSuccess) {
           //Happens when user created user account but never created user profile (only possible with old flow)
-          this.utilService.presentDismissableToast("Please create a user profile to get started");
+          this.utils.presentDismissableToast(USER_PROFILE_ERROR);
           this.navCtrl.push('CreateUserProfilePage', {
             email: this.email,
             password: this.password
@@ -118,12 +120,12 @@ export class LoginPage {
           this.updateLastLogin(userProfileObj);//Update lastLogin if needed and store user object
           this.navCtrl.push('TabsPage');
         }
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
     }
 
     updateLastLogin(userProfileObj: any) {
 
-      const currentDate = this.utilService.currentDateToValidDateFormat();
+      const currentDate = this.utils.currentDateToValidDateFormat();
       // Check if the lastLogin field needs to be updated
       if (userProfileObj.lastLogin != currentDate) {
         this.userService.updateLastLogin(userProfileObj, currentDate)
@@ -132,16 +134,11 @@ export class LoginPage {
           console.log(resp);
           if (resp.isSuccess) {
             console.log('updated last login');
-
-            // const userProfileObj = resp['userProfiles'][0];
-
-            // this.utilService.storeData('user', userProfileObj);//Store user with updated login
-
+            userProfileObj = resp['userProfiles'][0];
           }
-        }, err => console.error('ERROR', err));
-      } else {
-        this.utilService.storeData('user', userProfileObj);//Store user
+        }, err => console.error('ERROR: ', err.body));
       }
+        this.utils.storeData('user', userProfileObj); //Store user
     }
 
 }

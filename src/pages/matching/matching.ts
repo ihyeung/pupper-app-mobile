@@ -47,14 +47,14 @@ export class MatchingPage {
 
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
     public navCtrl: NavController, public matchProfService: MatchProfiles,
-    public utilService: Utilities, public matchesService: Matches) { }
+    public utils: Utilities, public matchesService: Matches) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfilePage');
       this.matchingResults = new Array<MatchingResult>();
-      this.utilService.getDataFromStorage('match').then(val => {
+      this.utils.getDataFromStorage('match').then(val => {
         if (!val) {
-          this.utilService.presentDismissableToast(MATCH_PROFILE_ERROR);
+          this.utils.presentDismissableToast(MATCH_PROFILE_ERROR);
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
           this.matchProfileObj = val;
@@ -79,13 +79,13 @@ export class MatchingPage {
         } else {
           this.addToDeck(resp);
         }
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
     }
 
     addToDeck(nextBatch: any) {
       nextBatch.forEach(profile => {
         console.log(profile);
-        let imageStr = this.utilService.validateImageUri(profile['profileImage'], DEFAULT_IMG);
+        let imageStr = this.utils.validateImageUri(profile['profileImage'], DEFAULT_IMG);
 
         this.deckOfCards.push({
           id: profile['profileId'],
@@ -177,7 +177,7 @@ export class MatchingPage {
                   });
                 }
 
-              }, err => console.error('ERROR', err));
+              }, err => console.error('ERROR: ', err.body));
             }
           }
         ]

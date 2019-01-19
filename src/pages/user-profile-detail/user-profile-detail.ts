@@ -46,7 +46,7 @@ export class UserProfileDetailPage {
           this.profileReady = true;
         }
 
-        }, err => console.error('ERROR', err));
+        }, err => console.error('ERROR: ', err.body));
       } else {
         console.log('userId is undefined, loading user from storage');
         this.utils.getDataFromStorage('user').then(val => {

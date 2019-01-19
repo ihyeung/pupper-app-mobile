@@ -31,7 +31,7 @@ export class CreateUserProfilePage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
 
-    public utilService: Utilities,
+    public utils: Utilities,
     public userService: Users,
     private storage: Storage,
     private file: File,
@@ -44,7 +44,7 @@ export class CreateUserProfilePage {
 
       this.setDatePickerBounds();
 
-      this.utilService.getAuthHeaders().then(val => {
+      this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
       });
 
@@ -85,14 +85,14 @@ export class CreateUserProfilePage {
         console.log(response);
         const userAccountObj = response['userAccounts'][0];
         this.userAccount = userAccountObj; //update to reference additional userAccountId field
-        this.utilService.storeData('account', userAccountObj);
+        this.utils.storeData('account', userAccountObj);
 
         this.createUserProfile();
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
     }
 
     createUserProfile() {
-      const today = this.utilService.currentDateToValidDateFormat();
+      const today = this.utils.currentDateToValidDateFormat();
       this.userProfileFormData = JSON.stringify({
         firstName: this.firstName,
         lastName: this.lastName,
@@ -111,15 +111,15 @@ export class CreateUserProfilePage {
       .map(res => res.json())
       .subscribe(result => {
         if (result.isSuccess) {
-          this.utilService.presentAutoDismissToast("User Profile Created! Please wait ...");
+          this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
           const userProfileObj = result['userProfiles'][0];
 
-          this.utilService.storeData('user', userProfileObj);
+          this.utils.storeData('user', userProfileObj);
 
           //Redirect newly created user to create a new match profile
           this.navCtrl.push('CreateMatchProfilePage');
         }
-      }, err => console.error('ERROR', err));
+      }, err => console.error('ERROR: ', err.body));
     }
 
     setDatePickerBounds() {
@@ -144,7 +144,7 @@ export class CreateUserProfilePage {
       //   let formData = new FormData();
       //   formData.append('name', 'profilePic');
       //   formData.append('filename', filepath);
-      //   this.utilService.uploadUserImage(67, formData, this.authHeaders)
+      //   this.utils.uploadUserImage(67, formData, this.authHeaders)
       //   .subscribe(res => {
       //     console.log(res);
       //   } , err => console.error('ERROR ', err));
