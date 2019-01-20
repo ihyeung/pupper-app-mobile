@@ -55,12 +55,11 @@ export class LoginPage {
     }
 
     authenticateUser() {
-      // if (ENV.AUTO_FILL) {
-      //   console.log('AUTO FILL IS SET');
-      //   this.email = ENV.VALIDATE_EMAIL_USER;
-      //   this.password = ENV.VALIDATE_EMAIL_PASS;
-      //   this.login(false);
-      // }
+      if (ENV.AUTO_FILL) {
+        this.email = ENV.VALIDATE_EMAIL_USER;
+        this.password = ENV.VALIDATE_EMAIL_PASS;
+        this.login();
+      }
       if(!this.userForm.valid){
         this.loginAttempted = true;
         return;
@@ -73,7 +72,6 @@ export class LoginPage {
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
       .subscribe(response => {
-        console.log(response);
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
           this.utils.presentDismissableToast("Email is in use for an existing account.");
@@ -82,7 +80,6 @@ export class LoginPage {
           this.utils.storeData('email', this.email);
           this.utils.storeData('password', this.password);
         }
-
       }, error => console.error('ERROR: ', error.body));
     }
 
@@ -91,7 +88,6 @@ export class LoginPage {
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
         const authObj = this.utils.extractAndStoreAuthHeaders(response);
-
         this.utils.presentAutoDismissToast("Login success! Please wait...");
         this.retrieveUserProfile(this.utils.createHeadersObjFromAuth(authObj));
 
