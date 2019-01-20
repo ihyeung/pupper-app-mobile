@@ -75,14 +75,14 @@ export class CreateMatchProfilePage {
         .map(res => res.json())
         .subscribe(response => {
           console.log(response);
-            if (response.matchProfiles) {
-              const matchProfileObj = response['matchProfiles'][0];
-              console.log('Match profile object;'  + matchProfileObj);
-              this.updateActiveMatchProfile(matchProfileObj);
+          if (response.matchProfiles) {
+            const matchProfileObj = response['matchProfiles'][0];
+            console.log('Match profile object;'  + matchProfileObj);
+            this.updateActiveMatchProfile(matchProfileObj);
 
-              this.uploadProfileImageForMatchProfile(matchProfileObj);
-            }
-          }, err => console.error('ERROR: ', err.body));
+            this.uploadProfileImageForMatchProfile(matchProfileObj);
+          }
+        }, err => console.error('ERROR: ', err.body));
       }
 
       uploadProfileImageForMatchProfile(matchProfileObj: any) {
@@ -123,19 +123,6 @@ export class CreateMatchProfilePage {
               }
             }
           });
-          // this.userProfile['activeMatchProfileId'] = matchProfileId;
-          // this.users.updateUserProfileById(this.userProfile, this.userProfile['id'])
-          // .map(res => res.json())
-          // .subscribe(response => {
-          //   console.log(response);
-          //     // let jsonResponseObj = JSON.parse((result['_body']));
-          //     if (response.userProfiles) {
-          //
-          //       const userProfileObj = response['userProfiles'][0];
-          //       this.utils.storeData('user', userProfileObj); //Update user obj in storage
-          //
-          //     }
-          //   }, err => console.error('ERROR: ', err.body));
         }
       }
 
@@ -153,19 +140,19 @@ export class CreateMatchProfilePage {
         const today = this.utils.currentDateToValidDateFormat();
 
         return {
-            aboutMe: this.aboutMe,
-            birthdate: this.birthdate,
-            breed: this.breed,
-            energyLevel: this.energyLevel,
-            lifeStage: this.lifeStage,
-            names: this.names,
-            numDogs: 1,
-            profileImage: null,
-            sex: this.sex,
-            size: this.size,
-            userProfile: this.userProfile,
-            zipRadius: this.radius,
-            isDefault: this.isActiveMatchProfile
+          aboutMe: this.aboutMe,
+          birthdate: this.birthdate,
+          breed: this.breed,
+          energyLevel: this.energyLevel,
+          lifeStage: this.lifeStage,
+          names: this.names,
+          numDogs: 1,
+          profileImage: null,
+          sex: this.sex,
+          size: this.size,
+          userProfile: this.userProfile,
+          zipRadius: this.radius,
+          isDefault: this.isActiveMatchProfile
         };
       }
     }

@@ -16,10 +16,7 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController, public app: App,
     public alertCtrl: AlertController,
-    private utils: Utilities, private dialog: Dialogs) {
-      // public userService: Users, public matchProfService: MatchProfiles,
-      // public matchService: Matches, public msgService: Messages) {
-    }
+    private utils: Utilities, private dialog: Dialogs) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad SettingsPage');

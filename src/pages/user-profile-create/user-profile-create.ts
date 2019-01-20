@@ -5,7 +5,6 @@ import { Utilities, Users  } from '../../providers';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file';
 import { FilePath } from '@ionic-native/file-path';
-import { DEFAULT_USER_IMG } from '../';
 
 @IonicPage()
 @Component({
