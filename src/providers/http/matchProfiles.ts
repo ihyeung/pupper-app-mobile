@@ -69,23 +69,6 @@ export class MatchProfiles {
     //   return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     // }
 
-    uploadImage(userProfileId: number, matchProfileId: number, file: File) {
-      let formData = new FormData();
-      // formData.append('profilePic', imageFile, fileName);
-      formData.append('profilePic', file);
-
-
-      const formheadersWithAuth = new Headers({
-        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-        'Authorization': this.authHeaders.get('Authorization')
-      });
-      const url =
-      `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
-      console.log('uploading image: ' + url);
-
-      return this.http.put(url, formData, { headers: formheadersWithAuth });
-    }
-
     deleteImageUpload(userProfileId: number, matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;

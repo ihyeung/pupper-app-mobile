@@ -93,9 +93,6 @@ export class Users {
           { headers: this.authHeaders });
     }
 
-    uploadImage(userProfileId: number, file: File){
-    }
-
     deleteUserAccount(email: string) {
       const url = `${ENV.BASE_URL}/account?email=${email}`;
       console.log(url);
