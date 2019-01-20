@@ -19,8 +19,6 @@ export class ImageUploadPage {
   imageFor: string;
   profileData: any = [];
   imageURI: string;
-  // imageTemp: string;
-  // imageFileName: string;
   uriReady: boolean = false;
   tempReady: boolean = false;
   headers: any;
@@ -29,7 +27,6 @@ export class ImageUploadPage {
     public navParams: NavParams,
     private camera: Camera,
     private file: File,
-    // private transfer: FileTransfer,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
     public loadingCtrl: LoadingController,
