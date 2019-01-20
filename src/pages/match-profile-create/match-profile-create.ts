@@ -28,9 +28,7 @@ export class CreateMatchProfilePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public matchProfiles: MatchProfiles,
-    public users: Users) {
-
-  }
+    public users: Users) { }
 
     ionViewDidLoad() {
       this.extractNavParams();
@@ -116,6 +114,12 @@ export class CreateMatchProfilePage {
               } else {
                 console.log(resp.matchProfiles.length + ' other match prfoiles for this user, need to make sure no others are marked as default');
                 //TODO: make update calls for the previously existing match prfoile that was marked as default
+                resp.matchProfiles.forEach(each => {
+                  if (each['isDefault']) {
+                    console.log('found previous default, updating to no longer be default');
+                    //TODO : update match profile
+                  }
+                });
               }
             }
           });
@@ -132,8 +136,6 @@ export class CreateMatchProfilePage {
           //
           //     }
           //   }, err => console.error('ERROR: ', err.body));
-
-          this.utils.storeData('match', matchProfileObj); //Update default match obj in storage
         }
       }
 
