@@ -4,6 +4,7 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
 import { DEFAULT_IMG, DEFAULT_USER_IMG } from '../../pages';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 
 @Injectable()
 export class Utilities {
@@ -13,7 +14,31 @@ export class Utilities {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     public loadCtrl: LoadingController,
-    private storage: Storage) { }
+    private storage: Storage,
+    private transfer: FileTransfer) { }
+
+    uploadFile(userId: number, matchId: number, imageUri: string): any {
+      this.getJwt().then(val => {
+        const fileTransfer: FileTransferObject = this.transfer.create();
+
+        let options: FileUploadOptions = {
+          fileKey: 'profilePic',
+          chunkedMode: false,
+          mimeType: "image/jpeg",
+          headers: val,
+          httpMethod: 'PUT'
+        };
+
+        const url = matchId === null ? `${ENV.BASE_URL}/user/${userId}/upload` :
+        `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
+        console.log('image upload endpoint url: ' + url);
+
+        const enc = encodeURI(url);
+        console.log("Encoded url: " + enc);
+
+        fileTransfer.upload(imageUri, enc, options);
+      });
+    }
 
     clearStorage() {
       console.log("Clearing storage");
