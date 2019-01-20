@@ -16,25 +16,25 @@
   <div>
   <h2 [hidden]="lastImage !== null">SELECT A IMAGE FILE FOR UPLOAD</h2>
   </div>
-  <ion-item [hidden]="lastImage === null">YOUR IMAGE BELOW:</ion-item>
+  <!-- <ion-item [hidden]="lastImage === null">YOUR IMAGE BELOW:</ion-item> -->
 
-  <ion-card *ngIf="uriReady">
+  <!-- <ion-card *ngIf="uriReady"> -->
   <!-- <img id="image" src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null"> -->
-  <div [hidden]="lastImage === null"> {{pathForImage(lastImage)}} </div>
-</ion-card>
+  <!-- <div [hidden]="lastImage === null"> {{pathForImage(lastImage)}} </div> -->
+<!-- </ion-card> -->
 <!-- <ion-card *ngIf="uriReady">
 =  <img [src]="imageURI" [hidden]="lastImage === null" />
   </ion-card> -->
-  <ion-card>
+  <!-- <ion-card>
   <ion-item *ngIf="uriReady">URI: '{{imageURI}}' <br> LAST IMAGE: '{{lastImage}}'</ion-item>
-  </ion-card>
+  </ion-card> -->
   <ion-item>
     <h4>Image Preview Below</h4>
-    <img src="{{imageFileName}}" *ngIf="imageFileName" width="300" />
+    <img src="{{imageURI}}" *ngIf="imageURI" width="300" />
   </ion-item>
 
   <ion-item>
-    <button ion-button (click)="uploadFile()">Upload</button>
+    <button ion-button (click)="passImageUriForUpload()">Upload</button>
   </ion-item>
 </ion-content>
 

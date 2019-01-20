@@ -79,10 +79,8 @@ export class LoginPage {
           this.utils.presentDismissableToast("Email is in use for an existing account.");
           return;
         } else {
-          this.navCtrl.push('CreateUserProfilePage', {
-            email: this.email,
-            password: this.password
-          });
+          this.utils.storeData('email', this.email);
+          this.utils.storeData('password', this.password);
         }
 
       }, error => console.error('ERROR: ', error.body));

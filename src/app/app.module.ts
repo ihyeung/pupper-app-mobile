@@ -9,6 +9,8 @@ import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Utilities, Messages, Matches, MatchProfiles, Users } from '../providers';
 import { ValidatorsModule } from '../validators/validators.module'
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { ValidatorsModule } from '../validators/validators.module'
     MatchProfiles,
     Utilities,
     Matches,
-    Messages
+    Messages,
+    FileTransfer
   ]
 })
 export class AppModule {}

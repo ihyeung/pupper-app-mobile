@@ -19,7 +19,6 @@ export class CreateMatchProfilePage {
   size: string;
   breedList: any = [];
   imageFilePath: string;
-  imageFileName: string;
   matchProfileFormData: any = [];
   userProfile: any;
   dogPreferences: string[];
@@ -29,22 +28,26 @@ export class CreateMatchProfilePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public matchProfiles: MatchProfiles,
-    public users: Users) {
-
-  }
+    public users: Users) { }
 
     ionViewDidLoad() {
+      this.extractNavParams();
+      this.retrieveDataFromStorage();
+    }
+
+    extractNavParams() {
       this.imageFilePath = this.navParams.get('filePath');
-      this.imageFileName = this.navParams.get('fileName');
-
       this.matchProfileFormData = this.navParams.get('formData');
-      console.log(this.imageFilePath);
-      console.log(this.imageFileName);
-      console.log(this.matchProfileFormData);
+      console.log('Image URI: ' + this.imageFilePath);
+      if (this.matchProfileFormData) {
+        console.log('profile form data passed back from image upload page');
+      }
+    }
 
+    retrieveDataFromStorage() {
       this.utils.getAuthHeaders().then(val => {
         this.authHeaders = val;
-      })
+      });
 
       this.utils.getDataFromStorage('breeds').then(val => {
         this.breedList = val;
@@ -54,28 +57,16 @@ export class CreateMatchProfilePage {
         if (!val) {
           this.utils.presentAutoDismissToast("No user profile found, please create one");
           this.navCtrl.push('CreateUserProfilePage');
+        } else {
+          this.userProfile = val;
         }
       });
     }
 
     public createMatchProfile() {
-      console.log('createMatchProfileFromWithBreedObj');
       const userProfileId = this.userProfile['id'];
 
-      this.matchProfileFormData = {
-        aboutMe: this.aboutMe,
-        birthdate: this.birthdate,
-        breed: this.breed,
-        energyLevel: this.energyLevel,
-        lifeStage: this.lifeStage,
-        names: this.names,
-        numDogs: 1,
-        profileImage: null,
-        sex: this.sex,
-        size: this.size,
-        userProfile: this.userProfile,
-        zipRadius: this.radius
-      };
+      this.matchProfileFormData = this.getDataFromInputFields();
       console.log(this.matchProfileFormData);
       console.log('Dog preferences: ' + this.dogPreferences);
 
@@ -89,72 +80,92 @@ export class CreateMatchProfilePage {
               console.log('Match profile object;'  + matchProfileObj);
               this.updateActiveMatchProfile(matchProfileObj);
 
-                // this.uploadProfileImage(this.imageFile,
-                //   //TODO: figure out how to get file object from filepath (this.imageFile is undefined)
-                // matchProfileId, this.imageFilePath);
-
-
-                this.navCtrl.push('TabsPage');
+              this.uploadProfileImageForMatchProfile(matchProfileObj);
             }
           }, err => console.error('ERROR: ', err.body));
+      }
+
+      uploadProfileImageForMatchProfile(matchProfileObj: any) {
+        const matchId = matchProfileObj['id'];
+        const userId = matchProfileObj['userProfile']['id'];
+        this.utils.uploadFile(userId, matchId, this.imageFilePath).then(val => {
+          console.log('Promise resolved : ' + val);
+          matchProfileObj['profileImage'] = val; //Update profileImage field after upload before storing in storage
+          this.utils.storeData(' match', matchProfileObj);
+          this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
+
+          //Redirect newly created user to create a new match profile
+          this.navCtrl.push('TabsPage');
+        })
       }
 
       private updateActiveMatchProfile(matchProfileObj: any) {
         if(this.isActiveMatchProfile) {
           let matchProfileId = matchProfileObj['id'];
 
-          this.userProfile['activeMatchProfileId'] = matchProfileId;
-          this.users.updateUserProfileById(this.userProfile, this.userProfile['id'])
+          //TODO: add logic to check for other match profiles for this user, and if any are found, make sure other match profiles are not marked as default
+          this.matchProfiles.getMatchProfiles(this.userProfile)
           .map(res => res.json())
-          .subscribe(response => {
-            console.log(response);
-              // let jsonResponseObj = JSON.parse((result['_body']));
-              if (response.userProfiles) {
-
-                const userProfileObj = response['userProfiles'][0];
-                this.utils.storeData('user', userProfileObj); //Update user obj in storage
-
+          .subscribe(resp => {
+            if (resp.isSuccess) {
+              if (!resp.matchProfiles || resp.matchProfiles.length == 0) {
+                //No other previously created match profiles, nothing to do
+                return;
+              } else {
+                console.log(resp.matchProfiles.length + ' other match prfoiles for this user, need to make sure no others are marked as default');
+                //TODO: make update calls for the previously existing match prfoile that was marked as default
+                resp.matchProfiles.forEach(each => {
+                  if (each['isDefault']) {
+                    console.log('found previous default, updating to no longer be default');
+                    //TODO : update match profile
+                  }
+                });
               }
-            }, err => console.error('ERROR: ', err.body));
-
-          this.utils.storeData('match', matchProfileObj); //Update default match obj in storage
+            }
+          });
+          // this.userProfile['activeMatchProfileId'] = matchProfileId;
+          // this.users.updateUserProfileById(this.userProfile, this.userProfile['id'])
+          // .map(res => res.json())
+          // .subscribe(response => {
+          //   console.log(response);
+          //     // let jsonResponseObj = JSON.parse((result['_body']));
+          //     if (response.userProfiles) {
+          //
+          //       const userProfileObj = response['userProfiles'][0];
+          //       this.utils.storeData('user', userProfileObj); //Update user obj in storage
+          //
+          //     }
+          //   }, err => console.error('ERROR: ', err.body));
         }
       }
 
-      // uploadProfileImage(file: any, matchProfileId: number, imageFilePath: string) {
-      //   const userProfileId = this.userProfile['id'];
-      //   const reader = new FileReader();
-      //       reader.onloadend = () => {
-      //         const imgBlob = new Blob([reader.result], {type: file.type});
-      //         this.matchProfiles.uploadImage(userProfileId, matchProfileId, imgBlob, imageFilePath)
-      //         .subscribe(res => {
-      //           console.log(res);
-      //     if (res['success']) {
-      //         console.log('File upload complete.')
-      //     } else {
-      //         console.log('File upload failed.')
-      //     }
-      // });
-      //     }
-      //       reader.readAsArrayBuffer(file);
-      // }
-
       addProfileImage() {
-        // const filepath = "/Users/iyeung/School/pupper stuff/CAPSTONE_DEMO_IMG.jpg";
-        // this.matchProfiles.uploadImage(this.userProfile['id'], 100, filepath)
-        // .subscribe(res => {
-        //           console.log(res);
-        //         } , err => console.error('ERROR ', err));
-        // }
-        //     if (res['success']) {
-        //         console.log('File upload complete.')
-        //     } else {
-        //         console.log('File upload failed.')
-        //     }
-        // });)
+        const data = this.matchProfileFormData ? this.matchProfileFormData :
+        this.getDataFromInputFields();
+
         this.navCtrl.push('ImageUploadPage', {
           profileType: 'match',
-          formData: this.matchProfileFormData
+          formData: data
         });
+      }
+
+      private getDataFromInputFields() {
+        const today = this.utils.currentDateToValidDateFormat();
+
+        return {
+            aboutMe: this.aboutMe,
+            birthdate: this.birthdate,
+            breed: this.breed,
+            energyLevel: this.energyLevel,
+            lifeStage: this.lifeStage,
+            names: this.names,
+            numDogs: 1,
+            profileImage: null,
+            sex: this.sex,
+            size: this.size,
+            userProfile: this.userProfile,
+            zipRadius: this.radius,
+            isDefault: this.isActiveMatchProfile
+        };
       }
     }
