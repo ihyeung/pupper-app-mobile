@@ -160,7 +160,6 @@ export class ProfileSnapshotPage {
         this.activeMatchProfileObj = null;
         this.hasMatchProfile = false;
         this.numMatchProfiles = 0;
-        this.userProfileObj['activeMatchProfileId'] = null;
         this.utils.storeData('profiles', null);
       } else { //Deleted match profile but others for user still remain
         const activeId = this.activeMatchProfileObj['id'];
@@ -169,20 +168,20 @@ export class ProfileSnapshotPage {
         this.activeMatchProfileObj = this.matchProfilesList[0]; //Replace with next profile in list
         this.utils.storeData('match', this.activeMatchProfileObj);
         this.numMatchProfiles--;
-        this.userProfileObj['activeMatchProfileId'] = this.activeMatchProfileObj['id'];
+        this.setNewDefaultMatchProfile();
       }
-      this.updateActiveMatchProfileForUser();
     }
 
-    updateActiveMatchProfileForUser() {
-      this.users.updateUserProfileById(this.userProfileObj, this.userProfileObj['id'])
+    setNewDefaultMatchProfile() {
+      this.activeMatchProfileObj['isDefault'] = true;
+      const userId = this.activeMatchProfileObj['userProfile']['id'];
+      this.matchProfService.updateMatchProfile(this.activeMatchProfileObj, userId)
       .map(res => res.json())
       .subscribe(response => {
         console.log(response);
-          if (response.userProfiles) {
-            const userProfileObj = response['userProfiles'][0];
-            this.utils.storeData('user', userProfileObj); //Update user obj in storage
-
+          if (response.matchProfiles) {
+            const matchProfileObj = response['matchProfiles'][0];
+            this.utils.storeData('match', matchProfileObj); //Update user obj in storage
           }
         }, err => console.error('ERROR: ', err.body));
     }
