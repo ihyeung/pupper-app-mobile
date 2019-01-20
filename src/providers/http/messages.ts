@@ -4,7 +4,6 @@ import { environment as ENV } from '../../environments/environment';
 import { Utilities } from '../../providers/utility/utilities';
 import { Message } from '../../models/message';
 
-
 @Injectable()
 export class Messages {
   authHeaders: any;
