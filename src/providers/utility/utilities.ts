@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ToastController, AlertController } from 'ionic-angular';
+import { ToastController } from 'ionic-angular';
 import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { Storage } from '@ionic/storage';
-import { DEFAULT_IMG, DEFAULT_USER_IMG } from '../../pages';
 
 @Injectable()
 export class Utilities {
@@ -12,19 +11,20 @@ export class Utilities {
   constructor(
     public http: Http,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController,
     private storage: Storage,
     private transfer: FileTransfer) { }
 
-    uploadFile(userId: number, matchId: number, imageUri: string, loader: any) {
-      this.getJwt().then(val => {
+    async uploadFile(userId: number, matchId: number, imageUri: string) {
+      const authToken = await this.getJwt();
+      console.log('Auth token: ' + JSON.stringify(authToken));
+      // this.getJwt().then(val => {
         const fileTransfer: FileTransferObject = this.transfer.create();
 
         let options: FileUploadOptions = {
           fileKey: 'profilePic',
           chunkedMode: false,
           mimeType: "image/jpeg",
-          headers: val,
+          headers: authToken,
           httpMethod: 'PUT'
         };
 
@@ -32,22 +32,19 @@ export class Utilities {
         `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
         console.log('image upload endpoint url: ' + url);
 
-        // const enc = encodeURIComponent(url);
-        // console.log("Encoded url: " + enc);
-
-        fileTransfer.upload(imageUri, url, options)
-        .then(data => {
-          const response = JSON.parse(data.response);
-          if (response.isSuccess) {
-            console.log("Uploaded Successfully");
-            console.log("Uploaded image file url: " + response.imageUrl);
-            return response.imageUrl;
-          }
-        }, err => {
-          console.error("ERROR: " + JSON.stringify(err));
-          loader.dismiss();
-        });
-      });
+        return fileTransfer.upload(imageUri, url, options);
+        // .then(
+        //   async data => {
+        //     const response = JSON.parse(data.response);
+        //     if (response.isSuccess) {
+        //       console.log("Uploaded Successfully");
+        //       console.log("Uploaded image file url: " + response.imageUrl);
+        //       return await response.imageUrl;
+        //     }
+        //   }, err => {
+        //     console.error("ERROR: " + JSON.stringify(err));
+        //   });
+      // });
     }
 
     async clearStorage() {

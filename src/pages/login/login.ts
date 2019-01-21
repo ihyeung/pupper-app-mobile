@@ -137,7 +137,8 @@ export class LoginPage {
           }
         }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
-        this.utils.storeData('user', userProfileObj); //Store user
+      
+      this.utils.storeData('user', userProfileObj); //Store user
     }
 
 }
