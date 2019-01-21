@@ -58,7 +58,7 @@ export class MessageInboxPage {
           });
         });
         this.matchesReady = true;
-      }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
 
     }
 
@@ -94,7 +94,7 @@ export class MessageInboxPage {
         }
       });
       this.messagesReady = true;
-    }, err => console.error('ERROR: ', err.body));
+    }, err => console.error('ERROR: ', JSON.stringify(err)));
   }
 
   viewMatchProfile(matchProfile: any) {

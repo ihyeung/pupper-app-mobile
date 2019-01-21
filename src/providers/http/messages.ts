@@ -10,7 +10,7 @@ export class Messages {
 
   constructor(public http: Http,
     private utils: Utilities) {
-      this.utils.getAuthHeaders().then(val => {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
   }

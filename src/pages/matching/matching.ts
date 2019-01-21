@@ -79,7 +79,7 @@ export class MatchingPage {
         } else {
           this.addToDeck(resp);
         }
-      }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     addToDeck(nextBatch: any) {
@@ -177,7 +177,7 @@ export class MatchingPage {
                   });
                 }
 
-              }, err => console.error('ERROR: ', err.body));
+              }, err => console.error('ERROR: ', JSON.stringify(err)));
             }
           }
         ]

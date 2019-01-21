@@ -49,7 +49,7 @@ export class MatchProfileDetailPage {
     .subscribe(response => { //Directly maps to matchProfile object
         console.log('successfully retrieved match profile by id');
         this.setProfile(response);
-    }, err => console.error('ERROR: ', err.body));
+    }, err => console.error('ERROR: ', JSON.stringify(err)));
   }
 
   setProfile(profile: any) {

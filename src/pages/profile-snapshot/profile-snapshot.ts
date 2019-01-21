@@ -34,7 +34,7 @@ export class ProfileSnapshotPage {
       this.welcome = `Welcome back, ${user['firstName']}!`;
       this.userProfileObj = user;
       this.image =
-        this.utils.validateImageUri(user['profileImage'], DEFAULT_USER_IMG);
+      this.utils.validateImageUri(user['profileImage'], DEFAULT_USER_IMG);
       this.userReady = true;
     }
 
@@ -50,31 +50,31 @@ export class ProfileSnapshotPage {
               this.initUserData(user);
               this.retrieveMatchProfilesForUser(user);
             }
-        });
-      } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
+          });
+        } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
           const userProfile = match.userProfile;
           this.initUserData(userProfile);
           this.retrieveMatchProfilesForUser(userProfile);
-      }
-    });
+        }
+      });
     }
 
     retrieveMatchProfilesForUser(user: any){
-        this.matchProfService.getMatchProfiles(user)
-        .map(res => res.json())
-        .subscribe(resp => {
-          if (resp['matchProfiles'] === undefined || !resp['matchProfiles']) {
-            console.log("No match profiles for user");
-            this.numMatchProfiles = 0;
-            this.promptCreateMatchProfile();
-          }
-          console.log(resp);
+      this.matchProfService.getMatchProfiles(user)
+      .map(res => res.json())
+      .subscribe(resp => {
+        console.log(resp);
+
+        if (resp['matchProfiles'] === undefined || !resp['matchProfiles']) {
+          console.log("No match profiles for user");
+          this.numMatchProfiles = 0;
+          this.promptCreateMatchProfile();
+        } else {
           console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
           this.numMatchProfiles = resp['matchProfiles'].length;
           this.matchProfilesList = resp['matchProfiles'];
           this.utils.storeData('profiles', this.matchProfilesList);
 
-          //Uncomment the code below after activeMatchProfile field has been added on backend
           this.matchProfilesList.forEach(profile => {
             console.log(profile);
             if (profile['isDefault']) {
@@ -82,15 +82,16 @@ export class ProfileSnapshotPage {
               this.activeMatchProfileObj = profile;
             }
           });
+
           if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
             console.log("no active match profile found, set to first profile in list");
             this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
-
           }
           this.utils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
           this.hasMatchProfile = true;
           this.matchProfileReady = true;
-        }, err => console.error('ERROR: ', err.body));
+        }
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     matchProfileModal(readOnly: boolean) {
@@ -114,7 +115,7 @@ export class ProfileSnapshotPage {
       if (this.matchProfilesList.length < 3) {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
-      this.utils.presentAutoDismissToast('A maximum of 3 matching profiles can be created for a given user.');
+        this.utils.presentAutoDismissToast('A maximum of 3 matching profiles can be created for a given user.');
       }
     }
 
@@ -144,11 +145,11 @@ export class ProfileSnapshotPage {
           .subscribe(resp => {
             console.log(resp);
             if (resp.isSuccess) {
-            this.utils.presentDismissableToast(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
-            this.updateActiveMatchProfile();
+              this.utils.presentDismissableToast(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
+              this.updateActiveMatchProfile();
             }
 
-          }, err => console.error('ERROR: ', err.body));
+          }, err => console.error('ERROR: ', JSON.stringify(err)));
         }
       })
       .catch(e => console.log('Error displaying dialog', e));
@@ -179,11 +180,11 @@ export class ProfileSnapshotPage {
       .map(res => res.json())
       .subscribe(response => {
         console.log(response);
-          if (response.matchProfiles) {
-            const matchProfileObj = response['matchProfiles'][0];
-            this.utils.storeData('match', matchProfileObj); //Update user obj in storage
-          }
-        }, err => console.error('ERROR: ', err.body));
+        if (response.matchProfiles) {
+          const matchProfileObj = response['matchProfiles'][0];
+          this.utils.storeData('match', matchProfileObj); //Update user obj in storage
+        }
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     userProfileModal(readOnly: boolean) {

@@ -45,7 +45,7 @@ export class CreateMatchProfilePage {
     }
 
     retrieveDataFromStorage() {
-      this.utils.getAuthHeaders().then(val => {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
 
@@ -82,7 +82,7 @@ export class CreateMatchProfilePage {
 
             this.uploadProfileImageForMatchProfile(matchProfileObj);
           }
-        }, err => console.error('ERROR: ', err.body));
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
 
       uploadProfileImageForMatchProfile(matchProfileObj: any) {

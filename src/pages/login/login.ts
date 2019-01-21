@@ -26,8 +26,7 @@ export class LoginPage {
   constructor(public navParams: NavParams, public navCtrl: NavController,
 
     public formBuilder: FormBuilder, public utils: Utilities,
-    public userService: Users, public accountValidator: AccountValidator,
-    private storage: Storage) {
+    public userService: Users, public accountValidator: AccountValidator) {
 
       this.userAuthType = this.navParams.get('userAuthType');
       // let username = new FormControl('', accountValidator.isValidEmail);
@@ -49,13 +48,16 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
-      this.utils.getAuthHeaders().then(val => {
-        this.authHeaders = val;
+      this.utils.getDataFromStorage('authHeaders').then(val => {
+        if (val) {
+          this.authHeaders = val;
+        }
       });
     }
 
     authenticateUser() {
       if (ENV.AUTO_FILL) {
+        console.log('Auto fill flag set');
         this.email = ENV.VALIDATE_EMAIL_USER;
         this.password = ENV.VALIDATE_EMAIL_PASS;
         this.login();
@@ -75,12 +77,13 @@ export class LoginPage {
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
           this.utils.presentDismissableToast("Email is in use for an existing account.");
-          return;
         } else {
           this.utils.storeData('email', this.email);
           this.utils.storeData('password', this.password);
+
+          this.navCtrl.push('CreateUserProfilePage');
         }
-      }, error => console.error('ERROR: ', error.body));
+      }, error => console.error('ERROR: ', JSON.stringify(error)));
     }
 
     login() {
@@ -92,7 +95,7 @@ export class LoginPage {
         this.retrieveUserProfile(this.utils.createHeadersObjFromAuth(authObj));
 
       }, error => {
-        console.error('ERROR: ', error.body);
+        console.error('ERROR: ', JSON.stringify(error));
         this.utils.presentDismissableToast("Invalid login credentials, please try again.");
       });
     }
@@ -105,16 +108,17 @@ export class LoginPage {
         if (!resp.isSuccess) {
           //Happens when user created user account but never created user profile (only possible with old flow)
           this.utils.presentDismissableToast(USER_PROFILE_ERROR);
-          this.navCtrl.push('CreateUserProfilePage', {
-            email: this.email,
-            password: this.password
-          });
+
+          this.utils.storeData('email', this.email);
+          this.utils.storeData('password', this.password);
+
+          this.navCtrl.push('CreateUserProfilePage');
         } else {
           const userProfileObj = resp['userProfiles'][0];
           this.updateLastLogin(userProfileObj);//Update lastLogin if needed and store user object
           this.navCtrl.push('TabsPage');
         }
-      }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     updateLastLogin(userProfileObj: any) {
@@ -125,14 +129,15 @@ export class LoginPage {
         this.userService.updateLastLogin(userProfileObj, currentDate)
         .map(res => res.json())
         .subscribe(resp => {
-          console.log(resp);
+          console.log(JSON.stringify(resp));
           if (resp.isSuccess) {
             console.log('updated last login');
             userProfileObj = resp['userProfiles'][0];
           }
-        }, err => console.error('ERROR: ', err.body));
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
-        this.utils.storeData('user', userProfileObj); //Store user
+
+      this.utils.storeData('user', userProfileObj); //Store user
     }
 
 }
