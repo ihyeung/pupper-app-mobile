@@ -37,21 +37,17 @@ export class Utilities {
 
         fileTransfer.upload(imageUri, enc, options)
         .then(async data => {
-          console.log(JSON.stringify(data));
-          return await "hello";
-        })
+          const response = JSON.parse(data.response);
+          console.log(JSON.stringify(response));
+          if (response.isSuccess) {
+            console.log("Uploaded Successfully");
+            console.log("Uploaded image file url: " + response.imageUrl);
+            return await response.imageUrl;
+          }
+        }, err => console.error("ERROR: " + JSON.stringify(err)));
       });
-  }
-        //     return response.imageUrl;
-        //   } else {
-        //     console.log("Upload failed, " + response.statusCode + ", message: " + response.description);
-        //     return null;
-        //   }
-        //   // this.utils.presentAutoDismissToast("Image uploaded successfully");
-        // }, err => {
-        //   console.log("ERROR response body: " + err.body);
-        //   return null;
-
+    }
+    
     async clearStorage() {
       await this.storage.clear();
     }
