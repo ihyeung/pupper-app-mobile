@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ToastController, AlertController } from 'ionic-angular';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { Storage } from '@ionic/storage';
 import { DEFAULT_IMG, DEFAULT_USER_IMG } from '../../pages';
 
@@ -12,7 +13,57 @@ export class Utilities {
     public http: Http,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private storage: Storage) { }
+    private storage: Storage,
+    private transfer: FileTransfer) { }
+
+    uploadFile(userId: number, matchId: number, imageUri: string): Promise<any> {
+      return new Promise((resolve, reject) => {
+
+      this.getJwt().then(val => {
+        const fileTransfer: FileTransferObject = this.transfer.create();
+
+        let options: FileUploadOptions = {
+          fileKey: 'profilePic',
+          chunkedMode: false,
+          mimeType: "image/jpeg",
+          headers: val,
+          httpMethod: 'PUT'
+        };
+
+        const url = matchId === null ? `${ENV.BASE_URL}/user/${userId}/upload` :
+        `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
+        console.log('image upload endpoint url: ' + url);
+
+        const enc = encodeURIComponent(url);
+        console.log("Encoded url: " + enc);
+
+        // return new Promise((resolve, reject) => {
+        fileTransfer.upload(imageUri, enc, options)
+        .then(data => {
+          console.log(data.response);
+          const response = JSON.parse(data.response);
+          if (response.isSuccess) {
+                console.log("Uploaded Successfully");
+                console.log("Uploaded image file url: " + response.imageUrl);
+            resolve(response.imageUrl);
+          }
+        }, err => {
+          console.log("ERROR response body: " + err.body);
+          reject(err);
+        });
+      });
+    // });
+  });
+  }
+        //     return response.imageUrl;
+        //   } else {
+        //     console.log("Upload failed, " + response.statusCode + ", message: " + response.description);
+        //     return null;
+        //   }
+        //   // this.utils.presentAutoDismissToast("Image uploaded successfully");
+        // }, err => {
+        //   console.log("ERROR response body: " + err.body);
+        //   return null;
 
     clearStorage() {
       console.log("Clearing storage");
