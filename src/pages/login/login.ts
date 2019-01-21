@@ -49,13 +49,17 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
-      this.utils.getAuthHeaders().then(val => {
-        this.authHeaders = val;
+      this.utils.getDataFromStorage('authHeaders').then(val => {
+        if (val) {
+          console.log('auth headers from storage');
+          this.authHeaders = val;
+        }
       });
     }
 
     authenticateUser() {
       if (ENV.AUTO_FILL) {
+        console.log('Auto fill flag set');
         this.email = ENV.VALIDATE_EMAIL_USER;
         this.password = ENV.VALIDATE_EMAIL_PASS;
         this.login();
@@ -68,11 +72,11 @@ export class LoginPage {
     }
 
     register() {
+      console.log('Register() with auth headers: ' + this.authHeaders['Authorization']);
       //Validate username is available but don't actually register until create user profile page
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
       .subscribe(response => {
-        console.log(response);
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
           this.utils.presentDismissableToast("Email is in use for an existing account.");
@@ -82,7 +86,7 @@ export class LoginPage {
 
           this.navCtrl.push('CreateUserProfilePage');
         }
-      }, error => console.error('ERROR: ', error.body));
+      }, error => console.error('ERROR: ', JSON.stringify(error)));
     }
 
     login() {
