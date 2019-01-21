@@ -26,8 +26,7 @@ export class LoginPage {
   constructor(public navParams: NavParams, public navCtrl: NavController,
 
     public formBuilder: FormBuilder, public utils: Utilities,
-    public userService: Users, public accountValidator: AccountValidator,
-    private storage: Storage) {
+    public userService: Users, public accountValidator: AccountValidator) {
 
       this.userAuthType = this.navParams.get('userAuthType');
       // let username = new FormControl('', accountValidator.isValidEmail);
@@ -130,14 +129,14 @@ export class LoginPage {
         this.userService.updateLastLogin(userProfileObj, currentDate)
         .map(res => res.json())
         .subscribe(resp => {
-          console.log(resp);
+          console.log(JSON.stringify(resp));
           if (resp.isSuccess) {
             console.log('updated last login');
             userProfileObj = resp['userProfiles'][0];
           }
         }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
-      
+
       this.utils.storeData('user', userProfileObj); //Store user
     }
 
