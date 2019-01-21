@@ -72,13 +72,15 @@ export class LoginPage {
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
       .subscribe(response => {
+        console.log(response);
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
           this.utils.presentDismissableToast("Email is in use for an existing account.");
-          return;
         } else {
           this.utils.storeData('email', this.email);
           this.utils.storeData('password', this.password);
+
+          this.navCtrl.push('CreateUserProfilePage');
         }
       }, error => console.error('ERROR: ', error.body));
     }
