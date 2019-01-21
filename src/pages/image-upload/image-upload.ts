@@ -53,7 +53,7 @@ export class ImageUploadPage {
       this.camera.getPicture(options).then(imageData => {
         this.imageURI = imageData;
         console.log("IMAGE URI FROM LIBRARY: '" + this.imageURI + "'");
-      }, err => console.error('ERROR: ' + err.body));
+      }, err => console.error('ERROR: ' + JSON.stringify(err));
     }
 
     takePhoto() {
@@ -66,7 +66,7 @@ export class ImageUploadPage {
       this.camera.getPicture(options).then((imageData) => {
         this.imageURI = imageData;
         console.log("IMAGE URI FROM CAMERA: '" + this.imageURI + "'");
-      }, err => console.error('ERROR: ' + err.body));
+      }, err => console.error('ERROR: ' + JSON.stringify(err));
     }
 
     passImageUriForUpload() {
@@ -118,7 +118,7 @@ export class ImageUploadPage {
       //   loader.dismiss();
       //   // this.utils.presentAutoDismissToast("Image uploaded successfully");
       // }, (err) => {
-      //   console.log("ERROR response body: " + err.body);
+      //   console.log("ERROR response body: " + JSON.stringify(err);
       //
       //   console.log(err);
       //   loader.dismiss();

@@ -50,11 +50,7 @@ export class LoginPage {
 
     ionViewDidLoad() {
       this.utils.getDataFromStorage('authHeaders').then(val => {
-        if (!val) {
-          console.log('auth headers not found in storage');
-        }
-        else {
-          console.log('auth headers successfully loaded from storage');
+        if (val) {
           this.authHeaders = val;
         }
       });
@@ -75,10 +71,6 @@ export class LoginPage {
     }
 
     register() {
-      if (!this.authHeaders) {
-        console.log('auth headers undefined');
-        return;
-      }
       //Validate username is available but don't actually register until create user profile page
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
@@ -104,7 +96,7 @@ export class LoginPage {
         this.retrieveUserProfile(this.utils.createHeadersObjFromAuth(authObj));
 
       }, error => {
-        console.error('ERROR: ', error.body);
+        console.error('ERROR: ', JSON.stringify(error));
         this.utils.presentDismissableToast("Invalid login credentials, please try again.");
       });
     }
@@ -117,10 +109,11 @@ export class LoginPage {
         if (!resp.isSuccess) {
           //Happens when user created user account but never created user profile (only possible with old flow)
           this.utils.presentDismissableToast(USER_PROFILE_ERROR);
-          this.navCtrl.push('CreateUserProfilePage', {
-            email: this.email,
-            password: this.password
-          });
+
+          this.utils.storeData('email', this.email);
+          this.utils.storeData('password', this.password);
+
+          this.navCtrl.push('CreateUserProfilePage');
         } else {
           const userProfileObj = resp['userProfiles'][0];
           this.updateLastLogin(userProfileObj);//Update lastLogin if needed and store user object
