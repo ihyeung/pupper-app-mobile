@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -24,7 +23,6 @@ export class LoginPage {
   authHeaders: any;
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
-
     public formBuilder: FormBuilder, public utils: Utilities,
     public userService: Users, public accountValidator: AccountValidator) {
 

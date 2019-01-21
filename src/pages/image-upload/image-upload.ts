@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, IonicPage, NavParams, LoadingController } from 'ionic-angular';
+import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { ActionSheetController, Platform } from 'ionic-angular';
-// import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
-import { File } from '@ionic-native/file';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Utilities  } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
@@ -26,10 +24,8 @@ export class ImageUploadPage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private camera: Camera,
-    private file: File,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
-    public loadingCtrl: LoadingController,
     public utils: Utilities) { }
 
     ionViewDidLoad() {
@@ -53,7 +49,7 @@ export class ImageUploadPage {
       this.camera.getPicture(options).then(imageData => {
         this.imageURI = imageData;
         console.log("IMAGE URI FROM LIBRARY: '" + this.imageURI + "'");
-      }, err => console.error('ERROR: ' + JSON.stringify(err));
+      }, err => console.error('ERROR: ' + JSON.stringify(err)));
     }
 
     takePhoto() {
@@ -66,7 +62,7 @@ export class ImageUploadPage {
       this.camera.getPicture(options).then((imageData) => {
         this.imageURI = imageData;
         console.log("IMAGE URI FROM CAMERA: '" + this.imageURI + "'");
-      }, err => console.error('ERROR: ' + JSON.stringify(err));
+      }, err => console.error('ERROR: ' + JSON.stringify(err)));
     }
 
     passImageUriForUpload() {
@@ -74,59 +70,18 @@ export class ImageUploadPage {
       console.log(this.imageURI);
 
       const profileData = {
-         filePath: this.imageURI,
-         formData: this.profileData //Pass data from create profile page back to restore state
-       };
+        filePath: this.imageURI,
+        formData: this.profileData //Pass data from create profile page back to restore state
+      };
 
-       if (this.imageFor == 'user') {
-         this.navCtrl.push('CreateUserProfilePage', profileData);
-       } else {
-         this.navCtrl.push('CreateMatchProfilePage', profileData);
-       }
-     }
-      // let loader = this.loadingCtrl.create({
-      //   content: "Uploading..."
-      // });
-      // loader.present();
-      // const fileTransfer: FileTransferObject = this.transfer.create();
-      //
-      // let options: FileUploadOptions = {
-      //   fileKey: 'profilePic',
-      //   fileName: 'test.jpg',
-      //   chunkedMode: false,
-      //   mimeType: "image/jpeg",
-      //   headers: this.headers,
-      //   httpMethod: 'PUT'
-      // }
-      //
-      // const userId = 6;
-      // const url = `${ENV.BASE_URL}/user/${userId}/upload`;
-      // const enc = encodeURI(url);
-      // console.log("Encoded url: " + enc);
-      // fileTransfer.upload(this.imageURI, enc, options)
-      // .then(data => {
-      //   console.log(data.response);
-      //   const response = JSON.parse(data.response);
-      //   if (response.isSuccess) {
-      //     console.log("Uploaded Successfully");
-      //     this.imageFileName = response.imageUrl;
-      //     this.lastImage = this.imageFileName;
-      //     console.log(response.imageUrl);
-      //   } else {
-      //     console.log("Upload failed, " + response.statusCode + ", message: " + response.description);
-      //   }
-      //   loader.dismiss();
-      //   // this.utils.presentAutoDismissToast("Image uploaded successfully");
-      // }, (err) => {
-      //   console.log("ERROR response body: " + JSON.stringify(err);
-      //
-      //   console.log(err);
-      //   loader.dismiss();
-      //   this.utils.presentAutoDismissToast(err);
-      // });
+      if (this.imageFor == 'user') {
+        this.navCtrl.push('CreateUserProfilePage', profileData);
+      } else {
+        this.navCtrl.push('CreateMatchProfilePage', profileData);
+      }
+    }
 
-
-    public selectImageForUpload() {
+    selectImageForUpload() {
       const actionSheet = this.actionSheetCtrl.create({
         title: 'Select Image Source',
         buttons: [
