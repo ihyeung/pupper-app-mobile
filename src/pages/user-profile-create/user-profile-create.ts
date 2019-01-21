@@ -43,7 +43,7 @@ export class CreateUserProfilePage {
 
       this.setDatePickerBounds();
 
-      this.utils.getAuthHeaders().then(val => {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
 
@@ -90,7 +90,7 @@ export class CreateUserProfilePage {
       this.utils.storeData('account', userAccountObj);
 
       this.createUserProfile();
-    }, err => console.error('ERROR: ', err.body));
+    }, err => console.error('ERROR: ', JSON.stringify(err)));
   }
 
   createUserProfile() {
@@ -116,15 +116,15 @@ export class CreateUserProfilePage {
 
   uploadProfileImageForUser(userProfileObj: any) {
     const userId = userProfileObj['id'];
-    this.utils.uploadFile(userId, null, this.imageFilePath).then(val => {
-      console.log('Promise resolved : ' + val);
-      userProfileObj['profileImage'] = val; //Update profileImage field after upload before storing in storage
-      this.utils.storeData('user', userProfileObj);
-      this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
+    const imageUrl = this.utils.uploadFile(userId, null, this.imageFilePath);
+    console.log('image url: ' + imageUrl);
+      // userProfileObj['profileImage'] = val; //Update profileImage field after upload before storing in storage
+      // this.utils.storeData('user', userProfileObj);
+      // this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
 
       //Redirect newly created user to create a new match profile
-      this.navCtrl.push('CreateMatchProfilePage');
-    })
+      // this.navCtrl.push('CreateMatchProfilePage');
+    // })
   }
 
   setDatePickerBounds() {

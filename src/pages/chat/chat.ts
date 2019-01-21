@@ -99,7 +99,7 @@ export class ChatPage {
         } else {
           console.log('Error sending message');
         }
-      }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
 
   }
 

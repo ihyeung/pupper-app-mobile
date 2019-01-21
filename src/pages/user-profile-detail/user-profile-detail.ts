@@ -23,7 +23,7 @@ export class UserProfileDetailPage {
       console.log('ionViewDidLoad UserProfileDetailPage');
       this.readOnly = this.navParams.get('readOnly');
 
-      this.utils.getAuthHeaders().then(val => {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
         const id = this.navParams.get('userId');
         this.retrieveUserProfile(id);
@@ -46,7 +46,7 @@ export class UserProfileDetailPage {
           this.profileReady = true;
         }
 
-        }, err => console.error('ERROR: ', err.body));
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
       } else {
         console.log('userId is undefined, loading user from storage');
         this.utils.getDataFromStorage('user').then(val => {
