@@ -17,7 +17,7 @@ export class Utilities {
     private transfer: FileTransfer) { }
 
     async uploadFile(userId: number, matchId: number, imageUri: string) {
-      this.getJwt().then(async val => {
+      this.getJwt().then(val => {
         const fileTransfer: FileTransferObject = this.transfer.create();
 
         let options: FileUploadOptions = {
@@ -35,10 +35,10 @@ export class Utilities {
         const enc = encodeURIComponent(url);
         console.log("Encoded url: " + enc);
 
-        await fileTransfer.upload(imageUri, enc, options)
-        .then(data => {
+        fileTransfer.upload(imageUri, enc, options)
+        .then(async data => {
           console.log(JSON.stringify(data));
-          return "hello";
+          return await "hello";
         })
       });
   }
