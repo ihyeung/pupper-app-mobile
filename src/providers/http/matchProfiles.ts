@@ -12,7 +12,7 @@ export class MatchProfiles {
 
     constructor(public http: Http,
     private utils: Utilities, private loadCtrl: LoadingController) {
-      this.utils.getAuthHeaders().then(val => {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
     }

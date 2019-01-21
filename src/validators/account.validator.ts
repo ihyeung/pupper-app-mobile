@@ -9,7 +9,7 @@ export class AccountValidator {
   authHeaders: any;
 
   constructor(public userService: Users, public utils: Utilities){
-    this.utils.getAuthHeaders().then(val => {
+    this.utils.getDataFromStorage('authHeaders').then(val => {
       this.authHeaders = val;
     });
   }

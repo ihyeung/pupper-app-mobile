@@ -10,7 +10,7 @@ export class Matches {
 
   constructor(public http: Http,
     private utils: Utilities) {
-      utils.getAuthHeaders().then(val => {
+      utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
     }
