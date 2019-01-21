@@ -13,11 +13,9 @@ import { DEFAULT_IMG } from '../';
 export class HomePage {
 
   image: string = DEFAULT_IMG;
-  breedList: any;
 
   constructor(public navCtrl: NavController, public utils: Utilities,
-     public userService: Users) {
-  }
+              public userService: Users) { }
 
     ionViewDidLoad() {
       this.utils.clearStorage().then(() => {
@@ -38,9 +36,7 @@ export class HomePage {
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
         const headers = this.utils.extractAndStoreAuthHeaders(response);
-        console.log('Headers object: ' + JSON.stringify(headers));
         const headersObj = this.utils.createHeadersObjFromAuth(headers);
-        console.log('Auth headers converted to Headers data type, auth token: ' + headersObj.get('Authorization'));
         this.utils.getBreeds(headersObj)
         .map(res => res.json())
         .subscribe(breedResponse => {
