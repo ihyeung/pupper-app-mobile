@@ -16,7 +16,7 @@ export class Utilities {
     private storage: Storage,
     private transfer: FileTransfer) { }
 
-    async uploadFile(userId: number, matchId: number, imageUri: string) {
+    uploadFile(userId: number, matchId: number, imageUri: string, loader: any) {
       this.getJwt().then(val => {
         const fileTransfer: FileTransferObject = this.transfer.create();
 
@@ -32,22 +32,24 @@ export class Utilities {
         `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
         console.log('image upload endpoint url: ' + url);
 
-        const enc = encodeURIComponent(url);
-        console.log("Encoded url: " + enc);
+        // const enc = encodeURIComponent(url);
+        // console.log("Encoded url: " + enc);
 
-        fileTransfer.upload(imageUri, enc, options)
-        .then(async data => {
+        fileTransfer.upload(imageUri, url, options)
+        .then(data => {
           const response = JSON.parse(data.response);
-          console.log(JSON.stringify(response));
           if (response.isSuccess) {
             console.log("Uploaded Successfully");
             console.log("Uploaded image file url: " + response.imageUrl);
-            return await response.imageUrl;
+            return response.imageUrl;
           }
-        }, err => console.error("ERROR: " + JSON.stringify(err)));
+        }, err => {
+          console.error("ERROR: " + JSON.stringify(err));
+          loader.dismiss();
+        });
       });
     }
-    
+
     async clearStorage() {
       await this.storage.clear();
     }
