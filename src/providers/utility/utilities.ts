@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastController, AlertController } from 'ionic-angular';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { Storage } from '@ionic/storage';
@@ -16,10 +16,8 @@ export class Utilities {
     private storage: Storage,
     private transfer: FileTransfer) { }
 
-    uploadFile(userId: number, matchId: number, imageUri: string): Promise<any> {
-      return new Promise((resolve, reject) => {
-
-      this.getJwt().then(val => {
+    async uploadFile(userId: number, matchId: number, imageUri: string) {
+      this.getJwt().then(async val => {
         const fileTransfer: FileTransferObject = this.transfer.create();
 
         let options: FileUploadOptions = {
@@ -37,23 +35,12 @@ export class Utilities {
         const enc = encodeURIComponent(url);
         console.log("Encoded url: " + enc);
 
-        // return new Promise((resolve, reject) => {
-        fileTransfer.upload(imageUri, enc, options)
+        await fileTransfer.upload(imageUri, enc, options)
         .then(data => {
-          console.log(data.response);
-          const response = JSON.parse(data.response);
-          if (response.isSuccess) {
-                console.log("Uploaded Successfully");
-                console.log("Uploaded image file url: " + response.imageUrl);
-            resolve(response.imageUrl);
-          }
-        }, err => {
-          console.log("ERROR response body: " + err.body);
-          reject(err);
-        });
+          console.log(JSON.stringify(data));
+          return "hello";
+        })
       });
-    // });
-  });
   }
         //     return response.imageUrl;
         //   } else {
@@ -65,9 +52,8 @@ export class Utilities {
         //   console.log("ERROR response body: " + err.body);
         //   return null;
 
-    clearStorage() {
-      console.log("Clearing storage");
-      this.storage.clear();
+    async clearStorage() {
+      await this.storage.clear();
     }
 
     storeData(key: string, val: any) {
@@ -80,6 +66,10 @@ export class Utilities {
       });
     }
 
+    async removeDataFromStorage(key: string) {
+      await this.storage.remove(key);
+    }
+
     getJwt() {
       return this.storage.get('authHeaders').then(val => {
         if (val) {
@@ -88,9 +78,10 @@ export class Utilities {
       });
     }
 
-    getAuthHeaders() {
+    authHeadersObjFromStorageToHeaders() {
       return this.storage.get('authHeaders').then(val => {
         if (!val) {
+          console.log('ERROR RETRIEVING AUTH HEADERS FROM STORAGE');
           return null;
         }
         const type = val['Content-Type'];
@@ -104,14 +95,14 @@ export class Utilities {
       const authHeaders = {
         'Content-Type': 'application/json',
         'Authorization': response.headers.get('Authorization')
-      }
+      };
       this.storage.set('authHeaders', authHeaders);
       return authHeaders;
     }
 
-    createHeadersObjFromAuth(authHeadersFromStorage) {
-      const jsonType = authHeadersFromStorage['Content-Type'];
-      const jwt = authHeadersFromStorage['Authorization'];
+    createHeadersObjFromAuth(authHeadersObj) {
+      const jsonType = authHeadersObj['Content-Type'];
+      const jwt = authHeadersObj['Authorization'];
 
       return new Headers({ 'Content-Type': jsonType, 'Authorization': jwt });
     }

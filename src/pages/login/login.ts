@@ -50,8 +50,11 @@ export class LoginPage {
 
     ionViewDidLoad() {
       this.utils.getDataFromStorage('authHeaders').then(val => {
-        if (val) {
-          console.log('auth headers from storage');
+        if (!val) {
+          console.log('auth headers not found in storage');
+        }
+        else {
+          console.log('auth headers successfully loaded from storage');
           this.authHeaders = val;
         }
       });
@@ -72,7 +75,10 @@ export class LoginPage {
     }
 
     register() {
-      console.log('Register() with auth headers: ' + this.authHeaders['Authorization']);
+      if (!this.authHeaders) {
+        console.log('auth headers undefined');
+        return;
+      }
       //Validate username is available but don't actually register until create user profile page
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
@@ -120,7 +126,7 @@ export class LoginPage {
           this.updateLastLogin(userProfileObj);//Update lastLogin if needed and store user object
           this.navCtrl.push('TabsPage');
         }
-      }, err => console.error('ERROR: ', err.body));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     updateLastLogin(userProfileObj: any) {
@@ -136,7 +142,7 @@ export class LoginPage {
             console.log('updated last login');
             userProfileObj = resp['userProfiles'][0];
           }
-        }, err => console.error('ERROR: ', err.body));
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
         this.utils.storeData('user', userProfileObj); //Store user
     }

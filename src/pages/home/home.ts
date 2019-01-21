@@ -16,12 +16,13 @@ export class HomePage {
   breedList: any;
 
   constructor(public navCtrl: NavController, public utils: Utilities,
-     public userService: Users) { }
+     public userService: Users) {
+  }
 
     ionViewDidLoad() {
-      this.utils.clearStorage();
-
-      this.retrieveBreedList();
+      this.utils.clearStorage().then(() => {
+        this.retrieveBreedList();
+      });
     }
 
     login(){
@@ -43,10 +44,9 @@ export class HomePage {
         this.utils.getBreeds(headersObj)
         .map(res => res.json())
         .subscribe(breedResponse => {
-          console.log(breedResponse);
            this.utils.storeData('breeds', breedResponse);
 
-        }, err => console.error('ERROR: ', err.body));
-      }, err => console.error('ERROR: ', err.body));
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
   }
