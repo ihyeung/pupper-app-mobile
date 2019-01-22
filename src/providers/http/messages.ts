@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
-import { Utilities } from '../../providers/utility/utilities';
+import { StorageUtilities } from '../../providers/utility/storage';
 import { Message } from '../../models/message';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class Messages {
   authHeaders: any;
 
   constructor(public http: Http,
-    private utils: Utilities) {
+    private utils: StorageUtilities) {
       this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });

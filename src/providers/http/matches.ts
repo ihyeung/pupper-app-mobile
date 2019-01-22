@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { Utilities } from '../../providers';
+import { StorageUtilities } from '../../providers';
 import { MatchingResult } from '../../models/matching-result';
 import { environment as ENV } from '../../environments/environment';
 
@@ -9,7 +9,7 @@ export class Matches {
   authHeaders: any;
 
   constructor(public http: Http,
-    private utils: Utilities) {
+    private utils: StorageUtilities) {
       utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
