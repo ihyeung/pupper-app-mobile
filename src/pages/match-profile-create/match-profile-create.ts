@@ -81,6 +81,7 @@ export class CreateMatchProfilePage {
       .subscribe(resp => {
         if (resp.isSuccess && resp.matchProfiles) {
           this.matchProfilesList = resp.matchProfiles;
+          this.storageUtils.storeData('profiles', this.matchProfilesList);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
