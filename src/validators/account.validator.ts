@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Users, Utilities } from '../providers';
+import { Users, StorageUtilities } from '../providers';
 
 @Injectable()
 export class AccountValidator {
@@ -8,7 +8,7 @@ export class AccountValidator {
   debouncer: any;
   authHeaders: any;
 
-  constructor(public userService: Users, public utils: Utilities){
+  constructor(public userService: Users, public utils: StorageUtilities){
     this.utils.getDataFromStorage('authHeaders').then(val => {
       this.authHeaders = val;
     });

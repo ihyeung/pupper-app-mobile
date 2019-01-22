@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
-import { Utilities, Users  } from '../../providers';
+import { StorageUtilities, Utilities, Users  } from '../../providers';
 import { DEFAULT_IMG } from '../';
 
 @IonicPage()
@@ -14,11 +14,11 @@ export class HomePage {
 
   image: string = DEFAULT_IMG;
 
-  constructor(public navCtrl: NavController, public utils: Utilities,
-              public userService: Users) { }
+  constructor(public navCtrl: NavController, public storageUtils: StorageUtilities,
+              public userService: Users, public utils: Utilities) { }
 
     ionViewDidLoad() {
-      this.utils.clearStorage().then(() => {
+      this.storageUtils.clearStorage().then(() => {
         this.retrieveBreedList();
       });
     }
@@ -35,12 +35,12 @@ export class HomePage {
       this.userService
       .authenticateUser(ENV.VALIDATE_EMAIL_USER, ENV.VALIDATE_EMAIL_PASS)
       .subscribe(response => {
-        const headers = this.utils.extractAndStoreAuthHeaders(response);
-        const headersObj = this.utils.createHeadersObjFromAuth(headers);
+        const headers = this.storageUtils.extractAndStoreAuthHeaders(response);
+        const headersObj = this.storageUtils.createHeadersObjFromAuth(headers);
         this.utils.getBreeds(headersObj)
         .map(res => res.json())
         .subscribe(breedResponse => {
-           this.utils.storeData('breeds', breedResponse);
+           this.storageUtils.storeData('breeds', breedResponse);
 
         }, err => console.error('ERROR: ', JSON.stringify(err)));
       }, err => console.error('ERROR: ', JSON.stringify(err)));

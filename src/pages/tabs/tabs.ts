@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
-import { environment as ENV } from '../../environments/environment';
 import { IonicPage } from 'ionic-angular';
 
 @IonicPage()

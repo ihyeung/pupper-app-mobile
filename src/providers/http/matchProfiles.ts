@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { LoadingController } from 'ionic-angular';
-import { Utilities } from '../../providers';
+import { StorageUtilities } from '../../providers';
 import { MatchProfile } from '../../models/match-profile';
 import { environment as ENV } from '../../environments/environment';
 
@@ -11,7 +11,7 @@ export class MatchProfiles {
   authHeaders: any;
 
     constructor(public http: Http,
-    private utils: Utilities, private loadCtrl: LoadingController) {
+    private utils: StorageUtilities, private loadCtrl: LoadingController) {
       this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });

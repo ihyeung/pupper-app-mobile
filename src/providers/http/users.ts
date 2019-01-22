@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { Utilities } from '../../providers';
+import { StorageUtilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 import { User } from '../../models/user';
 
@@ -10,7 +10,7 @@ export class Users {
   authHeaders: any;
 
   constructor(public http: Http,
-    public utils: Utilities) {
+    public utils: StorageUtilities) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
     }
 

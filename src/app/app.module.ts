@@ -7,10 +7,9 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
-import { Utilities, Messages, Matches, MatchProfiles, Users } from '../providers';
-import { ValidatorsModule } from '../validators/validators.module'
+import { Utilities, Messages, Matches, MatchProfiles, Users, StorageUtilities } from '../providers';
+import { ValidatorsModule } from '../validators/validators.module';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
-
 
 @NgModule({
   declarations: [
@@ -36,6 +35,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
     Utilities,
     Matches,
     Messages,
+    StorageUtilities,
     FileTransfer
   ]
 })

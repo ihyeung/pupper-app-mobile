@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { Utilities, MatchProfiles, Users } from '../../providers';
+import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../providers';
 import { DEFAULT_USER_IMG, USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 import { Dialogs } from '@ionic-native/dialogs';
 
@@ -22,8 +22,8 @@ export class ProfileSnapshotPage {
   numMatchProfiles: number = 1;
 
   constructor(public navCtrl: NavController, public utils: Utilities,
-    public matchProfService: MatchProfiles, public dialogs: Dialogs,
-    public users: Users) {}
+    public storageUtils: StorageUtilities, public matchProfService: MatchProfiles,
+    public dialogs: Dialogs, public users: Users) {}
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad ProfileSnapshotPage');
@@ -39,9 +39,9 @@ export class ProfileSnapshotPage {
     }
 
     retrieveMatchProfile() {
-      this.utils.getDataFromStorage('match').then(match => {
+      this.storageUtils.getDataFromStorage('match').then(match => {
         if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
-          this.utils.getDataFromStorage('user').then(user => {
+          this.storageUtils.getDataFromStorage('user').then(user => {
             if (!user) {
               this.utils.presentDismissableToast(USER_PROFILE_ERROR);
               this.navCtrl.push('CreateUserProfilePage');
@@ -73,7 +73,7 @@ export class ProfileSnapshotPage {
           console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
           this.numMatchProfiles = resp['matchProfiles'].length;
           this.matchProfilesList = resp['matchProfiles'];
-          this.utils.storeData('profiles', this.matchProfilesList);
+          this.storageUtils.storeData('profiles', this.matchProfilesList);
 
           this.matchProfilesList.forEach(profile => {
             console.log(profile);
@@ -87,7 +87,7 @@ export class ProfileSnapshotPage {
             console.log("no active match profile found, set to first profile in list");
             this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
           }
-          this.utils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
+          this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
           this.hasMatchProfile = true;
           this.matchProfileReady = true;
         }
@@ -157,17 +157,17 @@ export class ProfileSnapshotPage {
 
     updateActiveMatchProfile() {
       if (this.numMatchProfiles == 1) { //Deleted the only match profile for user
-        this.utils.storeData('match', null);
+        this.storageUtils.storeData('match', null);
         this.activeMatchProfileObj = null;
         this.hasMatchProfile = false;
         this.numMatchProfiles = 0;
-        this.utils.storeData('profiles', null);
+        this.storageUtils.storeData('profiles', null);
       } else { //Deleted match profile but others for user still remain
         const activeId = this.activeMatchProfileObj['id'];
         this.matchProfilesList.filter(profile => profile['id'] != activeId);
-        this.utils.storeData('profiles', this.matchProfilesList);
+        this.storageUtils.storeData('profiles', this.matchProfilesList);
         this.activeMatchProfileObj = this.matchProfilesList[0]; //Replace with next profile in list
-        this.utils.storeData('match', this.activeMatchProfileObj);
+        this.storageUtils.storeData('match', this.activeMatchProfileObj);
         this.numMatchProfiles--;
         this.setNewDefaultMatchProfile();
       }
@@ -182,7 +182,7 @@ export class ProfileSnapshotPage {
         console.log(response);
         if (response.matchProfiles) {
           const matchProfileObj = response['matchProfiles'][0];
-          this.utils.storeData('match', matchProfileObj); //Update user obj in storage
+          this.storageUtils.storeData('match', matchProfileObj); //Update user obj in storage
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
@@ -221,14 +221,14 @@ export class ProfileSnapshotPage {
           if(resp['isSuccess']) {
             console.log('zip code successfully updated');
             this.userProfileObj = updatedUserObj;
-            this.utils.storeData('user', this.userProfileObj);
+            this.storageUtils.storeData('user', this.userProfileObj);
             this.utils.presentDismissableToast(`Profile zip code location updated to '${obj.input1}'`);
           } else {
             console.log(resp);
 
           }
-        }, err => console.error('ERROR UPDATING USER ZIP CODE', err));
-      }).catch(e => console.log('Error displaying dialog', e));
+        }, err => console.error('ERROR UPDATING USER ZIP CODE: ', JSON.stringify(err)));
+      }).catch(e => console.log('Error displaying dialog: ', JSON.stringify(e)));
     }
 
   }

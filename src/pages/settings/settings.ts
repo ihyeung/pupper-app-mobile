@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, App, IonicPage, AlertController } from 'ionic-angular';
-import { environment as ENV } from '../../environments/environment';
-import { Utilities } from '../../providers';
+import { NavController, App, IonicPage } from 'ionic-angular';
+import { StorageUtilities } from '../../providers';
 import { Dialogs } from '@ionic-native/dialogs';
 
 @IonicPage()
@@ -15,8 +14,7 @@ export class SettingsPage {
   userObj: any = [];
 
   constructor(public navCtrl: NavController, public app: App,
-    public alertCtrl: AlertController,
-    private utils: Utilities, private dialog: Dialogs) { }
+    private utils: StorageUtilities, private dialog: Dialogs) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad SettingsPage');

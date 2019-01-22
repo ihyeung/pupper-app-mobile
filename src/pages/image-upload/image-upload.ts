@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { ActionSheetController, Platform } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { Utilities  } from '../../providers';
+import { StorageUtilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 
 declare var cordova: any;
@@ -26,7 +26,7 @@ export class ImageUploadPage {
     private camera: Camera,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
-    public utils: Utilities) { }
+    public utils: StorageUtilities) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad ImageUploadPage');

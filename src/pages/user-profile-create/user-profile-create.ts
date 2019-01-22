@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
-import { environment as ENV } from '../../environments/environment';
-import { Utilities, Users  } from '../../providers';
+import { Utilities, Users, StorageUtilities } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -26,6 +25,7 @@ export class CreateUserProfilePage {
   constructor (
     public navCtrl: NavController,
     public navParams: NavParams,
+    public storageUtils: StorageUtilities,
     public utils: Utilities,
     public userService: Users,
     private loadCtrl: LoadingController) { }
@@ -33,7 +33,7 @@ export class CreateUserProfilePage {
     ionViewDidLoad() {
       this.setDatePickerBounds();
 
-      this.utils.getDataFromStorage('authHeaders').then(val => {
+      this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
 
@@ -42,12 +42,12 @@ export class CreateUserProfilePage {
 
     extractNavParams() {
       console.log('retrieving email and password from storage');
-      this.utils.getDataFromStorage('email').then(val => {
+      this.storageUtils.getDataFromStorage('email').then(val => {
         this.userAccount = {
           username: val,
           password: null
         };
-        this.utils.getDataFromStorage('password').then(val => {
+        this.storageUtils.getDataFromStorage('password').then(val => {
           this.userAccount['password'] = val;
         })
       })
@@ -56,6 +56,8 @@ export class CreateUserProfilePage {
     if (this.userProfileFormData) {
       console.log("Profile passed back from image upload page");
       this.userAccount = this.userProfileFormData.userAccount;
+
+      this.repopulateInputFieldData();
     }
     //Extract nav params from image upload page
     this.imageFilePath = this.navParams.get('filePath');
@@ -77,7 +79,7 @@ export class CreateUserProfilePage {
       if (response.isSuccess) {
         const userAccountObj = response['userAccounts'][0];
         this.userAccount = userAccountObj; //update to reference additional userAccountId field
-        this.utils.storeData('account', userAccountObj);
+        this.storageUtils.storeData('account', userAccountObj);
 
         this.createUserProfile();
       }
@@ -107,17 +109,22 @@ export class CreateUserProfilePage {
 
   async uploadProfileImageForUser(userProfileObj: any, loader: any) {
     const userId = userProfileObj['id'];
-    let response = await this.utils.uploadFile(userId, null, this.imageFilePath);
+    let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
     console.log('response from file upload: ' + JSON.stringify(response));
     loader.dismiss();
-    const profileImage = response.response['imageUrl'];
-    userProfileObj['profileImage'] = profileImage; //Update profile image field
-      this.utils.storeData('user', userProfileObj);
+    if (response.response['isSuccess']) {
+      const profileImage = response.response['imageUrl'];
+      userProfileObj['profileImage'] = profileImage; //Update profile image field
+        this.storageUtils.storeData('user', userProfileObj);
 
-      this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
+        this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
 
-      //Redirect newly created user to create a new match profile
-      this.navCtrl.push('CreateMatchProfilePage');
+        this.navCtrl.push('CreateMatchProfilePage');
+    } else {
+      //Profile image was not successfully uploaded and updated in database
+      this.utils.presentDismissableToast('Error uploading profile image');
+
+    }
   }
 
   setDatePickerBounds() {
@@ -152,5 +159,11 @@ export class CreateUserProfilePage {
       userAccount: this.userAccount,
       profileImage: null
     };
+  }
+
+  repopulateInputFieldData() {
+    const profile = this.userProfileFormData;
+    this.firstName = profile.firstName;
+    this.lastName = profile.lastName;
   }
 }

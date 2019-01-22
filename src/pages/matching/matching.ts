@@ -2,7 +2,7 @@ import { Component, EventEmitter } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatchingResult } from '../../models/matching-result';
-import { MatchProfiles, Utilities, Matches } from '../../providers';
+import { MatchProfiles, Utilities, StorageUtilities, Matches } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 import { DEFAULT_IMG, MATCH_PROFILE_ERROR } from '../../pages';
 
@@ -47,12 +47,13 @@ export class MatchingPage {
 
   constructor(private sanitizer: DomSanitizer, public alertCtrl: AlertController,
     public navCtrl: NavController, public matchProfService: MatchProfiles,
-    public utils: Utilities, public matchesService: Matches) { }
+    public utils: Utilities, public storageUtils: StorageUtilities,
+    public matchesService: Matches) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfilePage');
       this.matchingResults = new Array<MatchingResult>();
-      this.utils.getDataFromStorage('match').then(val => {
+      this.storageUtils.getDataFromStorage('match').then(val => {
         if (!val) {
           this.utils.presentDismissableToast(MATCH_PROFILE_ERROR);
           this.navCtrl.push('CreateMatchProfilePage');
