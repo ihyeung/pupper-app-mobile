@@ -27,7 +27,26 @@ export class ProfileSnapshotPage {
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad ProfileSnapshotPage');
-      this.retrieveMatchProfile();
+      this.loadProfileSnapshotData();
+    }
+
+    loadProfileSnapshotData() {
+      this.storageUtils.getDataFromStorage('match').then(match => {
+        if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
+          this.storageUtils.getDataFromStorage('user').then(user => {
+            if (!user) {
+              this.utils.presentDismissableToast(USER_PROFILE_ERROR);
+              this.navCtrl.push('CreateUserProfilePage');
+            } else {
+              this.initUserData(user);
+              this.retrieveMatchProfilesForUser(user);
+            }
+          });
+        } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
+          this.initUserData(match.userProfile);
+          this.retrieveMatchProfilesForUser(match.userProfile);
+        }
+      });
     }
 
     initUserData(user: any) {
@@ -38,33 +57,12 @@ export class ProfileSnapshotPage {
       this.userReady = true;
     }
 
-    retrieveMatchProfile() {
-      this.storageUtils.getDataFromStorage('match').then(match => {
-        if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
-          this.storageUtils.getDataFromStorage('user').then(user => {
-            if (!user) {
-              this.utils.presentDismissableToast(USER_PROFILE_ERROR);
-              this.navCtrl.push('CreateUserProfilePage');
-            } else {
-              console.log(user);
-              this.initUserData(user);
-              this.retrieveMatchProfilesForUser(user);
-            }
-          });
-        } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
-          const userProfile = match.userProfile;
-          this.initUserData(userProfile);
-          this.retrieveMatchProfilesForUser(userProfile);
-        }
-      });
-    }
-
     retrieveMatchProfilesForUser(user: any){
       this.matchProfService.getMatchProfiles(user)
       .map(res => res.json())
       .subscribe(resp => {
         console.log(resp);
-
+        if (resp.isSuccess) {
         if (resp['matchProfiles'] === undefined || !resp['matchProfiles']) {
           console.log("No match profiles for user");
           this.numMatchProfiles = 0;
@@ -73,7 +71,6 @@ export class ProfileSnapshotPage {
           console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
           this.numMatchProfiles = resp['matchProfiles'].length;
           this.matchProfilesList = resp['matchProfiles'];
-          this.storageUtils.storeData('profiles', this.matchProfilesList);
 
           this.matchProfilesList.forEach(profile => {
             console.log(profile);
@@ -83,13 +80,31 @@ export class ProfileSnapshotPage {
             }
           });
 
+          this.storageUtils.storeData('profiles', this.matchProfilesList);
+
           if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
             console.log("no active match profile found, set to first profile in list");
             this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
+            this.activeMatchProfileObj['isDefault'] = true;
+            this.updateMatchProfile(this.activeMatchProfileObj);
           }
           this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
+
           this.hasMatchProfile = true;
           this.matchProfileReady = true;
+        }
+      }
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
+    }
+
+    updateMatchProfile(matchProfile: any) {
+      const userId = matchProfile['userProfile']['id'];
+
+      this.matchProfService.updateMatchProfile(matchProfile, userId)
+      .map(res => res.json())
+      .subscribe(resp => {
+        if (!resp.isSuccess) {
+          console.log(resp);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
@@ -112,7 +127,7 @@ export class ProfileSnapshotPage {
     }
 
     createMatchProfile() {
-      if (this.matchProfilesList.length < 3) {
+      if (!this.matchProfilesList || this.matchProfilesList.length < 3) {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
         this.utils.presentAutoDismissToast('A maximum of 3 matching profiles can be created for a given user.');
