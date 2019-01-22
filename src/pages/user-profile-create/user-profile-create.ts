@@ -13,8 +13,8 @@ export class CreateUserProfilePage {
   lastName: string;
   birthdate: string;
   zip: string;
-  maritalStatus: any;
-  sex: any;
+  maritalStatus: string;
+  sex: string;
   minDate: string;
   maxDate: string;
   imageFilePath: string; //Image URI
@@ -33,14 +33,15 @@ export class CreateUserProfilePage {
     ionViewDidLoad() {
       this.setDatePickerBounds();
 
+      this.loadDataFromStorage();
+      this.extractNavParams();
+    }
+
+    loadDataFromStorage() {
       this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
 
-      this.extractNavParams();
-    }
-
-    extractNavParams() {
       console.log('retrieving email and password from storage');
       this.storageUtils.getDataFromStorage('email').then(val => {
         this.userAccount = {
@@ -52,118 +53,124 @@ export class CreateUserProfilePage {
         })
       })
 
-    this.userProfileFormData = this.navParams.get('formData');
-    if (this.userProfileFormData) {
-      console.log("Profile passed back from image upload page");
-      this.userAccount = this.userProfileFormData.userAccount;
-
-      this.repopulateInputFieldData();
     }
-    //Extract nav params from image upload page
-    this.imageFilePath = this.navParams.get('filePath');
 
-    console.log('Image URI: ' + this.imageFilePath);
-    console.log('Profile form data: ' + this.userProfileFormData);
+    extractNavParams() {
+      this.userProfileFormData = this.navParams.get('formData');
+      if (this.userProfileFormData) {
+        console.log("Profile passed back from image upload page");
+        this.userAccount = this.userProfileFormData.userAccount;
 
-  }
-
-  createUser() {
-    this.createUserAccount();
-  }
-
-  createUserAccount() {
-    this.userService.createUserAccount(this.userAccount.username, this.userAccount.password)
-    .map(res => res.json())
-    .subscribe(response => {
-      console.log(JSON.stringify(response));
-      if (response.isSuccess) {
-        const userAccountObj = response['userAccounts'][0];
-        this.userAccount = userAccountObj; //update to reference additional userAccountId field
-        this.storageUtils.storeData('account', userAccountObj);
-
-        this.createUserProfile();
+        this.repopulateInputFieldData();
       }
-    }, err => console.error('ERROR: ', JSON.stringify(err)));
-  }
+      //Extract nav params from image upload page
+      this.imageFilePath = this.navParams.get('filePath');
 
-  createUserProfile() {
-    let loader = this.loadCtrl.create({
-      content: "Creating profile ..."
-    });
-    loader.present();
+      console.log('Image URI: ' + this.imageFilePath);
+      console.log('Profile form data: ' + this.userProfileFormData);
+    }
 
-    this.userProfileFormData = this.getDataFromInputFields();
+    createUser() {
+      this.createUserAccount();
+    }
 
-    this.userService.createUserProfile(JSON.stringify(this.userProfileFormData), this.authHeaders)
-    .map(res => res.json())
-    .subscribe(result => {
-      if (result.isSuccess) {
-        const userProfileObj = result['userProfiles'][0];
-        this.uploadProfileImageForUser(userProfileObj, loader);
-      }
-    }, err => {
-      console.error('ERROR: ', JSON.stringify(err));
+    createUserAccount() {
+      this.userService.createUserAccount(this.userAccount.username, this.userAccount.password)
+      .map(res => res.json())
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        if (response.isSuccess) {
+          const userAccountObj = response['userAccounts'][0];
+          this.userAccount = userAccountObj; //update to reference additional userAccountId field
+          this.storageUtils.storeData('account', userAccountObj);
+
+          this.createUserProfile();
+        }
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
+    }
+
+    createUserProfile() {
+      let loader = this.loadCtrl.create({
+        content: "Creating profile ..."
+      });
+      loader.present();
+
+      this.userProfileFormData = this.getDataFromInputFields();
+
+      this.userService.createUserProfile(JSON.stringify(this.userProfileFormData), this.authHeaders)
+      .map(res => res.json())
+      .subscribe(result => {
+        if (result.isSuccess) {
+          const userProfileObj = result['userProfiles'][0];
+          this.uploadProfileImageForUser(userProfileObj, loader);
+        }
+      }, err => {
+        console.error('ERROR: ', JSON.stringify(err));
+        loader.dismiss();
+      });
+    }
+
+    async uploadProfileImageForUser(userProfileObj: any, loader: any) {
+      const userId = userProfileObj['id'];
+      let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      console.log('response from file upload: ' + JSON.stringify(response));
       loader.dismiss();
-    });
-  }
-
-  async uploadProfileImageForUser(userProfileObj: any, loader: any) {
-    const userId = userProfileObj['id'];
-    let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
-    console.log('response from file upload: ' + JSON.stringify(response));
-    loader.dismiss();
-    if (response.response['isSuccess']) {
-      const profileImage = response.response['imageUrl'];
-      userProfileObj['profileImage'] = profileImage; //Update profile image field
+      if (response.response['isSuccess']) {
+        const profileImage = response.response['imageUrl'];
+        userProfileObj['profileImage'] = profileImage; //Update profile image field
         this.storageUtils.storeData('user', userProfileObj);
 
         this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
 
         this.navCtrl.push('CreateMatchProfilePage');
-    } else {
-      //Profile image was not successfully uploaded and updated in database
-      this.utils.presentDismissableToast('Error uploading profile image');
+      } else {
+        //Profile image was not successfully uploaded and updated in database
+        this.utils.presentDismissableToast('Error uploading profile image');
 
+      }
+    }
+
+    setDatePickerBounds() {
+      this.minDate = new Date('Jan 1, 1900').toISOString();
+      const minAgeLim = new Date();
+      minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
+      this.maxDate = minAgeLim.toISOString();
+    }
+
+    addProfileImage() {
+      const data = this.userProfileFormData ? this.userProfileFormData :
+      this.getDataFromInputFields();
+
+      this.navCtrl.push('ImageUploadPage', {
+        profileType : 'user',
+        formData: data //Pass form data so data can be restored upon return
+      });
+    }
+
+    private getDataFromInputFields() {
+      const today = this.utils.currentDateToValidDateFormat();
+
+      return {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        birthdate: this.birthdate,
+        zip: this.zip,
+        maritalStatus: this.maritalStatus,
+        sex: this.sex,
+        dateJoin: today,
+        lastLogin: today,
+        userAccount: this.userAccount,
+        profileImage: null
+      };
+    }
+
+    repopulateInputFieldData() {
+      const profile = this.userProfileFormData;
+      this.firstName = profile.firstName;
+      this.lastName = profile.lastName;
+      this.birthdate = profile.birthdate;
+      this.zip = profile.zip;
+      this.maritalStatus = profile.maritalStatus;
+      this.sex = profile.sex;
     }
   }
-
-  setDatePickerBounds() {
-    this.minDate = new Date('Jan 1, 1930').toISOString();
-    const minAgeLim = new Date();
-    minAgeLim.setDate(minAgeLim.getDate() - (13 * 365)); //User must be at least 13 years old
-    this.maxDate = minAgeLim.toISOString();
-  }
-
-  addProfileImage() {
-    const data = this.userProfileFormData ? this.userProfileFormData :
-    this.getDataFromInputFields();
-
-    this.navCtrl.push('ImageUploadPage', {
-      profileType : 'user',
-      formData: data //Pass form data so data can be restored upon return
-    });
-  }
-
-  private getDataFromInputFields() {
-    const today = this.utils.currentDateToValidDateFormat();
-
-    return {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      birthdate: this.birthdate,
-      zip: this.zip,
-      maritalStatus: this.maritalStatus,
-      sex: this.sex,
-      dateJoin: today,
-      lastLogin: today,
-      userAccount: this.userAccount,
-      profileImage: null
-    };
-  }
-
-  repopulateInputFieldData() {
-    const profile = this.userProfileFormData;
-    this.firstName = profile.firstName;
-    this.lastName = profile.lastName;
-  }
-}
