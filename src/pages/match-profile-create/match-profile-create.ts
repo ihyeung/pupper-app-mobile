@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
-import { Utilities, MatchProfiles, Users } from '../../providers';
+import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -26,8 +26,8 @@ export class CreateMatchProfilePage {
   authHeaders: any;
   isActiveMatchProfile: boolean = true;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-    public utils: Utilities, public matchProfiles: MatchProfiles,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public utils: Utilities,
+    public storageUtils: StorageUtilities, public matchProfiles: MatchProfiles,
     public users: Users) { }
 
     ionViewDidLoad() {
@@ -45,15 +45,15 @@ export class CreateMatchProfilePage {
     }
 
     retrieveDataFromStorage() {
-      this.utils.getDataFromStorage('authHeaders').then(val => {
+      this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
 
-      this.utils.getDataFromStorage('breeds').then(val => {
+      this.storageUtils.getDataFromStorage('breeds').then(val => {
         this.breedList = val;
       });
 
-      this.utils.getDataFromStorage('user').then(val => {
+      this.storageUtils.getDataFromStorage('user').then(val => {
         if (!val) {
           this.utils.presentAutoDismissToast("No user profile found, please create one");
           this.navCtrl.push('CreateUserProfilePage');
@@ -88,10 +88,10 @@ export class CreateMatchProfilePage {
       uploadProfileImageForMatchProfile(matchProfileObj: any) {
         const matchId = matchProfileObj['id'];
         const userId = matchProfileObj['userProfile']['id'];
-        this.utils.uploadFile(userId, matchId, this.imageFilePath).then(val => {
+        this.storageUtils.uploadFile(userId, matchId, this.imageFilePath).then(val => {
           console.log('Promise resolved : ' + val);
           matchProfileObj['profileImage'] = val; //Update profileImage field after upload before storing in storage
-          this.utils.storeData(' match', matchProfileObj);
+          this.storageUtils.storeData(' match', matchProfileObj);
           this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
 
           //Redirect newly created user to create a new match profile

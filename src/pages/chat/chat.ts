@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage} from 'ionic-angular';
 import { Http } from '@angular/http';
-import { Utilities, Messages } from '../../providers';
+import { Utilities, StorageUtilities, Messages } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 import { DEFAULT_IMG } from '../';
 
@@ -26,6 +26,7 @@ export class ChatPage {
     public navCtrl: NavController,
     public http: Http,
     public utils: Utilities,
+    public storageUtils: StorageUtilities,
     public msgService: Messages) {
       //There are three ways this page can be accessed:
       //1. When viewing match profiles and a match is established, and the user elects to send a message (in this case, there will be no message history to retrieve)
@@ -36,7 +37,7 @@ export class ChatPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChatPage');
 
-    this.utils.getDataFromStorage('match').then(val => {
+    this.storageUtils.getDataFromStorage('match').then(val => {
       if (!val) {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {

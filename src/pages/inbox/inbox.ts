@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { Utilities, Messages, Matches  } from '../../providers';
+import { StorageUtilities, Utilities, Messages, Matches  } from '../../providers';
 import { DEFAULT_IMG } from '../';
 
 @IonicPage()
@@ -21,12 +21,12 @@ export class MessageInboxPage {
 
   constructor(public navCtrl: NavController,
     public matchService: Matches, public msgService: Messages,
-    public utils: Utilities) {
+    public utils: Utilities, public storageUtils: StorageUtilities) {
 
     }
 
     ionViewDidLoad() {
-      this.utils.getDataFromStorage('match').then(val => {
+      this.storageUtils.getDataFromStorage('match').then(val => {
         this.matchProfileId = val['id'];
         this.retrieveMatches();
       });

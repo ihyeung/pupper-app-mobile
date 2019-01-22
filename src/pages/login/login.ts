@@ -3,7 +3,7 @@ import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account.validator';
-import { Utilities, Users  } from '../../providers';
+import { Utilities, StorageUtilities, Users  } from '../../providers';
 import { USER_PROFILE_ERROR } from '../';
 
 
@@ -23,7 +23,7 @@ export class LoginPage {
   authHeaders: any;
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
-    public formBuilder: FormBuilder, public utils: Utilities,
+    public formBuilder: FormBuilder, public utils: Utilities, public storageUtils: StorageUtilities,
     public userService: Users, public accountValidator: AccountValidator) {
 
       this.userAuthType = this.navParams.get('userAuthType');
@@ -46,7 +46,7 @@ export class LoginPage {
     }
 
     ionViewDidLoad() {
-      this.utils.getDataFromStorage('authHeaders').then(val => {
+      this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         if (val) {
           this.authHeaders = val;
         }
@@ -76,8 +76,8 @@ export class LoginPage {
           this.errorMessage = "Please enter a unique email to create a user account."
           this.utils.presentDismissableToast("Email is in use for an existing account.");
         } else {
-          this.utils.storeData('email', this.email);
-          this.utils.storeData('password', this.password);
+          this.storageUtils.storeData('email', this.email);
+          this.storageUtils.storeData('password', this.password);
 
           this.navCtrl.push('CreateUserProfilePage');
         }
@@ -88,9 +88,9 @@ export class LoginPage {
       this.userService.authenticateUser(this.email, this.password)
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
-        const authObj = this.utils.extractAndStoreAuthHeaders(response);
+        const authObj = this.storageUtils.extractAndStoreAuthHeaders(response);
         this.utils.presentAutoDismissToast("Login success! Please wait...");
-        this.retrieveUserProfile(this.utils.createHeadersObjFromAuth(authObj));
+        this.retrieveUserProfile(this.storageUtils.createHeadersObjFromAuth(authObj));
 
       }, error => {
         console.error('ERROR: ', JSON.stringify(error));
@@ -107,8 +107,8 @@ export class LoginPage {
           //Happens when user created user account but never created user profile (only possible with old flow)
           this.utils.presentDismissableToast(USER_PROFILE_ERROR);
 
-          this.utils.storeData('email', this.email);
-          this.utils.storeData('password', this.password);
+          this.storageUtils.storeData('email', this.email);
+          this.storageUtils.storeData('password', this.password);
 
           this.navCtrl.push('CreateUserProfilePage');
         } else {
@@ -135,7 +135,7 @@ export class LoginPage {
         }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
 
-      this.utils.storeData('user', userProfileObj); //Store user
+      this.storageUtils.storeData('user', userProfileObj); //Store user
     }
 
 }
