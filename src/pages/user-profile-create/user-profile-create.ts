@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { Utilities, Users, StorageUtilities } from '../../providers';
+import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
@@ -42,7 +43,6 @@ export class CreateUserProfilePage {
         this.authHeaders = val;
       });
 
-      console.log('retrieving email and password from storage');
       this.storageUtils.getDataFromStorage('email').then(val => {
         this.userAccount = {
           username: val,
@@ -71,7 +71,11 @@ export class CreateUserProfilePage {
     }
 
     createUser() {
-      this.createUserAccount();
+      if (ENV.AUTO_PROCEED_FOR_TESTING) {
+        this.navCtrl.push('CreateMatchProfilePage');
+      } else {
+        this.createUserAccount();
+      }
     }
 
     createUserAccount() {
@@ -111,6 +115,10 @@ export class CreateUserProfilePage {
     }
 
     async uploadProfileImageForUser(userProfileObj: any, loader: any) {
+      if (!this.imageFilePath) {
+        this.storeUserAndProceedToNextPage(userProfileObj);
+        return;
+      }
       const userId = userProfileObj['id'];
       let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
       console.log('response from file upload: ' + JSON.stringify(response));
@@ -118,16 +126,18 @@ export class CreateUserProfilePage {
       if (response.response['isSuccess']) {
         const profileImage = response.response['imageUrl'];
         userProfileObj['profileImage'] = profileImage; //Update profile image field
-        this.storageUtils.storeData('user', userProfileObj);
-
-        this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
-
-        this.navCtrl.push('CreateMatchProfilePage');
+        this.storeUserAndProceedToNextPage(userProfileObj);
       } else {
         //Profile image was not successfully uploaded and updated in database
         this.utils.presentDismissableToast('Error uploading profile image');
 
       }
+    }
+
+    private storeUserAndProceedToNextPage(userProfileObj: any) {
+      this.storageUtils.storeData('user', userProfileObj);
+      this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
+      this.navCtrl.push('CreateMatchProfilePage');
     }
 
     setDatePickerBounds() {
