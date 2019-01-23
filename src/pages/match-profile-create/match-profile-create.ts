@@ -157,11 +157,6 @@ export class CreateMatchProfilePage {
       loader.present();
 
       this.matchProfileFormData = this.getDataFromInputFields();
-      if (!this.matchProfileFormData.isDefault) {
-        if (this.matchProfilesList === undefined || this.matchProfilesList.length == 0) {
-          this.matchProfileFormData['isDefault'] = true; //Override isDefault flag
-        }
-      }
 
       const userProfileId = this.userProfile['id'];
       this.matchProfiles.createMatchProfile(
@@ -171,9 +166,9 @@ export class CreateMatchProfilePage {
           console.log(response);
           if (response.isSuccess) {
             const matchProfileObj = response['matchProfiles'][0];
-            this.checkForMultipleDefaultMatchProfiles(matchProfileObj);
-
             this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
+
+            this.retrieveAllMatchProfiles(); //Retrieve updated list of match profiles from server
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
@@ -186,7 +181,9 @@ export class CreateMatchProfilePage {
         const userId = matchProfileObj['userProfile']['id'];
         let response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
         console.log('response from file upload: ' + JSON.stringify(response));
+
         loader.dismiss();
+
         if (response.response['isSuccess']) {
           const profileImage = response.response['imageUrl'];
 
@@ -196,36 +193,8 @@ export class CreateMatchProfilePage {
 
           this.navCtrl.push('TabsPage');
         } else {
-          //Profile image was not successfully uploaded and updated in database
           this.utils.presentDismissableToast('Error uploading profile image');
         }
-      }
-
-      private checkForMultipleDefaultMatchProfiles(matchProfileObj: any) {
-        if (matchProfileObj['isDefault']) { //If newly created profile isDefault, reset default flag for other match profiles
-          if (!this.matchProfilesList) {
-            console.log('Error: matchProfilesList is undefined or null');
-            return;
-          }
-          this.matchProfilesList.forEach(each => {
-            if (each['isDefault']) { //If another match profile is marked as default, override isDefault to false and update
-              this.updateIsDefaultForMatchProfile(each, false);
-            }
-          });
-        }
-      }
-
-      updateIsDefaultForMatchProfile(matchProfile: any, isDefault: boolean) {
-        matchProfile['isDefault'] = isDefault;
-        const userId = matchProfile['userProfile']['id'];
-
-        this.matchProfiles.updateMatchProfile(matchProfile, userId)
-        .map(res => res.json())
-        .subscribe(resp => {
-          if (!resp.isSuccess) {
-            console.log('Error updating isDefault field for match profile id=' + matchProfile['id']);
-          }
-        }, err => console.error('ERROR: ', JSON.stringify(err)));
       }
 
       addProfileImage() {
@@ -239,8 +208,6 @@ export class CreateMatchProfilePage {
       }
 
       private getDataFromInputFields() {
-        const today = this.utils.currentDateToValidDateFormat();
-
         return {
           aboutMe: this.aboutMe,
           birthdate: this.birthdate,
