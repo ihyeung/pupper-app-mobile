@@ -54,7 +54,10 @@ export class LoginPage {
     }
 
     authenticateUser() {
-      if (ENV.AUTO_FILL) {
+      if (ENV.AUTO_PROCEED_FOR_TESTING) {
+        this.navCtrl.push('CreateUserProfilePage');
+      }
+      else if (ENV.AUTO_FILL) {
         console.log('Auto fill flag set');
         this.email = ENV.VALIDATE_EMAIL_USER;
         this.password = ENV.VALIDATE_EMAIL_PASS;
