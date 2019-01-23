@@ -62,7 +62,7 @@
     </ion-item>
     <ion-item text-wrap>
       <ion-label floating>ABOUT ME</ion-label><br>
-      <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="150"></ion-textarea>
+      <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="130"></ion-textarea>
     </ion-item>
     <ion-item-divider>
     </ion-item-divider>
@@ -94,14 +94,14 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label color="primary">Matching Radius</ion-label>
+        <ion-label color="primary">MATCHING RADIUS</ion-label>
         <ion-range [(ngModel)]="radius" min="0" max="50" step="1" color="primary" snaps="true" pin="true">
           <ion-label range-left>0 miles</ion-label>
           <ion-label range-right>50 miles</ion-label>
         </ion-range>
       </ion-item>
       <ion-item>
-        <ion-label color="primary">Make this my default/active matching profile</ion-label>
+        <ion-label color="primary">MAKE DEFAULT MATCHING PROFILE</ion-label>
         <ion-toggle item-end right color="secondary" checked="true" [(ngModel)]="isActiveMatchProfile"></ion-toggle>
       </ion-item>
     </ion-list>
