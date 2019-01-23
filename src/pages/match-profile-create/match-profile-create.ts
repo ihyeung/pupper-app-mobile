@@ -2,6 +2,17 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../providers';
 import { USER_PROFILE_ERROR } from '../';
+import { environment as ENV } from '../../environments/environment';
+
+export class ProfileDataOption {
+  option: string;
+  value: string;
+
+  constructor(text: string, val: string) {
+    this.option = text;
+    this.value = val;
+  }
+}
 
 @IonicPage()
 @Component({
@@ -13,7 +24,6 @@ export class CreateMatchProfilePage {
   birthdate: string;
   breed: any;
   energyLevel: string;
-  lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
   lifeStage: string;
   names: string;
   sex: string;
@@ -22,20 +32,69 @@ export class CreateMatchProfilePage {
   imageFilePath: string;
   matchProfileFormData: any = [];
   userProfile: any;
-  dogPreferences: string[];
   radius: number = 5;
   authHeaders: any;
   isActiveMatchProfile: boolean = true;
   matchProfilesList: any;
 
+  //Match profile ion options
+  lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
+  sizes: ProfileDataOption[];
+  energyLevels: ProfileDataOption[];
+
+  //Matching preferences: ion options
+  sizePreferences: ProfileDataOption[];
+  lifeStagePreferences: ProfileDataOption[];
+  energyLevelPreferences: ProfileDataOption[];
+
+  //Matching preferences: user data
+  dogSizes: string[];
+  dogAges: string[];
+  dogEnergies: string[];
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public storageUtils: StorageUtilities,
     public matchProfiles: MatchProfiles, public users: Users,
-    public loadCtrl: LoadingController) { }
+    public loadCtrl: LoadingController) {
+
+    }
 
     ionViewDidLoad() {
+      this.initializeIonOptions();
+
       this.extractNavParams();
       this.retrieveDataFromStorage();
+    }
+
+    initializeIonOptions() {
+      this.sizes = new Array<ProfileDataOption>();
+      this.energyLevels = new Array<ProfileDataOption>();
+      this.lifeStagePreferences = new Array<ProfileDataOption>();
+
+      this.sizes.push(new ProfileDataOption('TOY/PETITE (0-10 POUNDS)','TOY'));
+      this.sizes.push(new ProfileDataOption('SMALL (11-25 POUNDS)','SMALL'));
+      this.sizes.push(new ProfileDataOption('MEDIUM (26-50 POUNDS)','MID'));
+      this.sizes.push(new ProfileDataOption('LARGE (51-99 POUNDS)','LARGE'));
+      this.sizes.push(new ProfileDataOption('EXTRA LARGE (100+ POUNDS)','XLARGE'));
+
+      this.energyLevels.push(new ProfileDataOption('MINIMAL','MIN'));
+      this.energyLevels.push(new ProfileDataOption('LOW','LOW'));
+      this.energyLevels.push(new ProfileDataOption('MEDIUM','MED'));
+      this.energyLevels.push(new ProfileDataOption('HIGH','HIGH'));
+      this.energyLevels.push(new ProfileDataOption('EXTREME','EXTREME'));
+
+      const all = new ProfileDataOption('ALL OF THE ABOVE','ALL');
+
+      this.lifeStages.forEach(each => {
+        this.lifeStagePreferences.push(new ProfileDataOption(each, each));
+      });
+      this.lifeStagePreferences.push(all);
+
+      this.sizePreferences = this.sizes.slice();
+      this.sizePreferences.push(all);
+
+      this.energyLevelPreferences = this.energyLevels.slice();
+      this.energyLevelPreferences.push(all);
     }
 
     extractNavParams() {
@@ -60,7 +119,9 @@ export class CreateMatchProfilePage {
       this.storageUtils.getDataFromStorage('user').then(val => {
         if (!val) {
           this.utils.presentAutoDismissToast(USER_PROFILE_ERROR);
-          this.navCtrl.push('CreateUserProfilePage');
+          if (!ENV.AUTO_PROCEED_FOR_TESTING) {
+            this.navCtrl.push('CreateUserProfilePage');
+          }
         } else {
           this.userProfile = val;
         }
@@ -76,6 +137,9 @@ export class CreateMatchProfilePage {
     }
 
     retrieveAllMatchProfiles() {
+      if (ENV.AUTO_PROCEED_FOR_TESTING) {
+        return;
+      }
       this.matchProfiles.getMatchProfiles(this.userProfile)
       .map(res => res.json())
       .subscribe(resp => {
@@ -98,7 +162,6 @@ export class CreateMatchProfilePage {
           this.matchProfileFormData['isDefault'] = true; //Override isDefault flag
         }
       }
-      console.log('Dog preferences: ' + this.dogPreferences);
 
       const userProfileId = this.userProfile['id'];
       this.matchProfiles.createMatchProfile(
@@ -192,7 +255,6 @@ export class CreateMatchProfilePage {
           userProfile: this.userProfile,
           zipRadius: this.radius,
           isDefault: this.isActiveMatchProfile
-          // dogPreferences: this.dogPreferences
         };
       }
 
@@ -209,7 +271,6 @@ export class CreateMatchProfilePage {
         this.aboutMe = profile.aboutMe;
         // this.numDogs = profile.numDogs;
         this.isActiveMatchProfile = profile.isDefault;
-        // this.dogPreferences = profile.dogPreferences;
 
       }
     }
