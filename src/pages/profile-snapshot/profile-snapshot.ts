@@ -26,7 +26,6 @@ export class ProfileSnapshotPage {
     public dialogs: Dialogs, public users: Users) {}
 
     ionViewDidLoad() {
-      console.log('ionViewDidLoad ProfileSnapshotPage');
       this.loadProfileSnapshotData();
     }
 

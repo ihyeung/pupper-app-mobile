@@ -120,24 +120,32 @@ export class CreateUserProfilePage {
         return;
       }
       const userId = userProfileObj['id'];
-      let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      let response;
+      try {
+        response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      } catch(err) {
+         console.error(JSON.stringify(err));
+         loader.dismiss();
+         this.utils.presentDismissableToast('Error uploading profile image');
+
+      }
       console.log('response from file upload: ' + JSON.stringify(response));
       loader.dismiss();
-      if (response.response['isSuccess']) {
+      console.log(response.response);
+      console.log(response.response.imageUrl);
+      if (response.response.isSuccess) {
         const profileImage = response.response['imageUrl'];
         userProfileObj['profileImage'] = profileImage; //Update profile image field
         this.storeUserAndProceedToNextPage(userProfileObj);
-      } else {
-        //Profile image was not successfully uploaded and updated in database
-        this.utils.presentDismissableToast('Error uploading profile image');
-
       }
     }
 
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
       this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
-      this.navCtrl.push('CreateMatchProfilePage');
+      this.navCtrl.push('CreateMatchProfilePage', {
+        isNewUser: true  //If new user, don't retrieve match profiles list on create match profile page
+      });
     }
 
     setDatePickerBounds() {

@@ -3,7 +3,6 @@ import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { ActionSheetController, Platform } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { StorageUtilities } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
 
 declare var cordova: any;
 
@@ -29,10 +28,7 @@ export class ImageUploadPage {
     public utils: StorageUtilities) { }
 
     ionViewDidLoad() {
-      console.log('ionViewDidLoad ImageUploadPage');
-
       this.imageFor = this.navParams.get('profileType');
-      console.log('Routed from create profile page for ' + this.imageFor);
       this.profileData = this.navParams.get('formData');
       if (this.profileData) {
         console.log('profile form data passed from create profile page');
@@ -41,27 +37,35 @@ export class ImageUploadPage {
 
     selectExistingImage() {
       const options: CameraOptions = {
-        quality: 20,
+        quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
-        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
-      }
+        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+        encodingType: this.camera.EncodingType.JPEG
+      };
 
       this.camera.getPicture(options).then(imageData => {
-        this.imageURI = imageData;
+      if (this.platform.is('ios')) {
+          this.imageURI = imageData.replace(/^file:\/\//, '');
+      } else {
+          this.imageURI = imageData;
+      }
         console.log("IMAGE URI FROM LIBRARY: '" + this.imageURI + "'");
+
       }, err => console.error('ERROR: ' + JSON.stringify(err)));
     }
 
     takePhoto() {
       const options: CameraOptions = {
-        quality: 20,
+        quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
-        sourceType: this.camera.PictureSourceType.CAMERA
+        sourceType: this.camera.PictureSourceType.CAMERA,
+        encodingType: this.camera.EncodingType.JPEG
       }
 
       this.camera.getPicture(options).then((imageData) => {
         this.imageURI = imageData;
-        console.log("IMAGE URI FROM CAMERA: '" + this.imageURI + "'");
+        console.log("IMAGE URI FROM CAMERA: '" + imageData + "'");
+
       }, err => console.error('ERROR: ' + JSON.stringify(err)));
     }
 
