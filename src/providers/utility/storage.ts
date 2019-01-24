@@ -24,6 +24,8 @@ export class StorageUtilities {
     const url = matchId === null ? `${ENV.BASE_URL}/user/${userId}/upload` :
     `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
 
+    console.log(url);
+
     return fileTransfer.upload(imageUri, url, options);
   }
     async clearStorage() {
