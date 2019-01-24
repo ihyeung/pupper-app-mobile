@@ -39,19 +39,18 @@ export class SettingsPage {
     }
 
     matchProfile() {
-
+      this.dialog.alert('Match Profile button clicked')
+      .then(() => console.log('Dialog dismissed'))
+      .catch(e => console.log('Error displaying dialog', e));
     }
 
     logout() {
       this.dialog.confirm('Are you sure you want to log out?', 'Log out')
       .then(index => {
         if (index == 1) {
-          this.utils.clearStorage();
           this.returnToHomeScreen();
         }
-      })
-      .catch(e => console.log('Error displaying dialog', e));
-
+      }).catch(e => console.error('Error displaying dialog: ', e));
     }
 
     deleteAccount() {
@@ -66,16 +65,16 @@ export class SettingsPage {
                       obj.input1 != this.userObj['userAccount']['username']) {
             console.log('Email address does not match');
           } else {
-            console.log('Deleting account (NOT IMPLEMENTED YET)');
             this.deleteAllUserData();
-            this.utils.clearStorage();
             this.returnToHomeScreen();
           }
       })
-      .catch(e => console.log('Error displaying dialog', e));
+      .catch(e => console.error('Error displaying dialog: ', e));
     }
 
     deleteAllUserData() {
+      console.log('NOT IMPLEMENTED YET');
+
       //Required delete order (due to foreign key constraints):
       //1. delete all messages
       //1. delete match results

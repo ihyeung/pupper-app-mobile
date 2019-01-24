@@ -20,7 +20,6 @@ export class CreateUserProfilePage {
   maxDate: string;
   imageFilePath: string; //Image URI
   userAccount: any;
-  userProfileFormData: any;
   authHeaders: any;
 
   constructor (
@@ -56,18 +55,17 @@ export class CreateUserProfilePage {
     }
 
     extractNavParams() {
-      this.userProfileFormData = this.navParams.get('formData');
-      if (this.userProfileFormData) {
+      const userData = this.navParams.get('formData');
+      if (userData) {
         console.log("Profile passed back from image upload page");
-        this.userAccount = this.userProfileFormData.userAccount;
+        this.userAccount = userData.userAccount;
 
-        this.repopulateInputFieldData();
+        this.repopulateInputFieldData(userData);
       }
       //Extract nav params from image upload page
       this.imageFilePath = this.navParams.get('filePath');
 
       console.log('Image URI: ' + this.imageFilePath);
-      console.log('Profile form data: ' + this.userProfileFormData);
     }
 
     createUser() {
@@ -99,9 +97,9 @@ export class CreateUserProfilePage {
       });
       loader.present();
 
-      this.userProfileFormData = this.getDataFromInputFields();
+      const userData = this.getDataFromInputFields();
 
-      this.userService.createUserProfile(JSON.stringify(this.userProfileFormData), this.authHeaders)
+      this.userService.createUserProfile(JSON.stringify(userData), this.authHeaders)
       .map(res => res.json())
       .subscribe(result => {
         if (result.isSuccess) {
@@ -131,10 +129,10 @@ export class CreateUserProfilePage {
       }
       console.log('response from file upload: ' + JSON.stringify(response));
       loader.dismiss();
-      console.log(response.response);
-      console.log(response.response.imageUrl);
-      if (response.response.isSuccess) {
-        const profileImage = response.response['imageUrl'];
+      const responseObj = JSON.parse(response.response);
+      if (responseObj.isSuccess) {
+        this.utils.presentAutoDismissToast("Image upload success");
+        const profileImage = responseObj.imageUrl;
         userProfileObj['profileImage'] = profileImage; //Update profile image field
         this.storeUserAndProceedToNextPage(userProfileObj);
       }
@@ -156,12 +154,9 @@ export class CreateUserProfilePage {
     }
 
     addProfileImage() {
-      const data = this.userProfileFormData ? this.userProfileFormData :
-      this.getDataFromInputFields();
-
       this.navCtrl.push('ImageUploadPage', {
         profileType : 'user',
-        formData: data //Pass form data so data can be restored upon return
+        formData: this.getDataFromInputFields() //Pass form data so data can be restored upon return
       });
     }
 
@@ -182,8 +177,7 @@ export class CreateUserProfilePage {
       };
     }
 
-    repopulateInputFieldData() {
-      const profile = this.userProfileFormData;
+    repopulateInputFieldData(profile: any) {
       this.firstName = profile.firstName;
       this.lastName = profile.lastName;
       this.birthdate = profile.birthdate;

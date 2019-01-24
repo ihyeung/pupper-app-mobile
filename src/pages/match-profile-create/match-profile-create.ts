@@ -203,12 +203,12 @@ export class CreateMatchProfilePage {
         }
         console.log('response from file upload: ' + JSON.stringify(response));
         loader.dismiss();
-        console.log(response.response);
-        if (response.response['isSuccess']) {
-          const profileImage = response.response['imageUrl'];
-
+        const responseObj = JSON.parse(response.response);
+        if (responseObj.isSuccess) {
+          this.utils.presentAutoDismissToast("Image upload success");
+          const profileImage = responseObj.imageUrl;
           matchProfileObj['profileImage'] = profileImage; //Update profileImage field after upload before storing in storage
-          this.storageUtils.storeData(' match', matchProfileObj);
+          this.storageUtils.storeData('match', matchProfileObj);
           this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
 
           this.navCtrl.push('TabsPage');

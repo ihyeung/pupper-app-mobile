@@ -7,11 +7,11 @@
 </ion-header>
 
 <ion-content padding class="image-upload-preview">
-  <ion-item>
-    <button ion-button color="secondary" (click)="selectExistingImage()">Select Existing Image</button>
-    <button ion-button color="secondary" (click)="takePhoto()">Take New Image</button>
+  <!-- <ion-item>
+    <button ion-button color="secondary" (click)="selectProfileImage()">Select Existing Image</button>
+    <button ion-button color="secondary" (click)="selectProfileImage()">Take New Image</button>
 
-  </ion-item>
+  </ion-item> -->
   <div>
   <h2 [hidden]="lastImage !== null">SELECT A IMAGE FILE FOR UPLOAD</h2>
   </div>
@@ -28,10 +28,10 @@
   <ion-item *ngIf="uriReady">URI: '{{imageURI}}' <br> LAST IMAGE: '{{lastImage}}'</ion-item>
   </ion-card> -->
   <ion-item>
-    <h4>Image Preview Below</h4>
     <h5>Image URI/path: </h5>
     <p>{{imageURI}}</p>
     <br>
+    <h4>Image Preview Below</h4>
     <img [src]="imageURI" *ngIf="imageURI" width="300" />
   </ion-item>
 
@@ -40,13 +40,13 @@
   </ion-item>
 </ion-content>
 
-<!-- <ion-footer>
+<ion-footer>
   <ion-toolbar color="primary">
-        <button ion-button class="btn" full icon-left (click)="selectImageForUpload()">
+        <button ion-button class="btn" full icon-left (click)="getImageUploadDialog()">
         <ion-icon name="camera"></ion-icon> Select Image
       </button>
-      <button ion-button class="btn" full icon-left (click)="uploadImage()" [disabled]="lastImage === null">
+      <button ion-button class="btn" full icon-left (click)="passImageUriForUpload()" [disabled]="imageURI === null">
         <ion-icon name="cloud-upload"></ion-icon> Upload Image
       </button>
   </ion-toolbar>
-</ion-footer> -->
+</ion-footer>

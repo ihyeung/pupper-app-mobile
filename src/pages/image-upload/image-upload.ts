@@ -3,6 +3,8 @@ import { NavController, IonicPage, NavParams } from 'ionic-angular';
 import { ActionSheetController, Platform } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { StorageUtilities } from '../../providers';
+import { FilePath } from '@ionic-native/file-path';
+import { File } from '@ionic-native/file';
 
 declare var cordova: any;
 
@@ -25,7 +27,9 @@ export class ImageUploadPage {
     private camera: Camera,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
-    public utils: StorageUtilities) { }
+    public utils: StorageUtilities,
+    private filePath: FilePath,
+    private file: File) { }
 
     ionViewDidLoad() {
       this.imageFor = this.navParams.get('profileType');
@@ -35,39 +39,51 @@ export class ImageUploadPage {
       }
     }
 
-    selectExistingImage() {
+    selectProfileImage(sourceType: any, saveImage: boolean) {
       const options: CameraOptions = {
         quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
-        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-        encodingType: this.camera.EncodingType.JPEG
+        sourceType: sourceType,
+        encodingType: this.camera.EncodingType.JPEG,
+        correctOrientation: true,
+        saveToPhotoAlbum: saveImage
       };
 
-      this.camera.getPicture(options).then(imageData => {
-      if (this.platform.is('ios')) {
-          this.imageURI = imageData.replace(/^file:\/\//, '');
-      } else {
-          this.imageURI = imageData;
-      }
-        console.log("IMAGE URI FROM LIBRARY: '" + this.imageURI + "'");
+      this.camera.getPicture(options).then(imagePath => {
+        if (this.platform.is('android') &&
+        sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
 
-      }, err => console.error('ERROR: ' + JSON.stringify(err)));
+          this.filePath.resolveNativePath(imagePath)
+          .then(filePath => {
+            console.log('Resolved native path: ', filePath);
+
+            const path = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+            const name = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+            this.copyFileToLocalDir(path, name);
+          });
+        } else {
+          const name = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+          const path = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+          this.copyFileToLocalDir(path, name);
+        }
+
+      }).catch(err => console.error('ERROR: ' + JSON.stringify(err)));
     }
 
-    takePhoto() {
-      const options: CameraOptions = {
-        quality: 100,
-        destinationType: this.camera.DestinationType.FILE_URI,
-        sourceType: this.camera.PictureSourceType.CAMERA,
-        encodingType: this.camera.EncodingType.JPEG
-      }
-
-      this.camera.getPicture(options).then((imageData) => {
-        this.imageURI = imageData;
-        console.log("IMAGE URI FROM CAMERA: '" + imageData + "'");
-
-      }, err => console.error('ERROR: ' + JSON.stringify(err)));
-    }
+    // takePhoto() {
+    //   const options: CameraOptions = {
+    //     quality: 100,
+    //     destinationType: this.camera.DestinationType.FILE_URI,
+    //     sourceType: this.camera.PictureSourceType.CAMERA,
+    //     encodingType: this.camera.EncodingType.JPEG
+    //   }
+    //
+    //   this.camera.getPicture(options).then((imageData) => {
+    //     this.imageURI = imageData;
+    //     console.log("IMAGE URI FROM CAMERA: '" + imageData + "'");
+    //
+    //   }, err => console.error('ERROR: ' + JSON.stringify(err)));
+    // }
 
     passImageUriForUpload() {
       console.log('Passing image uri back to create profile page');
@@ -85,17 +101,17 @@ export class ImageUploadPage {
       }
     }
 
-    selectImageForUpload() {
+    getImageUploadDialog() {
       const actionSheet = this.actionSheetCtrl.create({
         title: 'Select Image Source',
         buttons: [
           {
-            text: 'Select existing from library',
-            handler: () => this.selectExistingImage()
+            text: 'Select Existing From Gallery',
+            handler: () => this.selectProfileImage(this.camera.PictureSourceType.PHOTOLIBRARY, false)
           },
           {
-            text: 'Take photo',
-            handler: () => this.takePhoto()
+            text: 'Take Photo',
+            handler: () => this.selectProfileImage(this.camera.PictureSourceType.CAMERA, true)
           },
           {
             text: 'Cancel',
@@ -163,22 +179,19 @@ export class ImageUploadPage {
     //   }, (err) => console.log(err));
     // }
     //
-    // private copyFileToLocalDir(namePath, currentName) {
-    //   const imageFileName = new Date().getTime() + '.jpg';
-    //   this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, imageFileName)
-    //   .then(success => {
-    //     this.lastImage = imageFileName;
-    //     this.imageURI = this.pathForImage(this.lastImage);
-    //     this.uriReady = true;
-    //
-    //   }, err => console.error('ERROR', JSON.stringify(err)));
-    // }
+    private copyFileToLocalDir(tempFilePath: string, tempFileName: string) {
+      const fileNameLocalCopy = new Date().getTime() + '.jpg';
+      this.file.copyFile(tempFilePath, tempFileName, cordova.file.dataDirectory, fileNameLocalCopy)
+      .then(success => {
+        this.imageURI = this.pathForImage(tempFileName);
+        console.log('image URI of file copied to local directory: ' + this.imageURI);
+        if (this.platform.is('ios')) {
+          this.imageURI = this.imageURI.replace(/^file:\/\//, '');
+        }
+      }, err => console.error('ERROR', JSON.stringify(err)));
+    }
 
     public pathForImage(img) {
-      const path = img === null ? '' : cordova.file.dataDirectory + img;
-      if (img !== null) {
-        console.log("pathForImage() function, path is " + path);
-      }
-      return path;
+      return img === null ? '' : cordova.file.dataDirectory + img;
     }
   }

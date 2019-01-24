@@ -8,8 +8,7 @@ import { Message } from '../../models/message';
 export class Messages {
   authHeaders: any;
 
-  constructor(public http: Http,
-    private utils: StorageUtilities) {
+  constructor(public http: Http, private utils: StorageUtilities) {
       this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
