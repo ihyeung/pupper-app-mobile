@@ -199,10 +199,11 @@ export class CreateMatchProfilePage {
         } catch(err) {
            console.error(JSON.stringify(err));
            loader.dismiss();
+           this.utils.presentDismissableToast('Error uploading profile image');
         }
         console.log('response from file upload: ' + JSON.stringify(response));
         loader.dismiss();
-
+        console.log(response.response);
         if (response.response['isSuccess']) {
           const profileImage = response.response['imageUrl'];
 
