@@ -20,6 +20,7 @@ export class ProfileDataOption {
   templateUrl: 'match-profile-create.html'
 })
 export class CreateMatchProfilePage {
+  //Match profile form: user input data
   aboutMe: string;
   birthdate: string;
   breed: any;
@@ -28,21 +29,22 @@ export class CreateMatchProfilePage {
   names: string;
   sex: string;
   size: string;
-  breedList: any = [];
-  imageFilePath: string;
-  matchProfileFormData: any = [];
-  userProfile: any;
   radius: number = 5;
-  authHeaders: any;
   isActiveMatchProfile: boolean = true;
+
+  //Objects needed for creating profile
+  authHeaders: any;
+  userProfile: any;
+  imageFilePath: string;
   matchProfilesList: any;
 
   //Match profile ion options
   lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
+  breedList: any = [];
   sizes: ProfileDataOption[];
   energyLevels: ProfileDataOption[];
 
-  //Matching preferences: ion options
+  //Matching preferences ion options
   sizePreferences: ProfileDataOption[];
   lifeStagePreferences: ProfileDataOption[];
   energyLevelPreferences: ProfileDataOption[];
@@ -55,18 +57,14 @@ export class CreateMatchProfilePage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public storageUtils: StorageUtilities,
     public matchProfiles: MatchProfiles, public users: Users,
-    public loadCtrl: LoadingController) {
-
-    }
+    public loadCtrl: LoadingController) { }
 
     ionViewDidLoad() {
       this.initializeIonOptions();
-
-      this.extractNavParams();
-      this.retrieveDataFromStorage();
+      this.extractNavParamsAndRetrieveStoredData();
     }
 
-    initializeIonOptions() {
+    private initializeIonOptions() {
       this.sizes = new Array<ProfileDataOption>();
       this.energyLevels = new Array<ProfileDataOption>();
       this.lifeStagePreferences = new Array<ProfileDataOption>();
@@ -83,31 +81,33 @@ export class CreateMatchProfilePage {
       this.energyLevels.push(new ProfileDataOption('HIGH','HIGH'));
       this.energyLevels.push(new ProfileDataOption('EXTREME','EXTREME'));
 
-      const all = new ProfileDataOption('ALL OF THE ABOVE','ALL');
-
+      const allOption = 'ALL OF THE ABOVE';
       this.lifeStages.forEach(each => {
         this.lifeStagePreferences.push(new ProfileDataOption(each, each));
       });
-      this.lifeStagePreferences.push(all);
+      this.lifeStagePreferences.push(new ProfileDataOption(allOption,'ALL AGE'));
 
       this.sizePreferences = this.sizes.slice();
-      this.sizePreferences.push(all);
+      this.sizePreferences.push(new ProfileDataOption(allOption,'ALL SIZE'));
 
       this.energyLevelPreferences = this.energyLevels.slice();
-      this.energyLevelPreferences.push(all);
+      this.energyLevelPreferences.push(new ProfileDataOption(allOption,'ALL ENERGY'));
     }
 
-    extractNavParams() {
+    extractNavParamsAndRetrieveStoredData() {
       this.imageFilePath = this.navParams.get('filePath');
-      this.matchProfileFormData = this.navParams.get('formData');
+      const profileData = this.navParams.get('formData');
       console.log('Image URI: ' + this.imageFilePath);
-      if (this.matchProfileFormData) {
+      if (profileData) {
         console.log('profile form data passed back from image upload page');
-        this.repopulateInputFieldData();
+        this.repopulateInputFieldData(profileData);
       }
+      const retrieveMatchProfileList = this.navParams.get('isNewUser');
+
+      retrieveMatchProfileList ? this.retrieveDataFromStorage(false) : this.retrieveDataFromStorage(true);
     }
 
-    retrieveDataFromStorage() {
+    retrieveDataFromStorage(retrieveMatchProfileList: boolean) {
       this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
@@ -119,7 +119,9 @@ export class CreateMatchProfilePage {
       this.storageUtils.getDataFromStorage('user').then(val => {
         if (!val) {
           this.utils.presentAutoDismissToast(USER_PROFILE_ERROR);
-          if (!ENV.AUTO_PROCEED_FOR_TESTING) {
+          if (ENV.AUTO_PROCEED_FOR_TESTING) {
+            console.log('Bypassing user profile error encountered when retrieving user key from storage');
+          } else {
             this.navCtrl.push('CreateUserProfilePage');
           }
         } else {
@@ -127,13 +129,19 @@ export class CreateMatchProfilePage {
         }
       });
 
+      if (!retrieveMatchProfileList) {
+        console.log('Skipping code to retrieve match profile list from storage ' +
+        'and/or from server since routed from CreateUserProfilePage (i.e., no match profiles exist yet)');
+        return;
+      }
+
       this.storageUtils.getDataFromStorage('profiles').then(val => {
         if (val) {
           this.matchProfilesList = val;
         } else {
           this.retrieveAllMatchProfiles();
         }
-      })
+      });
     }
 
     retrieveAllMatchProfiles() {
@@ -156,11 +164,16 @@ export class CreateMatchProfilePage {
       });
       loader.present();
 
-      this.matchProfileFormData = this.getDataFromInputFields();
+      const dogPreferences = this.dogSizes.concat(this.dogAges, this.dogEnergies);
+      console.log(dogPreferences);
+      const dogPreferencesSanitized = this.sanitizeMatchingPreferences();
+      console.log(dogPreferencesSanitized);
+
+      const matchProfileObj = this.getDataFromInputFields();
 
       const userProfileId = this.userProfile['id'];
       this.matchProfiles.createMatchProfile(
-        JSON.stringify(this.matchProfileFormData), userProfileId)
+        JSON.stringify(matchProfileObj), userProfileId)
         .map(res => res.json())
         .subscribe(response => {
           console.log(response);
@@ -168,7 +181,8 @@ export class CreateMatchProfilePage {
             const matchProfileObj = response['matchProfiles'][0];
             this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
 
-            this.retrieveAllMatchProfiles(); //Retrieve updated list of match profiles from server
+            //Retrieve updated list of match profiles from server (server handles isDefault logic)
+            this.retrieveAllMatchProfiles();
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
@@ -198,12 +212,9 @@ export class CreateMatchProfilePage {
       }
 
       addProfileImage() {
-        const data = this.matchProfileFormData ? this.matchProfileFormData :
-        this.getDataFromInputFields();
-
         this.navCtrl.push('ImageUploadPage', {
           profileType: 'match',
-          formData: data
+          formData: this.getDataFromInputFields()
         });
       }
 
@@ -222,12 +233,12 @@ export class CreateMatchProfilePage {
           userProfile: this.userProfile,
           zipRadius: this.radius,
           isDefault: this.isActiveMatchProfile
+          // dogPreferences: this.sanitizeMatchingPreferences()
+
         };
       }
 
-
-      repopulateInputFieldData() {
-        const profile = this.matchProfileFormData;
+      repopulateInputFieldData(profile: any) {
         this.names = profile.names;
         this.sex = profile.sex;
         this.breed = profile.breed;
@@ -238,6 +249,33 @@ export class CreateMatchProfilePage {
         this.aboutMe = profile.aboutMe;
         // this.numDogs = profile.numDogs;
         this.isActiveMatchProfile = profile.isDefault;
-
-      }
+        this.userProfile = profile.userProfile;
+        this.radius = profile.zipRadius;
+        this.isActiveMatchProfile = profile.isDefault;
     }
+
+    /**
+      Match preference helper method that handles the user selecting the
+      'all of the above' option (in addition to other options).
+      For the purposes of optimizing storing matching preferences in the database,
+      Only store a single 'All' match_preference record for a given attribute as opposed to
+      storing individual records for each of the possible fields for an attribute.
+
+      i.e., if a user selects PUPPY, YOUNG, MATURE, and ALL OF THE ABOVE, store
+      a single match preference ('ALL AGE') for the lifeStage attribute in the match_preference
+      table, as opposed to inserting 3 or 4 records for size preferences for that match profile.
+
+    */
+    sanitizeMatchingPreferences() {
+      if (this.dogSizes.indexOf('ALL SIZE') > -1) {
+        this.dogSizes = ['ALL SIZE'];
+      }
+      if (this.dogAges.indexOf('ALL AGE') > -1) {
+        this.dogAges = ['ALL AGE'];
+      }
+      if (this.dogEnergies.indexOf('ALL ENERGY') > -1) {
+        this.dogEnergies = ['ALL ENERGY'];
+      }
+      return this.dogSizes.concat(this.dogAges, this.dogEnergies);
+    }
+  }
