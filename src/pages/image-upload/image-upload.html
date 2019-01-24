@@ -30,7 +30,7 @@
   </ion-card> -->
   <ion-item>
     <h4>Image Preview Below</h4>
-    <img src="{{imageURI}}" *ngIf="imageURI" width="300" />
+    <img [src]="DomSanitizer.bypassSecurityTrustUrl(imageURI)" *ngIf="imageURI" width="300" />
   </ion-item>
 
   <ion-item>

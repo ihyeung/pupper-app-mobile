@@ -54,7 +54,7 @@ export class Utilities {
         console.log('Error: undefined or null');
         return defaultImg;
       }
-      else if (!imageUri.startsWith('https://') || !imageUri.startsWith('http://')) {
+      if (!(imageUri.startsWith("https://") || imageUri.startsWith("http://"))) {
         console.log('Error: Invalid image URI, setting to default');
         return defaultImg;
       }
