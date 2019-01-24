@@ -11,7 +11,7 @@ export class MatchProfiles {
   authHeaders: any;
 
     constructor(public http: Http,
-    private utils: StorageUtilities, private loadCtrl: LoadingController) {
+    private utils: StorageUtilities) {
       this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });

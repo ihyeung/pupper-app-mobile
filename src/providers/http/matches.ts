@@ -8,9 +8,8 @@ import { environment as ENV } from '../../environments/environment';
 export class Matches {
   authHeaders: any;
 
-  constructor(public http: Http,
-    private utils: StorageUtilities) {
-      utils.getDataFromStorage('authHeaders').then(val => {
+  constructor(public http: Http, private utils: StorageUtilities) {
+      this.utils.getDataFromStorage('authHeaders').then(val => {
         this.authHeaders = val;
       });
     }
