@@ -193,9 +193,14 @@ export class CreateMatchProfilePage {
       async uploadProfileImageForMatchProfile(matchProfileObj: any, loader: any) {
         const matchId = matchProfileObj['id'];
         const userId = matchProfileObj['userProfile']['id'];
-        let response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
+        let response;
+        try {
+          response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
+        } catch(err) {
+           console.error(JSON.stringify(err));
+           loader.dismiss();
+        }
         console.log('response from file upload: ' + JSON.stringify(response));
-
         loader.dismiss();
 
         if (response.response['isSuccess']) {
@@ -206,8 +211,6 @@ export class CreateMatchProfilePage {
           this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
 
           this.navCtrl.push('TabsPage');
-        } else {
-          this.utils.presentDismissableToast('Error uploading profile image');
         }
       }
 
