@@ -120,7 +120,12 @@ export class CreateUserProfilePage {
         return;
       }
       const userId = userProfileObj['id'];
-      let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      let response;
+      try {
+        response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      } catch(err) {
+         console.error(JSON.stringify(err));
+      }
       console.log('response from file upload: ' + JSON.stringify(response));
       loader.dismiss();
       if (response.response['isSuccess']) {
@@ -137,7 +142,9 @@ export class CreateUserProfilePage {
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
       this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
-      this.navCtrl.push('CreateMatchProfilePage');
+      this.navCtrl.push('CreateMatchProfilePage', {
+        'isNewUser': true
+      });
     }
 
     setDatePickerBounds() {
