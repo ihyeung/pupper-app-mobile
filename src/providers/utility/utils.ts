@@ -45,8 +45,10 @@ export class Utilities {
       return isoStringDate.replace('T', ' ').split('.')[0];
     }
 
-    getBreeds(headers) {
-      return this.http.get(`${ENV.BASE_URL}/breed`, { headers: headers });
+    getBreeds(headers: any) {
+      const url = `${ENV.BASE_URL}/breed`;
+      console.log(url);
+      return this.http.get(url, { headers: headers });
     }
 
     validateImageUri(imageUri: string, defaultImg: string) {
