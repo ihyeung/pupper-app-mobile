@@ -34,10 +34,6 @@
     <h4>Image Preview Below</h4>
     <img [src]="imageURI" *ngIf="imageURI" width="300" />
   </ion-item>
-
-  <ion-item>
-    <button ion-button (click)="passImageUriForUpload()">Upload</button>
-  </ion-item>
 </ion-content>
 
 <ion-footer>
@@ -45,7 +41,7 @@
         <button ion-button class="btn" full icon-left (click)="getImageUploadDialog()">
         <ion-icon name="camera"></ion-icon> Select Image
       </button>
-      <button ion-button class="btn" full icon-left (click)="passImageUriForUpload()" [disabled]="imageURI === null">
+      <button ion-button class="btn" full icon-left (click)="passImageUriForUpload()" [disabled]="!imagePathForUpload">
         <ion-icon name="cloud-upload"></ion-icon> Upload Image
       </button>
   </ion-toolbar>
