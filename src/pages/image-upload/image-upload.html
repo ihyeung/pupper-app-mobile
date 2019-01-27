@@ -5,37 +5,16 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-
-<ion-content padding class="image-upload-preview">
-  <!-- <ion-item>
-    <button ion-button color="secondary" (click)="selectProfileImage()">Select Existing Image</button>
-    <button ion-button color="secondary" (click)="selectProfileImage()">Take New Image</button>
-
-  </ion-item> -->
+<ion-content>
   <div>
-  <h2 [hidden]="lastImage !== null">SELECT A IMAGE FILE FOR UPLOAD</h2>
+  <h2 [hidden]="imageURI != null ">SELECT A IMAGE FILE FOR UPLOAD</h2>
   </div>
-  <!-- <ion-item [hidden]="lastImage === null">YOUR IMAGE BELOW:</ion-item> -->
-
-  <!-- <ion-card *ngIf="uriReady"> -->
-  <!-- <img id="image" src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null"> -->
-  <!-- <div [hidden]="lastImage === null"> {{pathForImage(lastImage)}} </div> -->
-<!-- </ion-card> -->
-<!-- <ion-card *ngIf="uriReady">
-=  <img [src]="imageURI" [hidden]="lastImage === null" />
-  </ion-card> -->
-  <!-- <ion-card>
-  <ion-item *ngIf="uriReady">URI: '{{imageURI}}' <br> LAST IMAGE: '{{lastImage}}'</ion-item>
-  </ion-card> -->
-  <ion-item>
-    <h5>Image URI/path: </h5>
-    <p>{{imageURI}}</p>
-    <br>
-    <h4>Image Preview Below</h4>
-    <img [src]="imageURI" *ngIf="imageURI" width="300" />
-  </ion-item>
+    <h5 [hidden]="imageURI == null">Image URI/path: </h5>
+    <ion-item [hidden]="imagePathForUpload == null">'{{imageURI}}'</ion-item>
+    <ion-card>
+    <img [src]="imageURI" [hidden]="imageURI == null" width="300" />
+  </ion-card>
 </ion-content>
-
 <ion-footer>
   <ion-toolbar color="primary">
         <button ion-button class="btn" full icon-left (click)="getImageUploadDialog()">
