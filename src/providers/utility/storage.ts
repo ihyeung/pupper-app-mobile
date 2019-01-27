@@ -57,8 +57,8 @@ export class StorageUtilities {
     extractAndStoreAuthHeaders(response: any) {
       const authHeaders = {
         'Content-Type': 'application/json',
-        'Authorization': response.headers.get('Authorization'),
-        'Origin': ENV.SERVICE_URL
+        'Authorization': response.headers.get('Authorization')
+        // 'Origin': ENV.SERVICE_URL
       };
       this.storage.set('authHeaders', authHeaders);
       return authHeaders;
@@ -69,8 +69,8 @@ export class StorageUtilities {
       const jwt = authHeadersObj['Authorization'];
 
       return new Headers({ 'Content-Type': jsonType,
-                            'Authorization': jwt,
-                            'Origin': ENV.SERVICE_URL
+                            'Authorization': jwt
+                            // 'Origin': ENV.SERVICE_URL
                            });
     }
   }

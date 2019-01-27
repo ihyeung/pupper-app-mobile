@@ -11,22 +11,15 @@ export class Users {
 
   constructor(public http: Http,
     public utils: StorageUtilities) {
-      this.basicHeaders = new Headers({ 'Content-Type': 'application/json',
-                                        'Origin': ENV.SERVICE_URL});
-
-                                        console.log(this.basicHeaders.get('Content-Type'));
-                                        console.log(this.basicHeaders.get('Origin'));
-
-    }
+      this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
+                                      // 'Origin': ENV.SERVICE_URL});
+        }
 
     createUserAccount(username, password) {
       let signupData = JSON.stringify({
         username: username,
         password: password
       });
-      // console.log(this.basicHeaders.get('Content-Type'));
-      // console.log(this.basicHeaders.get('Origin'));
-
       const registerUrl = `${ENV.BASE_URL}/account/register`;
       console.log(registerUrl);
 
