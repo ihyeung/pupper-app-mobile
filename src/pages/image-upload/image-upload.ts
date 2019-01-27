@@ -6,7 +6,7 @@ import { StorageUtilities } from '../../providers';
 import { FilePath } from '@ionic-native/file-path';
 import { File } from '@ionic-native/file';
 import { normalizeURL } from 'ionic-angular';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
+// import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 
 declare var cordova: any;
@@ -32,8 +32,7 @@ export class ImageUploadPage {
     public platform: Platform,
     public utils: StorageUtilities,
     private filePath: FilePath,
-    private file: File,
-    private wv: WebView) { }
+    private file: File) { }
 
     ionViewDidLoad() {
       this.imageFor = this.navParams.get('profileType');
@@ -44,7 +43,7 @@ export class ImageUploadPage {
     }
 
     selectProfileImage(sourceType: any) {
-      const saveCopy = sourceType === this.camera.PictureSourceType.CAMERA ? true : false;
+      // const saveCopy = sourceType === this.camera.PictureSourceType.CAMERA ? true : false;
       const options: CameraOptions = {
         quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
@@ -52,14 +51,14 @@ export class ImageUploadPage {
         encodingType: this.camera.EncodingType.JPEG,
         correctOrientation: true,
         mediaType: this.camera.MediaType.PICTURE,
-        saveToPhotoAlbum: saveCopy
+        saveToPhotoAlbum: true
       };
 
       this.camera.getPicture(options).then(imagePath => {
         console.log('IMAGE PATH: ' + imagePath);
         this.imagePathForUpload = imagePath;
-        // this.imageURI = normalizeURL(imagePath);
-        this.imageURI = this.wv.convertFileSrc(imagePath);
+        this.imageURI = normalizeURL(imagePath);
+        // this.imageURI = this.wv.convertFileSrc(imagePath);
 
         console.log('NORMALIZED IMAGE PATH: ' + this.imageURI);
 
@@ -70,8 +69,8 @@ export class ImageUploadPage {
           .then(filePath => {
             console.log('Resolved native path: ', filePath);
             this.imagePathForUpload = filePath;
-            this.imageURI = this.wv.convertFileSrc(imagePath);
-
+            // this.imageURI = this.wv.convertFileSrc(imagePath);
+            this.imageURI = normalizeURL(imagePath);
           }).catch(err => console.error('ERROR RESOLVING NATIVE PATH: ' + JSON.stringify(err)));
         } else if (this.platform.is('ios')){
           console.log('ios');
