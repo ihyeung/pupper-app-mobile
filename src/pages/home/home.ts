@@ -19,6 +19,7 @@ export class HomePage {
 
     ionViewDidLoad() {
       this.storageUtils.clearStorage().then(() => {
+
         this.retrieveBreedList();
       });
     }
@@ -42,7 +43,7 @@ export class HomePage {
         .subscribe(breedResponse => {
            this.storageUtils.storeData('breeds', breedResponse);
 
-        }, err => console.error('ERROR: ', JSON.stringify(err)));
+        }, err => console.error('ERROR retrieving breed list: ', JSON.stringify(err)));
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
   }

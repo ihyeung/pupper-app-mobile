@@ -102,9 +102,9 @@ export class CreateMatchProfilePage {
         console.log('profile form data passed back from image upload page');
         this.repopulateInputFieldData(profileData);
       }
-      const retrieveMatchProfileList = this.navParams.get('isNewUser');
-
-      retrieveMatchProfileList ? this.retrieveDataFromStorage(false) : this.retrieveDataFromStorage(true);
+      const newUser = this.navParams.get('isNewUser');
+      newUser === null || !newUser ?   this.retrieveDataFromStorage(false):
+                                        this.retrieveDataFromStorage(true);
     }
 
     retrieveDataFromStorage(retrieveMatchProfileList: boolean) {
@@ -148,7 +148,7 @@ export class CreateMatchProfilePage {
       if (ENV.AUTO_PROCEED_FOR_TESTING) {
         return;
       }
-      this.matchProfiles.getMatchProfiles(this.userProfile)
+      this.matchProfiles.getMatchProfilesByUserId(this.userProfile['id'])
       .map(res => res.json())
       .subscribe(resp => {
         if (resp.isSuccess && resp.matchProfiles) {
@@ -179,6 +179,8 @@ export class CreateMatchProfilePage {
           console.log(response);
           if (response.isSuccess) {
             const matchProfileObj = response['matchProfiles'][0];
+            console.log(response);
+
             this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
 
             //Retrieve updated list of match profiles from server (server handles isDefault logic)
@@ -192,7 +194,7 @@ export class CreateMatchProfilePage {
 
       async uploadProfileImageForMatchProfile(matchProfileObj: any, loader: any) {
         const matchId = matchProfileObj['id'];
-        const userId = matchProfileObj['userProfile']['id'];
+        const userId = this.userProfile['id'];
         let response;
         try {
           response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
@@ -255,7 +257,6 @@ export class CreateMatchProfilePage {
         this.isActiveMatchProfile = profile.isDefault;
         this.userProfile = profile.userProfile;
         this.radius = profile.zipRadius;
-        this.isActiveMatchProfile = profile.isDefault;
     }
 
     /**

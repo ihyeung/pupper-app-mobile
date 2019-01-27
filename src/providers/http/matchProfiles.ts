@@ -25,8 +25,8 @@ export class MatchProfiles {
     }
 
     updateMatchProfile(matchProfileObj: any, userId: number) {
-      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile`;
-      console.log("Creating match profile: " + url);
+      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileObj['id']}`;
+      console.log("Updating match profile: " + url);
 
       return this.http.put(url, matchProfileObj, { headers: this.authHeaders });
     }
@@ -45,14 +45,12 @@ export class MatchProfiles {
       return this.http.delete(url, { headers: this.authHeaders });
     }
 
-    getMatchProfiles(userProfileObj: any){
-      const userProfileId = userProfileObj['id'];
-      const getMatchProfilesForUserUrl =
-      `${ENV.BASE_URL}/user/${userProfileId}/matchProfile`;
+    getMatchProfilesByUserId(userProfileId: number){
+      const url = `${ENV.BASE_URL}/user/${userProfileId}/matchProfile`;
 
-      console.log("Retrieving match profiles for user: " + getMatchProfilesForUserUrl);
+      console.log("Retrieving match profiles for user: " + url);
       return this.http.get(
-        getMatchProfilesForUserUrl, { headers: this.authHeaders });
+        url, { headers: this.authHeaders });
     }
 
     getMatchProfileByMatchProfileId(matchProfileId: number) {

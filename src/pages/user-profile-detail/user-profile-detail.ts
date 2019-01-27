@@ -16,19 +16,19 @@ export class UserProfileDetailPage {
   authHeaders: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public storageUtils: StorageUtilities, public utils: Utilities, public users: Users) {
-    }
+    public storageUtils: StorageUtilities, public utils: Utilities, public users: Users) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad UserProfileDetailPage');
       this.readOnly = this.navParams.get('readOnly');
 
       this.storageUtils.getDataFromStorage('authHeaders').then(val => {
-        this.authHeaders = val;
-        const id = this.navParams.get('userId');
-        this.retrieveUserProfile(id);
+        if (val) {
+          this.authHeaders = val;
+          const id = this.navParams.get('userId');
+          this.retrieveUserProfile(id);
+        }
       });
-
     }
 
     retrieveUserProfile(userId: number) {
@@ -48,11 +48,9 @@ export class UserProfileDetailPage {
 
         }, err => console.error('ERROR: ', JSON.stringify(err)));
       } else {
-        console.log('userId is undefined, loading user from storage');
+        console.log('userId is undefined, defaulting to loading user from storage (i.e., the profile for the user logged in)');
         this.storageUtils.getDataFromStorage('user').then(val => {
-          if (!val) {
-            console.log('no object found in storage for user');
-          } else {
+          if (val) {
             this.profile = val;
             this.profile.profileImage =
                 this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
@@ -66,7 +64,4 @@ export class UserProfileDetailPage {
       console.log('Editing user profile by id ' + id);
       console.log('Not implemented yet');
     }
-
-
-
   }
