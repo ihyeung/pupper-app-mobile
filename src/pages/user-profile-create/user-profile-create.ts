@@ -104,31 +104,37 @@ export class CreateUserProfilePage {
       .subscribe(result => {
         if (result.isSuccess) {
           const userProfileObj = result['userProfiles'][0];
-          this.uploadProfileImageForUser(userProfileObj, loader);
+          console.log('User Profile created successfully');
+
+          if (this.imageFilePath) {
+            this.uploadProfileImageForUser(userProfileObj, loader);
+          } else {
+              console.log('No image file uploaded, skip profile image upload logic');
+              this.dismissLoader(loader);
+              this.storeUserAndProceedToNextPage(userProfileObj);
+          }
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
-        loader.dismiss();
+        this.dismissLoader(loader);
       });
     }
 
     async uploadProfileImageForUser(userProfileObj: any, loader: any) {
-      if (!this.imageFilePath) {
-        this.storeUserAndProceedToNextPage(userProfileObj);
-        return;
-      }
+
       const userId = userProfileObj['id'];
       let response;
       try {
         response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
       } catch(err) {
          console.error(JSON.stringify(err));
-         loader.dismiss();
-         this.utils.presentDismissableToast('Error uploading profile image');
+         this.dismissLoader(loader);
 
+         this.utils.presentDismissableToast('Error uploading profile image: please select a smaller image');
       }
       console.log('response from file upload: ' + JSON.stringify(response));
-      loader.dismiss();
+      this.dismissLoader(loader);
+
       const responseObj = JSON.parse(response.response);
       if (responseObj.isSuccess) {
         this.utils.presentAutoDismissToast("Image upload success");
@@ -184,5 +190,12 @@ export class CreateUserProfilePage {
       this.zip = profile.zip;
       this.maritalStatus = profile.maritalStatus;
       this.sex = profile.sex;
+    }
+
+    private dismissLoader(loader: any) {
+      if (loader) {
+        loader.dismiss();
+        loader = null;
+      }
     }
   }
