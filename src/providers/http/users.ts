@@ -12,7 +12,7 @@ export class Users {
   constructor(public http: Http,
     public utils: StorageUtilities) {
       this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
-                                      // 'Origin': ENV.SERVICE_URL});
+                                      // ,'Origin': ENV.SERVICE_URL});
         }
 
     createUserAccount(username, password) {

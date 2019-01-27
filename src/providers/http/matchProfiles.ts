@@ -25,8 +25,8 @@ export class MatchProfiles {
     }
 
     updateMatchProfile(matchProfileObj: any, userId: number) {
-      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile`;
-      console.log("Creating match profile: " + url);
+      const url = `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileObj['id']}`;
+      console.log("Updating match profile: " + url);
 
       return this.http.put(url, matchProfileObj, { headers: this.authHeaders });
     }
