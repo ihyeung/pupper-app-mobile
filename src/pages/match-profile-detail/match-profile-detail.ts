@@ -32,7 +32,7 @@ export class MatchProfileDetailPage {
       this.retrieveProfileData(this.id);
     }
     else if (matchProfile) {
-      this.setProfile(matchProfile);
+      this.initProfileData(matchProfile);
     }
     if (this.matchProfiles) {
       console.log('User has ' + this.matchProfiles.length + ' match profiles');

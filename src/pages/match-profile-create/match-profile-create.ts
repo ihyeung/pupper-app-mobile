@@ -102,9 +102,9 @@ export class CreateMatchProfilePage {
         console.log('profile form data passed back from image upload page');
         this.repopulateInputFieldData(profileData);
       }
-      const retrieveMatchProfileList = this.navParams.get('isNewUser');
-
-      retrieveMatchProfileList ? this.retrieveDataFromStorage(false) : this.retrieveDataFromStorage(true);
+      const newUser = this.navParams.get('isNewUser');
+      newUser === null || !newUser ?   this.retrieveDataFromStorage(false):
+                                        this.retrieveDataFromStorage(true);
     }
 
     retrieveDataFromStorage(retrieveMatchProfileList: boolean) {
@@ -238,8 +238,7 @@ export class CreateMatchProfilePage {
           size: this.size,
           userProfile: this.userProfile,
           zipRadius: this.radius,
-          default: this.isActiveMatchProfile
-          // isDefault: this.isActiveMatchProfile
+          isDefault: this.isActiveMatchProfile
           // dogPreferences: this.sanitizeMatchingPreferences()
 
         };
@@ -258,7 +257,6 @@ export class CreateMatchProfilePage {
         this.isActiveMatchProfile = profile.isDefault;
         this.userProfile = profile.userProfile;
         this.radius = profile.zipRadius;
-        this.isActiveMatchProfile = profile.isDefault;
     }
 
     /**
