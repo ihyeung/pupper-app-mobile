@@ -7,7 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
   templateUrl: 'app.html'
 })
 export class AppComponent {
-  rootPage: any = 'HomePage';
+  rootPage: any = 'IntroPage';
 
     constructor(public platform: Platform, public splashScreen: SplashScreen,
     public statusBar: StatusBar) {
