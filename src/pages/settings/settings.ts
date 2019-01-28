@@ -28,7 +28,7 @@ export class SettingsPage {
 
     }
 
-    userProfile() {
+    editUserProfile() {
       this.dialog.alert('User Profile button clicked')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
@@ -38,7 +38,7 @@ export class SettingsPage {
       this.navCtrl.push('MatchProfileDetailPage', { matchProfile: profile });
     }
 
-    matchProfile() {
+    editMatchProfiles() {
       this.dialog.alert('Match Profile button clicked')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
@@ -85,6 +85,8 @@ export class SettingsPage {
     }
 
     returnToHomeScreen() {
+      this.utils.clearStorage();
+
       this.app.getRootNav().setRoot('HomePage');
       // this.app.getRootNav().popToRoot();
     }

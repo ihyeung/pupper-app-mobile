@@ -70,7 +70,15 @@
       MATCHING PREFERENCES
     </ion-item-divider>
     <ion-item>
-      <ion-label floating>COMPATIBLE WITH THE FOLLOWING DOG SIZES...</ion-label>
+      <ion-label color="primary">MATCHING RADIUS</ion-label>
+      <ion-range [(ngModel)]="radius" min="0" max="50" step="1" color="primary" snaps="true" pin="true">
+        <ion-label range-left>0 miles</ion-label>
+        <ion-label range-right>50 miles</ion-label>
+      </ion-range>
+    </ion-item>
+    <h2>MATCH ME WITH THE FOLLOWING MATCH PROFILE TYPES...</h2>
+    <ion-item>
+      <ion-label>SELECT SIZES</ion-label>
       <ion-select [(ngModel)]="dogSizes" multiple="true">
           <ion-option *ngFor="let size of sizePreferences" [value]="size.value">
             <p>{{size.option}}</p>
@@ -78,7 +86,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label floating>COMPATIBLE WITH THE FOLLOWING DOG LIFESTAGES...</ion-label>
+        <ion-label>SELECT LIFESTAGES/AGE GROUPS</ion-label>
         <ion-select [(ngModel)]="dogAges" multiple="true">
           <ion-option *ngFor="let age of lifeStagePreferences" [value]="age.value">
             <p>{{age.option}}</p>
@@ -86,7 +94,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label floating>COMPATIBLE WITH THE FOLLOWING DOG ENERGY LEVELS...</ion-label>
+        <ion-label>SELECT ENERGY LEVELS</ion-label>
         <ion-select [(ngModel)]="dogEnergies" multiple="true">
           <ion-option *ngFor="let energy of energyLevelPreferences" [value]="energy.value">
             <p>{{energy.option}}</p>
@@ -94,14 +102,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label color="primary">MATCHING RADIUS</ion-label>
-        <ion-range [(ngModel)]="radius" min="0" max="50" step="1" color="primary" snaps="true" pin="true">
-          <ion-label range-left>0 miles</ion-label>
-          <ion-label range-right>50 miles</ion-label>
-        </ion-range>
-      </ion-item>
-      <ion-item>
-        <ion-label color="primary">MAKE DEFAULT MATCHING PROFILE</ion-label>
+        <ion-label color="primary">SET AS DEFAULT</ion-label>
         <ion-toggle item-end right color="secondary" checked="true" [(ngModel)]="isActiveMatchProfile"></ion-toggle>
       </ion-item>
     </ion-list>

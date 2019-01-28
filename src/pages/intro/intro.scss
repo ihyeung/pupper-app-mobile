@@ -1,0 +1,34 @@
+page-intro {
+  ion-slide {
+      height: 100vh;
+      flex-direction: column;
+  }
+
+  ion-img {
+      max-width: 50vw;
+      max-height: 50vh;
+      overflow: hidden;
+  }
+
+  .intro-one {
+      background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+  }
+
+  .intro-two {
+      background: var(--ion-color-success);
+      color: var(--ion-color-success-contrast);
+  }
+
+  .intro-three {
+      background: var(--ion-color-dark);
+      color: var(--ion-color-dark-contrast);
+  }
+
+  .intro-icon {
+    margin: auto;
+    max-width: 10vw;
+    max-height: 10vh;
+    align-items: auto;
+  }
+}

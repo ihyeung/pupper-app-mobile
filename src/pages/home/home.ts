@@ -15,13 +15,21 @@ export class HomePage {
   image: string = DEFAULT_IMG;
 
   constructor(public navCtrl: NavController, public storageUtils: StorageUtilities,
-              public userService: Users, public utils: Utilities) { }
+    public userService: Users, public utils: Utilities) { }
 
     ionViewDidLoad() {
-      this.storageUtils.clearStorage().then(() => {
+      this.initApp();
+    }
 
+    private initApp() {
+      if (ENV.CLEAR_STORAGE_ON_HOME) {
+        this.storageUtils.clearStorage().then(() => {
+
+          this.retrieveBreedList();
+        });
+      } else {
         this.retrieveBreedList();
-      });
+      }
     }
 
     login(){
@@ -41,7 +49,7 @@ export class HomePage {
         this.utils.getBreeds(headersObj)
         .map(res => res.json())
         .subscribe(breedResponse => {
-           this.storageUtils.storeData('breeds', breedResponse);
+          this.storageUtils.storeData('breeds', breedResponse);
 
         }, err => console.error('ERROR retrieving breed list: ', JSON.stringify(err)));
       }, err => console.error('ERROR: ', JSON.stringify(err)));
