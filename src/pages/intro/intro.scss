@@ -11,24 +11,30 @@ page-intro {
   }
 
   .intro-one {
-      background: var(--ion-color-primary);
+      // background: var(--ion-color-light);
+      background: map-get($colors, light);
+
       color: var(--ion-color-primary-contrast);
   }
 
   .intro-two {
-      background: var(--ion-color-success);
+      // background: var(--ion-color-dark);
+      background: map-get($colors, light);
+
       color: var(--ion-color-success-contrast);
   }
 
   .intro-three {
-      background: var(--ion-color-dark);
+      // background: var(--ion-color-secondary);
+      background: map-get($colors, light);
+
       color: var(--ion-color-dark-contrast);
   }
 
   .intro-icon {
     margin: auto;
-    max-width: 10vw;
-    max-height: 10vh;
+    max-width: 30vw;
+    max-height: 30vh;
     align-items: auto;
   }
 }
