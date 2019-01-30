@@ -11,24 +11,18 @@ page-intro {
   }
 
   .intro-one {
-      // background: var(--ion-color-light);
       background: map-get($colors, light);
-
-      color: var(--ion-color-primary-contrast);
+      // color: var(--ion-color-primary-contrast);
   }
 
   .intro-two {
-      // background: var(--ion-color-dark);
       background: map-get($colors, light);
-
-      color: var(--ion-color-success-contrast);
+      // color: var(--ion-color-success-contrast);
   }
 
   .intro-three {
-      // background: var(--ion-color-secondary);
       background: map-get($colors, light);
-
-      color: var(--ion-color-dark-contrast);
+      // color: var(--ion-color-dark-contrast);
   }
 
   .intro-icon {
@@ -36,5 +30,10 @@ page-intro {
     max-width: 30vw;
     max-height: 30vh;
     align-items: auto;
+  }
+
+  h1 {
+    text-transform: uppercase;
+    font-size: 20px;
   }
 }
