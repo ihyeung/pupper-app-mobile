@@ -70,6 +70,7 @@ export class LoginPage {
     authenticateUser() {
       if (ENV.AUTO_PROCEED_FOR_TESTING) {
         this.navCtrl.push('CreateUserProfilePage');
+        return;
       }
       if(!this.userForm.valid){
         this.loginAttempted = true;
