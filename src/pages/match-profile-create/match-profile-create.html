@@ -7,8 +7,9 @@
 </ion-header>
 <ion-content>
   <ion-list no-lines>
-    <ion-item-divider>
-    </ion-item-divider>
+    <ion-card>
+    <img [src]="imagePreview" [hidden]="imagePreview == null" width="150" />
+    </ion-card>
     <ion-item-divider>
       MATCH PROFILE
     </ion-item-divider>
@@ -64,8 +65,6 @@
       <ion-label floating>ABOUT ME</ion-label><br>
       <ion-textarea [(ngModel)]="aboutMe" type="text" min="0" max="130"></ion-textarea>
     </ion-item>
-    <ion-item-divider>
-    </ion-item-divider>
     <ion-item-divider>
       MATCHING PREFERENCES
     </ion-item-divider>

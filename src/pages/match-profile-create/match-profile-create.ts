@@ -38,6 +38,7 @@ export class CreateMatchProfilePage {
   authHeaders: any;
   userProfile: any;
   imageFilePath: string;
+  imagePreview: string;
   matchProfilesList: any;
 
   //Match profile ion options
@@ -97,6 +98,7 @@ export class CreateMatchProfilePage {
     }
 
     extractNavParamsAndRetrieveStoredData() {
+      this.imagePreview = this.navParams.get('imagePreview');
       this.imageFilePath = this.navParams.get('filePath');
       const profileData = this.navParams.get('formData');
       console.log('Image URI: ' + this.imageFilePath);
