@@ -74,4 +74,11 @@ export class MatchProfiles {
       return this.http.delete(url, { headers: this.authHeaders });
     }
 
+    insertMatchPreference(matchProfileId: number, matchPreference: any) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('adding match preference: ' + url);
+      return this.http.post(url, matchPreference, { headers: this.authHeaders });
+    }
+
 }
