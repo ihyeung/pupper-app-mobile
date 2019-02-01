@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../providers';
+import { MatchPreference } from '../../models/match-preference';
 import { USER_PROFILE_ERROR } from '../';
 import { environment as ENV } from '../../environments/environment';
 
+//DTO Class for representing k,v pairs for form input fields where the value doesnt match what is displayed to the user
 export class ProfileDataOption {
   option: string;
   value: string;
@@ -44,12 +46,12 @@ export class CreateMatchProfilePage {
   sizes: ProfileDataOption[];
   energyLevels: ProfileDataOption[];
 
-  //Matching preferences ion options
+  //Matching preferences ion options to display to user
   sizePreferences: ProfileDataOption[];
   lifeStagePreferences: ProfileDataOption[];
   energyLevelPreferences: ProfileDataOption[];
 
-  //Matching preferences: user data
+  //Matching preferences: user data to submit to backend
   dogSizes: string[];
   dogAges: string[];
   dogEnergies: string[];
@@ -85,13 +87,13 @@ export class CreateMatchProfilePage {
       this.lifeStages.forEach(each => {
         this.lifeStagePreferences.push(new ProfileDataOption(each, each));
       });
-      this.lifeStagePreferences.push(new ProfileDataOption(allOption,'ALL AGE'));
+      this.lifeStagePreferences.push(new ProfileDataOption(allOption,'ALL'));
 
       this.sizePreferences = this.sizes.slice();
-      this.sizePreferences.push(new ProfileDataOption(allOption,'ALL SIZE'));
+      this.sizePreferences.push(new ProfileDataOption(allOption,'ALL'));
 
       this.energyLevelPreferences = this.energyLevels.slice();
-      this.energyLevelPreferences.push(new ProfileDataOption(allOption,'ALL ENERGY'));
+      this.energyLevelPreferences.push(new ProfileDataOption(allOption,'ALL'));
     }
 
     extractNavParamsAndRetrieveStoredData() {
@@ -217,7 +219,60 @@ export class CreateMatchProfilePage {
         }
       }
 
-      addProfileImage() {
+      insertAndStoreMatchingPreferences(matchProfileObj: any, loader: any) {
+
+        const matchPreferences = this.createMatchPreferenceArr(matchProfileObj);
+        //
+        // matchPreferences.forEach(pref => {
+        this.matchProfiles.insertMatchPreference(matchProfileObj['id'], JSON.stringify(matchPreferences[0]))
+        .map(res => res.json())
+        .subscribe(response => {
+          console.log(response);
+          if (response.isSuccess) {
+            // const matchProfileObj = response['matchProfiles'][0];
+            // console.log(response);
+          }
+        }, err => {
+          console.error('ERROR: ', JSON.stringify(err));
+          loader.dismiss();
+        });
+
+        //TODO: store matching preferences in local storage
+
+      // });
+      }
+
+      createMatchPreferenceArr(matchProfile: any) {
+        let matchingPreferences = new Array<MatchPreference>();
+
+        this.sanitizeMatchingPreferences(); //Replace redundant match_preference values with 'ALL'
+        this.dogSizes.forEach(size => {
+          matchingPreferences.push(this.addMatchPreference(matchProfile, 'SIZE', size));
+        });
+        console.log('Size matching preferences added: ' + this.dogSizes.length);
+
+        this.dogAges.forEach(age => {
+          matchingPreferences.push(this.addMatchPreference(matchProfile, 'AGE', age));
+        });
+        console.log('Age matching preferences added: ' + this.dogAges.length);
+
+        this.dogEnergies.forEach(energy => {
+          matchingPreferences.push(this.addMatchPreference(matchProfile, 'ENERGY', energy));
+        });
+        console.log('Energy matching preferences added: ' + this.dogEnergies.length);
+
+        return matchingPreferences;
+      }
+
+      addMatchPreference(matchProfile: any, type: string, value: string) {
+        return new MatchPreference({
+          matchProfile: matchProfile,
+          preferenceType: type,
+          preference: value
+        });
+      }
+
+      selectProfileImage() {
         this.navCtrl.push('ImageUploadPage', {
           profileType: 'match',
           formData: this.getDataFromInputFields()
@@ -239,8 +294,6 @@ export class CreateMatchProfilePage {
           userProfile: this.userProfile,
           zipRadius: this.radius,
           isDefault: this.isActiveMatchProfile
-          // dogPreferences: this.sanitizeMatchingPreferences()
-
         };
       }
 
@@ -272,15 +325,15 @@ export class CreateMatchProfilePage {
 
     */
     sanitizeMatchingPreferences() {
-      if (this.dogSizes.indexOf('ALL SIZE') > -1) {
-        this.dogSizes = ['ALL SIZE'];
+      const ALL_STR = 'ALL';
+      if (this.dogSizes.indexOf(ALL_STR) > -1) {
+        this.dogSizes = [ALL_STR];
       }
-      if (this.dogAges.indexOf('ALL AGE') > -1) {
-        this.dogAges = ['ALL AGE'];
+      if (this.dogAges.indexOf(ALL_STR) > -1) {
+        this.dogAges = [ALL_STR];
       }
-      if (this.dogEnergies.indexOf('ALL ENERGY') > -1) {
-        this.dogEnergies = ['ALL ENERGY'];
+      if (this.dogEnergies.indexOf(ALL_STR) > -1) {
+        this.dogEnergies = [ALL_STR];
       }
-      return this.dogSizes.concat(this.dogAges, this.dogEnergies);
     }
   }
