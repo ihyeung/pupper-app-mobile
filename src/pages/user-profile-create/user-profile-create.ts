@@ -21,6 +21,8 @@ export class CreateUserProfilePage {
   imageFilePath: string; //Image URI
   userAccount: any;
   authHeaders: any;
+  imagePreview: string;
+
 
   constructor (
     public navCtrl: NavController,
@@ -66,6 +68,8 @@ export class CreateUserProfilePage {
       this.imageFilePath = this.navParams.get('filePath');
 
       console.log('Image URI: ' + this.imageFilePath);
+      //Extract imageURI from image-upload page formatted correctly for displaying on page
+      this.imagePreview = this.navParams.get('imagePreview');
     }
 
     createUser() {
