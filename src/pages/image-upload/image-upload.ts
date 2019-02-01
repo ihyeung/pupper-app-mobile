@@ -73,6 +73,7 @@ export class ImageUploadPage {
     passImageUriForUpload() {
       const profileData = {
         filePath: this.imagePathForUpload,
+        imagePreview: this.imageURI,
         formData: this.profileData //Pass data from create profile page back to restore state
       };
 
