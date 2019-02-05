@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 import { StorageUtilities, Utilities, Messages, Matches  } from '../../providers';
-import { DEFAULT_IMG } from '../';
+import { DEFAULT_IMG, MATCH_PROFILE_ERROR } from '../';
 
 @IonicPage()
 @Component({
@@ -27,6 +27,10 @@ export class MessageInboxPage {
 
     ionViewDidLoad() {
       this.storageUtils.getDataFromStorage('match').then(val => {
+        if (!val) {
+          this.utils.presentAutoDismissToast(MATCH_PROFILE_ERROR);
+          this.navCtrl.push('CreateMatchProfilePage');
+        }
         this.matchProfileId = val['id'];
         this.retrieveMatches();
       });
@@ -45,7 +49,6 @@ export class MessageInboxPage {
           const img = this.utils.validateImageUri(match['profileImage'], DEFAULT_IMG);
           this.matchesList.push({
             id: match['id'],
-            // profileImage: match['profileImage'] ? match['profileImage'] : DEFAULT_IMG,
             profileImage: img,
             names: match['names'],
             breed: match['breed'],

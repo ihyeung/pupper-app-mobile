@@ -45,8 +45,10 @@ export class Utilities {
       return isoStringDate.replace('T', ' ').split('.')[0];
     }
 
-    getBreeds(headers) {
-      return this.http.get(`${ENV.BASE_URL}/breed`, { headers: headers });
+    getBreeds(headers: any) {
+      const url = `${ENV.BASE_URL}/breed`;
+      console.log(url);
+      return this.http.get(url, { headers: headers });
     }
 
     validateImageUri(imageUri: string, defaultImg: string) {
@@ -54,7 +56,7 @@ export class Utilities {
         console.log('Error: undefined or null');
         return defaultImg;
       }
-      else if (!imageUri.startsWith('https://') || !imageUri.startsWith('http://')) {
+      if (!(imageUri.startsWith("https://") || imageUri.startsWith("http://"))) {
         console.log('Error: Invalid image URI, setting to default');
         return defaultImg;
       }

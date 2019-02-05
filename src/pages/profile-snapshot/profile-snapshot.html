@@ -13,7 +13,7 @@
     </ion-card>
   </div>
 
-  <ion-list no lines *ngIf="userReady || matchProfileReady">
+  <ion-list no lines *ngIf="userReady">
     <ion-item-sliding>
       <ion-item>
         <ion-label color="primary" >YOUR ZIPCODE/LOCATION:   {{userProfileObj.zip}}</ion-label>
@@ -46,15 +46,15 @@
           <ion-icon name="add" item-start></ion-icon>
           CREATE
         </button>
-        <button ion-button color="secondary" (click)="matchProfileModal(true)" *ngIf="hasMatchProfile">
+        <button ion-button color="secondary" (click)="matchProfileModal(true)" *ngIf="numMatchProfiles > 0">
           <ion-icon name="open" item-start></ion-icon>
           VIEW
         </button>
-        <button ion-button color="light" (click)="matchProfileModal(false)" *ngIf="hasMatchProfile">
+        <button ion-button color="light" (click)="matchProfileModal(false)" *ngIf="numMatchProfiles > 0">
           <ion-icon name="create" item-start></ion-icon>
           EDIT
         </button>
-        <button ion-button color="dark" (click)="deleteActiveMatchProfile()" *ngIf="hasMatchProfile">
+        <button ion-button color="dark" (click)="deleteActiveMatchProfile()" *ngIf="numMatchProfiles > 0">
           <ion-icon name="trash" item-start></ion-icon>
           DELETE
         </button>

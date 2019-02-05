@@ -18,15 +18,13 @@ export class ProfileSnapshotPage {
   matchProfileReady: boolean = false;
   matchProfilesList: any = [];
   activeMatchProfileObj: any;
-  hasMatchProfile: boolean = false;
-  numMatchProfiles: number = 1;
+  numMatchProfiles: number = 0;
 
   constructor(public navCtrl: NavController, public utils: Utilities,
     public storageUtils: StorageUtilities, public matchProfService: MatchProfiles,
     public dialogs: Dialogs, public users: Users) {}
 
     ionViewDidLoad() {
-      console.log('ionViewDidLoad ProfileSnapshotPage');
       this.loadProfileSnapshotData();
     }
 
@@ -58,43 +56,53 @@ export class ProfileSnapshotPage {
     }
 
     retrieveMatchProfilesForUser(user: any){
-      this.matchProfService.getMatchProfiles(user)
-      .map(res => res.json())
-      .subscribe(resp => {
-        console.log(resp);
-        if (resp.isSuccess) {
-        if (resp['matchProfiles'] === undefined || !resp['matchProfiles']) {
-          console.log("No match profiles for user");
-          this.numMatchProfiles = 0;
-          this.promptCreateMatchProfile();
+
+      this.storageUtils.getDataFromStorage('profiles').then(val => {
+        if (val) { //May have been previously stored on login page
+          this.matchProfilesList = val;
+          this.numMatchProfiles = val.length;
+          this.findAndStoreActiveMatchProfile();
         } else {
-          console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
-          this.numMatchProfiles = resp['matchProfiles'].length;
-          this.matchProfilesList = resp['matchProfiles'];
+          this.matchProfService.getMatchProfilesByUserId(user['id'])
+          .map(res => res.json())
+          .subscribe(resp => {
+            // console.log(resp);
+            if (!resp.isSuccess ||
+              (resp['matchProfiles'] === undefined || !resp['matchProfiles'])) {
+              console.log("No match profiles for user");
+              this.promptCreateMatchProfile();
+            } else {
+              console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
+              this.numMatchProfiles = resp['matchProfiles'].length;
+              this.matchProfilesList = resp['matchProfiles'];
 
-          this.matchProfilesList.forEach(profile => {
-            console.log(profile);
-            if (profile['isDefault']) {
-              console.log('found active match profile');
-              this.activeMatchProfileObj = profile;
+              this.storageUtils.storeData('profiles', this.matchProfilesList);
+              this.findAndStoreActiveMatchProfile();
             }
-          });
-
-          this.storageUtils.storeData('profiles', this.matchProfilesList);
-
-          if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
-            console.log("no active match profile found, set to first profile in list");
-            this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
-            this.activeMatchProfileObj['isDefault'] = true;
-            this.updateMatchProfile(this.activeMatchProfileObj);
-          }
-          this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
-
-          this.hasMatchProfile = true;
-          this.matchProfileReady = true;
+          }, err => console.error('ERROR: ', JSON.stringify(err)));
         }
+      });
+    }
+
+    private findAndStoreActiveMatchProfile() {
+      if (!this.matchProfilesList) {
+        this.promptCreateMatchProfile();
+      } else {
+        this.matchProfilesList.forEach(profile => {
+          if (profile['isDefault']) {
+            console.log('found active match profile');
+            this.activeMatchProfileObj = profile;
+          }
+        });
+
+        if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
+          console.log("None of the match profiles have been marked as default; set to first profile in list");
+          this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
+          this.activeMatchProfileObj['isDefault'] = true;
+          this.updateMatchProfile(this.activeMatchProfileObj);
+        }
+        this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
       }
-      }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     updateMatchProfile(matchProfile: any) {
@@ -110,7 +118,7 @@ export class ProfileSnapshotPage {
     }
 
     matchProfileModal(readOnly: boolean) {
-      if (this.hasMatchProfile) {
+      if (this.numMatchProfiles > 0) {
         this.navCtrl.push('MatchProfileDetailPage', {
           readOnly : readOnly,
           matchProfiles: this.matchProfilesList,
@@ -172,20 +180,18 @@ export class ProfileSnapshotPage {
 
     updateActiveMatchProfile() {
       if (this.numMatchProfiles == 1) { //Deleted the only match profile for user
-        this.storageUtils.storeData('match', null);
         this.activeMatchProfileObj = null;
-        this.hasMatchProfile = false;
-        this.numMatchProfiles = 0;
-        this.storageUtils.storeData('profiles', null);
+        this.storageUtils.removeDataFromStorage('profiles');
+        this.storageUtils.removeDataFromStorage('match');
       } else { //Deleted match profile but others for user still remain
         const activeId = this.activeMatchProfileObj['id'];
-        this.matchProfilesList.filter(profile => profile['id'] != activeId);
-        this.storageUtils.storeData('profiles', this.matchProfilesList);
+        this.matchProfilesList = this.matchProfilesList.filter(profile => profile['id'] != activeId);
         this.activeMatchProfileObj = this.matchProfilesList[0]; //Replace with next profile in list
+        this.storageUtils.storeData('profiles', this.matchProfilesList);
         this.storageUtils.storeData('match', this.activeMatchProfileObj);
-        this.numMatchProfiles--;
         this.setNewDefaultMatchProfile();
       }
+      this.numMatchProfiles--;
     }
 
     setNewDefaultMatchProfile() {
@@ -195,7 +201,7 @@ export class ProfileSnapshotPage {
       .map(res => res.json())
       .subscribe(response => {
         console.log(response);
-        if (response.matchProfiles) {
+        if (response.isSuccess && response.matchProfiles) {
           const matchProfileObj = response['matchProfiles'][0];
           this.storageUtils.storeData('match', matchProfileObj); //Update user obj in storage
         }

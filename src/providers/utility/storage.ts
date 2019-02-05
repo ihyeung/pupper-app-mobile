@@ -24,6 +24,8 @@ export class StorageUtilities {
     const url = matchId === null ? `${ENV.BASE_URL}/user/${userId}/upload` :
     `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchId}/upload`;
 
+    console.log(url);
+
     return fileTransfer.upload(imageUri, url, options);
   }
     async clearStorage() {
@@ -52,32 +54,23 @@ export class StorageUtilities {
       });
     }
 
-    authHeadersObjFromStorageToHeaders() {
-      return this.storage.get('authHeaders').then(val => {
-        if (!val) {
-          console.log('ERROR RETRIEVING AUTH HEADERS FROM STORAGE');
-          return null;
-        }
-        const type = val['Content-Type'];
-        const jwt = val['Authorization'];
-
-        return new Headers({ 'Content-Type': type, 'Authorization': jwt });
-      });
-    }
-
-    extractAndStoreAuthHeaders(response) {
+    extractAndStoreAuthHeaders(response: any) {
       const authHeaders = {
         'Content-Type': 'application/json',
         'Authorization': response.headers.get('Authorization')
+        // 'Origin': ENV.SERVICE_URL
       };
       this.storage.set('authHeaders', authHeaders);
       return authHeaders;
     }
 
-    createHeadersObjFromAuth(authHeadersObj) {
+    createHeadersObjFromAuth(authHeadersObj: any) {
       const jsonType = authHeadersObj['Content-Type'];
       const jwt = authHeadersObj['Authorization'];
 
-      return new Headers({ 'Content-Type': jsonType, 'Authorization': jwt });
+      return new Headers({ 'Content-Type': jsonType,
+                            'Authorization': jwt
+                            // 'Origin': ENV.SERVICE_URL
+                           });
     }
   }

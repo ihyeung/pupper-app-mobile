@@ -20,8 +20,9 @@ export class CreateUserProfilePage {
   maxDate: string;
   imageFilePath: string; //Image URI
   userAccount: any;
-  userProfileFormData: any;
   authHeaders: any;
+  imagePreview: string;
+
 
   constructor (
     public navCtrl: NavController,
@@ -56,18 +57,19 @@ export class CreateUserProfilePage {
     }
 
     extractNavParams() {
-      this.userProfileFormData = this.navParams.get('formData');
-      if (this.userProfileFormData) {
+      const userData = this.navParams.get('formData');
+      if (userData) {
         console.log("Profile passed back from image upload page");
-        this.userAccount = this.userProfileFormData.userAccount;
+        this.userAccount = userData.userAccount;
 
-        this.repopulateInputFieldData();
+        this.repopulateInputFieldData(userData);
       }
       //Extract nav params from image upload page
       this.imageFilePath = this.navParams.get('filePath');
 
       console.log('Image URI: ' + this.imageFilePath);
-      console.log('Profile form data: ' + this.userProfileFormData);
+      //Extract imageURI from image-upload page formatted correctly for displaying on page
+      this.imagePreview = this.navParams.get('imagePreview');
     }
 
     createUser() {
@@ -99,45 +101,59 @@ export class CreateUserProfilePage {
       });
       loader.present();
 
-      this.userProfileFormData = this.getDataFromInputFields();
+      const userData = this.getDataFromInputFields();
 
-      this.userService.createUserProfile(JSON.stringify(this.userProfileFormData), this.authHeaders)
+      this.userService.createUserProfile(JSON.stringify(userData), this.authHeaders)
       .map(res => res.json())
       .subscribe(result => {
         if (result.isSuccess) {
           const userProfileObj = result['userProfiles'][0];
-          this.uploadProfileImageForUser(userProfileObj, loader);
+          console.log('User Profile created successfully');
+
+          if (this.imageFilePath) {
+            this.uploadProfileImageForUser(userProfileObj, loader);
+          } else {
+              console.log('No image file uploaded, skip profile image upload logic');
+              this.dismissLoader(loader);
+              this.storeUserAndProceedToNextPage(userProfileObj);
+          }
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
-        loader.dismiss();
+        this.dismissLoader(loader);
       });
     }
 
     async uploadProfileImageForUser(userProfileObj: any, loader: any) {
-      if (!this.imageFilePath) {
-        this.storeUserAndProceedToNextPage(userProfileObj);
-        return;
-      }
+
       const userId = userProfileObj['id'];
-      let response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      let response;
+      try {
+        response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
+      } catch(err) {
+         console.error(JSON.stringify(err));
+         this.dismissLoader(loader);
+
+         this.utils.presentDismissableToast('Error uploading profile image: please select a smaller image');
+      }
       console.log('response from file upload: ' + JSON.stringify(response));
-      loader.dismiss();
-      if (response.response['isSuccess']) {
-        const profileImage = response.response['imageUrl'];
+      this.dismissLoader(loader);
+
+      const responseObj = JSON.parse(response.response);
+      if (responseObj.isSuccess) {
+        this.utils.presentAutoDismissToast("Image upload success");
+        const profileImage = responseObj.imageUrl;
         userProfileObj['profileImage'] = profileImage; //Update profile image field
         this.storeUserAndProceedToNextPage(userProfileObj);
-      } else {
-        //Profile image was not successfully uploaded and updated in database
-        this.utils.presentDismissableToast('Error uploading profile image');
-
       }
     }
 
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
       this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
-      this.navCtrl.push('CreateMatchProfilePage');
+      this.navCtrl.push('CreateMatchProfilePage', {
+        isNewUser: true  //If new user, don't retrieve match profiles list on create match profile page
+      });
     }
 
     setDatePickerBounds() {
@@ -148,12 +164,9 @@ export class CreateUserProfilePage {
     }
 
     addProfileImage() {
-      const data = this.userProfileFormData ? this.userProfileFormData :
-      this.getDataFromInputFields();
-
       this.navCtrl.push('ImageUploadPage', {
         profileType : 'user',
-        formData: data //Pass form data so data can be restored upon return
+        formData: this.getDataFromInputFields() //Pass form data so data can be restored upon return
       });
     }
 
@@ -174,13 +187,19 @@ export class CreateUserProfilePage {
       };
     }
 
-    repopulateInputFieldData() {
-      const profile = this.userProfileFormData;
+    repopulateInputFieldData(profile: any) {
       this.firstName = profile.firstName;
       this.lastName = profile.lastName;
       this.birthdate = profile.birthdate;
       this.zip = profile.zip;
       this.maritalStatus = profile.maritalStatus;
       this.sex = profile.sex;
+    }
+
+    private dismissLoader(loader: any) {
+      if (loader) {
+        loader.dismiss();
+        loader = null;
+      }
     }
   }

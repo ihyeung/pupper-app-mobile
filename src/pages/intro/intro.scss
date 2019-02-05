@@ -1,0 +1,39 @@
+page-intro {
+  ion-slide {
+      height: 100vh;
+      flex-direction: column;
+  }
+
+  ion-img {
+      max-width: 50vw;
+      max-height: 50vh;
+      overflow: hidden;
+  }
+
+  .intro-one {
+      background: map-get($colors, light);
+      // color: var(--ion-color-primary-contrast);
+  }
+
+  .intro-two {
+      background: map-get($colors, light);
+      // color: var(--ion-color-success-contrast);
+  }
+
+  .intro-three {
+      background: map-get($colors, light);
+      // color: var(--ion-color-dark-contrast);
+  }
+
+  .intro-icon {
+    margin: auto;
+    max-width: 30vw;
+    max-height: 30vh;
+    align-items: auto;
+  }
+
+  h1 {
+    text-transform: uppercase;
+    font-size: 20px;
+  }
+}

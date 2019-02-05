@@ -15,7 +15,7 @@ export class MatchProfileDetailPage {
   profile: any;
   profileReady: boolean = false;
   readOnly: boolean = true;
-  matchProfiles: any = [];
+  matchProfiles: any = []; //Routed from view match profiles button from profile snapshot page, modal will show list of match profiles with active match profile at the top
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public matchProfileService: MatchProfiles) {
@@ -24,20 +24,23 @@ export class MatchProfileDetailPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad MatchProfileDetailPage');
     this.id = this.navParams.get('matchProfileId');//Only sent from matching page
-    this.readOnly = this.navParams.get('readOnly');
-    this.matchProfiles = this.navParams.get('matchProfiles');
-    const matchProfile = this.navParams.get('matchProfile'); //Passed inbox page
+    this.readOnly = this.navParams.get('readOnly');//Determines whether or not to display edit button
+    this.matchProfiles = this.navParams.get('matchProfiles');//Passed from profile snapshot page
+    const matchProfile = this.navParams.get('matchProfile'); //Passed from inbox page, if passed from profile snapshot page, represents first (ie active/default) match profile to display in list
 
     if (this.id) {
       this.retrieveProfileData(this.id);
     }
     else if (matchProfile) {
-      this.setProfile(matchProfile);
+      this.initProfileData(matchProfile);
     }
     if (this.matchProfiles) {
       console.log('User has ' + this.matchProfiles.length + ' match profiles');
 
       //TODO: Display modal pane with match profiles you can swipe through
+      //TODO: if matchProfiles nav param is passed, then there should also be a
+      // matchProfile param representing the active/default match profile, this should be displayed
+      //at the top of the list of profiles
     }
 
   }
@@ -48,15 +51,15 @@ export class MatchProfileDetailPage {
     .map(res => res.json())
     .subscribe(response => { //Directly maps to matchProfile object
         console.log('successfully retrieved match profile by id');
-        this.setProfile(response);
+        this.initProfileData(response);
     }, err => console.error('ERROR: ', JSON.stringify(err)));
   }
 
-  setProfile(profile: any) {
+  initProfileData(profile: any) {
     this.profile = profile;
     this.id = this.profile['id'];
     this.profile['profileImage'] =
-      this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
+          this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
     this.profileReady = true;
   }
 
