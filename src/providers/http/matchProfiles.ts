@@ -67,11 +67,32 @@ export class MatchProfiles {
       return this.http.delete(url, { headers: this.authHeaders });
     }
 
-    insertMatchPreferences(matchProfileId: number, matchPreference: any) {
+    getMatchPreferences(matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
-      console.log('adding match preference: ' + url);
-      return this.http.post(url, matchPreference, { headers: this.authHeaders });
+      console.log('retrieving match preferences: ' + url);
+      return this.http.get(url, { headers: this.authHeaders });
+    }
+
+    insertMatchPreferences(matchProfileId: number, matchPreferences: any) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('inserting match preferences: ' + url);
+      return this.http.post(url, matchPreferences, { headers: this.authHeaders });
+    }
+
+    updateMatchPreferences(matchProfileId: number, matchPreferences: any) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('updating match preferences: ' + url);
+      return this.http.post(url, matchPreferences, { headers: this.authHeaders });
+    }
+
+    deleteMatchPreferences(matchProfileId: number) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('deleting match preferences: ' + url);
+      return this.http.delete(url, { headers: this.authHeaders });
     }
 
 }
