@@ -60,13 +60,6 @@ export class MatchProfiles {
       return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     }
 
-    // getMatchProfileByIds(matchProfileId: number, userId: number) {
-    //   const matchProfileByIdUrl =
-    //   `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
-    //   console.log(matchProfileByIdUrl);
-    //   return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
-    // }
-
     deleteImageUpload(userProfileId: number, matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
@@ -74,11 +67,32 @@ export class MatchProfiles {
       return this.http.delete(url, { headers: this.authHeaders });
     }
 
-    insertMatchPreferences(matchProfileId: number, matchPreference: any) {
+    getMatchPreferences(matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
-      console.log('adding match preference: ' + url);
-      return this.http.post(url, matchPreference, { headers: this.authHeaders });
+      console.log('retrieving match preferences: ' + url);
+      return this.http.get(url, { headers: this.authHeaders });
+    }
+
+    insertMatchPreferences(matchProfileId: number, matchPreferences: any) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('inserting match preferences: ' + url);
+      return this.http.post(url, matchPreferences, { headers: this.authHeaders });
+    }
+
+    updateMatchPreferences(matchProfileId: number, matchPreferences: any) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('updating match preferences: ' + url);
+      return this.http.post(url, matchPreferences, { headers: this.authHeaders });
+    }
+
+    deleteMatchPreferences(matchProfileId: number) {
+      const url =
+      `${ENV.BASE_URL}/matchProfile/${matchProfileId}/matchPreference`;
+      console.log('deleting match preferences: ' + url);
+      return this.http.delete(url, { headers: this.authHeaders });
     }
 
 }
