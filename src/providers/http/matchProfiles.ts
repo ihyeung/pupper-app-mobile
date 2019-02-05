@@ -62,13 +62,6 @@ export class MatchProfiles {
       return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
     }
 
-    // getMatchProfileByIds(matchProfileId: number, userId: number) {
-    //   const matchProfileByIdUrl =
-    //   `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
-    //   console.log(matchProfileByIdUrl);
-    //   return this.http.get(matchProfileByIdUrl, { headers: this.authHeaders });
-    // }
-
     deleteImageUpload(userProfileId: number, matchProfileId: number) {
       const url =
       `${ENV.BASE_URL}/user/${userProfileId}/matchProfile/${matchProfileId}/upload`;
