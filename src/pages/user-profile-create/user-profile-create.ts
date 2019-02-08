@@ -59,7 +59,6 @@ export class CreateUserProfilePage {
     extractNavParams() {
       const userData = this.navParams.get('formData');
       if (userData) {
-        console.log("Profile passed back from image upload page");
         this.userAccount = userData.userAccount;
 
         this.repopulateInputFieldData(userData);
@@ -67,7 +66,6 @@ export class CreateUserProfilePage {
       //Extract nav params from image upload page
       this.imageFilePath = this.navParams.get('filePath');
 
-      console.log('Image URI: ' + this.imageFilePath);
       //Extract imageURI from image-upload page formatted correctly for displaying on page
       this.imagePreview = this.navParams.get('imagePreview');
     }

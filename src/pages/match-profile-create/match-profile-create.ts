@@ -230,18 +230,12 @@ export class CreateMatchProfilePage {
         .map(res => res.json())
         .subscribe(response => {
           console.log(response);
-          if (response.isSuccess) {
-            // const matchProfileObj = response['matchProfiles'][0];
-            // console.log(response);
-          }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
           loader.dismiss();
         });
 
         //TODO: store matching preferences in local storage
-
-      // });
       }
 
       createMatchPreferenceArr(matchProfile: any) {
