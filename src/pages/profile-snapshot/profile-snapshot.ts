@@ -66,7 +66,6 @@ export class ProfileSnapshotPage {
           this.matchProfService.getMatchProfilesByUserId(user['id'])
           .map(res => res.json())
           .subscribe(resp => {
-            // console.log(resp);
             if (!resp.isSuccess ||
               (resp['matchProfiles'] === undefined || !resp['matchProfiles'])) {
               console.log("No match profiles for user");
@@ -96,7 +95,6 @@ export class ProfileSnapshotPage {
         });
 
         if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
-          console.log("None of the match profiles have been marked as default; set to first profile in list");
           this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
           this.activeMatchProfileObj['isDefault'] = true;
           this.updateMatchProfile(this.activeMatchProfileObj);
@@ -160,7 +158,7 @@ export class ProfileSnapshotPage {
           console.log('deleting matching profile ', this.activeMatchProfileObj['names']);
 
           //TODO: DELETE MATCH_RESULT AND PUPPER_MESSAGES LINKED TO THIS MATCH PROFILE FIRST
-          this.deleteMatchProfileData();
+          this.deleteMatchProfileData(this.activeMatchProfileObj['id']);
 
           this.matchProfService.deleteMatchProfileById(this.userProfileObj['id'],
           this.activeMatchProfileObj['id'])
@@ -214,7 +212,9 @@ export class ProfileSnapshotPage {
       });
     }
 
-    deleteMatchProfileData() {
+    deleteMatchProfileData(matchProfileId: number) {
+      console.log("Deleting match profile data for match profile id = " + matchProfileId);
+      console.log("not implemented yet");
       //1. delete match_result records
       //2. delete pupper_message records
     }
