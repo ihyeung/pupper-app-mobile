@@ -1,7 +1,7 @@
 {
   "name": "pupper-app-mobile",
   "version": "0.0.2",
-  "author": "Irene Yeung, Kayla Cresswell",
+  "author": "Irene Yeung",
   "homepage": "https://www.github.com/ihyeung/pupper-app-mobile",
   "private": true,
   "scripts": {

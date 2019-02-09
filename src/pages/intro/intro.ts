@@ -8,7 +8,8 @@ import { StorageUtilities } from '../../providers';
   templateUrl: 'intro.html',
 })
 export class IntroPage {
-
+  introReady: boolean = false;
+  
   constructor(public navCtrl: NavController, public navParams: NavParams,
   public util: StorageUtilities) { }
 
@@ -16,8 +17,10 @@ export class IntroPage {
     console.log('ionViewDidLoad IntroPage');
 
     this.util.getDataFromStorage('introComplete').then(val =>  {
-      if(val) {
+      if (val) {
         this.navCtrl.push('HomePage');
+      } else {
+        this.introReady = true;
       }
     });
   }
