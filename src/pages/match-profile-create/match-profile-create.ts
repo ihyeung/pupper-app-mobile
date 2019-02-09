@@ -224,7 +224,7 @@ export class CreateMatchProfilePage {
       insertAndStoreMatchingPreferences(matchProfileObj: any, loader: any) {
 
         const matchPreferences = this.createMatchPreferenceArr(matchProfileObj);
-
+        console.log("Match preferences array: ");
         console.log(JSON.stringify(matchPreferences));
         this.matchProfiles.insertMatchPreferences(matchProfileObj['id'], JSON.stringify(matchPreferences))
         .map(res => res.json())
