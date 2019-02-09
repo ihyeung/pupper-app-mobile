@@ -108,7 +108,7 @@ export class CreateMatchProfilePage {
       }
       const newUser = this.navParams.get('isNewUser');
       newUser === null || !newUser ?   this.retrieveDataFromStorage(false):
-                                        this.retrieveDataFromStorage(true);
+      this.retrieveDataFromStorage(true);
     }
 
     retrieveDataFromStorage(retrieveMatchProfileList: boolean) {
@@ -168,32 +168,35 @@ export class CreateMatchProfilePage {
       });
       loader.present();
 
-      const dogPreferences = this.dogSizes.concat(this.dogAges, this.dogEnergies);
-      console.log("Dog preferences: " + dogPreferences);
-      const dogPreferencesSanitized = this.sanitizeMatchingPreferences();
-      console.log("Sanitized: " + dogPreferencesSanitized);
-
+      if (!this.matchingPreferencesHandler()) {
+        this.dismissLoader(loader);
+        console.log('Matching preference data not selected');
+        return;
+      }
       const matchProfileObj = this.getDataFromInputFields();
+      this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
 
-      const userProfileId = this.userProfile['id'];
-      this.matchProfiles.createMatchProfile(
-        JSON.stringify(matchProfileObj), userProfileId)
-        .map(res => res.json())
-        .subscribe(response => {
-          console.log(response);
-          if (response.isSuccess) {
-            const matchProfileObj = response['matchProfiles'][0];
-
-            this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
-
-            //Retrieve updated list of match profiles from server (server handles isDefault logic)
-            this.insertAndStoreMatchingPreferences
-            this.retrieveAllMatchProfiles();
-          }
-        }, err => {
-          console.error('ERROR: ', JSON.stringify(err));
-          this.dismissLoader(loader);
-        });
+      // const userProfileId = this.userProfile['id'];
+      // this.matchProfiles.createMatchProfile(
+      //   JSON.stringify(matchProfileObj), userProfileId)
+      //   .map(res => res.json())
+      //   .subscribe(response => {
+      //     console.log(response);
+      //     if (response.isSuccess) {
+      //       const matchProfileObj = response['matchProfiles'][0];
+      //
+      //       this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
+      //
+      //       // this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
+      //
+      //       //Re-retrieve updated list of match profiles from server (server handles isDefault logic)
+      //
+      //       this.retrieveAllMatchProfiles();
+      //     }
+      //   }, err => {
+      //     console.error('ERROR: ', JSON.stringify(err));
+      //     this.dismissLoader(loader);
+      //   });
       }
 
       async uploadProfileImageForMatchProfile(matchProfileObj: any, loader: any) {
@@ -203,9 +206,9 @@ export class CreateMatchProfilePage {
         try {
           response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
         } catch(err) {
-           console.error(JSON.stringify(err));
-           this.dismissLoader(loader);
-           this.utils.presentDismissableToast('Error uploading profile image');
+          console.error(JSON.stringify(err));
+          this.dismissLoader(loader);
+          this.utils.presentDismissableToast('Error uploading profile image');
         }
         console.log('response from file upload: ' + JSON.stringify(response));
         this.dismissLoader(loader);
@@ -310,9 +313,9 @@ export class CreateMatchProfilePage {
         this.isActiveMatchProfile = profile.isDefault;
         this.userProfile = profile.userProfile;
         this.radius = profile.zipRadius;
-    }
+      }
 
-    /**
+      /**
       Match preference helper method that handles the user selecting the
       'all of the above' option (in addition to other options).
       For the purposes of optimizing storing matching preferences in the database,
@@ -323,24 +326,37 @@ export class CreateMatchProfilePage {
       a single match preference ('ALL AGE') for the lifeStage attribute in the match_preference
       table, as opposed to inserting 3 or 4 records for size preferences for that match profile.
 
-    */
-    sanitizeMatchingPreferences() {
-      const ALL_STR = 'ALL';
-      if (this.dogSizes.indexOf(ALL_STR) > -1) {
-        this.dogSizes = [ALL_STR];
+      */
+      sanitizeMatchingPreferences() {
+        const ALL_STR = 'ALL';
+        if (this.dogSizes.indexOf(ALL_STR) > -1) {
+          this.dogSizes = [ALL_STR];
+        }
+        if (this.dogAges.indexOf(ALL_STR) > -1) {
+          this.dogAges = [ALL_STR];
+        }
+        if (this.dogEnergies.indexOf(ALL_STR) > -1) {
+          this.dogEnergies = [ALL_STR];
+        }
       }
-      if (this.dogAges.indexOf(ALL_STR) > -1) {
-        this.dogAges = [ALL_STR];
-      }
-      if (this.dogEnergies.indexOf(ALL_STR) > -1) {
-        this.dogEnergies = [ALL_STR];
-      }
-    }
 
-    private dismissLoader(loader: any) {
-      if (loader) {
-        loader.dismiss();
-        loader = null;
+      private matchingPreferencesHandler() {
+        if (this.dogSizes.length == 0 || this.dogAges.length == 0 || this.dogEnergies.length == 0) {
+          console.log('not all matching preference fields have been filled in ');
+          return false;
+        } else {
+        const dogPreferences = this.dogSizes.concat(this.dogAges, this.dogEnergies);
+        console.log("Dog preferences: " + dogPreferences);
+        const dogPreferencesSanitized = this.sanitizeMatchingPreferences();
+        console.log("Sanitized: " + dogPreferencesSanitized);
+        return true;
+        }
+      }
+
+      private dismissLoader(loader: any) {
+        if (loader) {
+          loader.dismiss();
+          loader = null;
+        }
       }
     }
-  }
