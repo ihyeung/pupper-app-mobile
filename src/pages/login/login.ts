@@ -106,7 +106,8 @@ export class LoginPage {
           content: "Login success. Loading user data ..."
         });
         loader.present();
-        this.retrieveUserProfile(this.storageUtils.createHeadersObjFromAuth(authObj), loader);
+        const headers = this.storageUtils.createHeadersObjFromAuth(authObj);
+        this.retrieveUserProfile(headers, loader);
 
       }, error => {
         console.error('ERROR: ', JSON.stringify(error));
@@ -119,7 +120,11 @@ export class LoginPage {
       .map(res => res.json())
       .subscribe(resp => {
         console.log(resp);
-        if (!resp.isSuccess) {
+        if (resp.isSuccess) {
+
+          const userProfileObj = resp['userProfiles'][0];
+          this.retrieveMatchProfileData(userProfileObj, loader);
+        } else {
           this.dismissLoader(loader);
 
           //Happens when user created user account but never created user profile (only possible with old flow)
@@ -129,10 +134,6 @@ export class LoginPage {
           this.storageUtils.storeData('password', this.password);
 
           this.navCtrl.push('CreateUserProfilePage');
-        } else {
-
-          const userProfileObj = resp['userProfiles'][0];
-          this.retrieveMatchProfileData(userProfileObj, loader);
 
         }
       }, err => {
@@ -141,7 +142,7 @@ export class LoginPage {
       });
     }
 
-    updateLastLogin(userProfileObj: any, loader: any) {
+    updateLastLogin(userProfileObj: any, loader: any, navPage: string) {
       const currentDate = this.utils.currentDateToValidDateFormat();
 
       // Check if the lastLogin field needs to be updated
@@ -153,21 +154,21 @@ export class LoginPage {
             console.log('updated last login');
             const userProfile = resp['userProfiles'][0];
 
-            this.storeUserAndNavToMain(userProfile, loader)//Store user after last login has been updated
+            this.storeUserAndNavToMain(userProfile, loader, navPage)//Store user after last login has been updated
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
           this.dismissLoader(loader);
         });
       } else {
-        this.storeUserAndNavToMain(userProfileObj, loader);
+        this.storeUserAndNavToMain(userProfileObj, loader, navPage);
       }
     }
 
-    private storeUserAndNavToMain(userProfileObj: any, loader: any) {
+    private storeUserAndNavToMain(userProfileObj: any, loader: any, navPage: string) {
       this.storageUtils.storeData('user', userProfileObj); //Store user
-      this.navCtrl.push('TabsPage'); //Only proceed after user/match profile data has been stored (for displaying on profile snapshot page)
       this.dismissLoader(loader);
+      this.navCtrl.push(navPage); //Only proceed after user/match profile data has been stored (for displaying on profile snapshot page)
 
     }
 
@@ -176,12 +177,17 @@ export class LoginPage {
       .map(res => res.json())
       .subscribe(resp => {
         console.log(JSON.stringify(resp));
-        this.updateLastLogin(userProfileObj, loader); //Regardless of whether the user has match profiles yet, update last login for user profile
         if (resp.isSuccess) {
+          this.updateLastLogin(userProfileObj, loader, 'TabsPage'); //Update last login, pass in TabsPage since matchProfiles were successfully retrieved
+
           console.log(JSON.stringify(resp.matchProfiles));
           const profiles = resp.matchProfiles;
           console.log("USER HAS "  + resp.matchProfiles.length + " MATCH PROFILES");
           this.storageUtils.storeData('profiles', profiles);
+        } else  {
+          this.updateLastLogin(userProfileObj, loader, 'CreateMatchProfilePage'); //Update last login, pass in CreateMatchProfilePage since matchProfiles were NOT successfully retrieved
+
+          console.log('attempt to retreive match profiles failed');
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
