@@ -183,6 +183,7 @@ export class LoginPage {
           console.log(JSON.stringify(resp.matchProfiles));
           const profiles = resp.matchProfiles;
           console.log("USER HAS "  + resp.matchProfiles.length + " MATCH PROFILES");
+          console.log(profiles);
           this.storageUtils.storeData('profiles', profiles);
         } else  {
           this.updateLastLogin(userProfileObj, loader, 'CreateMatchProfilePage'); //Update last login, pass in CreateMatchProfilePage since matchProfiles were NOT successfully retrieved
