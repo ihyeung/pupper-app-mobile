@@ -169,9 +169,9 @@ export class CreateMatchProfilePage {
       loader.present();
 
       const dogPreferences = this.dogSizes.concat(this.dogAges, this.dogEnergies);
-      console.log(dogPreferences);
+      console.log("Dog preferences: " + dogPreferences);
       const dogPreferencesSanitized = this.sanitizeMatchingPreferences();
-      console.log(dogPreferencesSanitized);
+      console.log("Sanitized: " + dogPreferencesSanitized);
 
       const matchProfileObj = this.getDataFromInputFields();
 
@@ -183,16 +183,16 @@ export class CreateMatchProfilePage {
           console.log(response);
           if (response.isSuccess) {
             const matchProfileObj = response['matchProfiles'][0];
-            console.log(response);
 
             this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
 
             //Retrieve updated list of match profiles from server (server handles isDefault logic)
+            this.insertAndStoreMatchingPreferences
             this.retrieveAllMatchProfiles();
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
-          loader.dismiss();
+          this.dismissLoader(loader);
         });
       }
 
@@ -204,11 +204,11 @@ export class CreateMatchProfilePage {
           response = await this.storageUtils.uploadFile(userId, matchId, this.imageFilePath);
         } catch(err) {
            console.error(JSON.stringify(err));
-           loader.dismiss();
+           this.dismissLoader(loader);
            this.utils.presentDismissableToast('Error uploading profile image');
         }
         console.log('response from file upload: ' + JSON.stringify(response));
-        loader.dismiss();
+        this.dismissLoader(loader);
         const responseObj = JSON.parse(response.response);
         if (responseObj.isSuccess) {
           this.utils.presentAutoDismissToast("Image upload success");
@@ -226,16 +226,20 @@ export class CreateMatchProfilePage {
         const matchPreferences = this.createMatchPreferenceArr(matchProfileObj);
         console.log("Match preferences array: ");
         console.log(JSON.stringify(matchPreferences));
-        this.matchProfiles.insertMatchPreferences(matchProfileObj['id'], JSON.stringify(matchPreferences))
-        .map(res => res.json())
-        .subscribe(response => {
-          console.log(response);
-        }, err => {
-          console.error('ERROR: ', JSON.stringify(err));
-          loader.dismiss();
-        });
-
-        //TODO: store matching preferences in local storage
+        // this.matchProfiles.insertMatchPreferences(matchProfileObj['id'], JSON.stringify(matchPreferences))
+        // .map(res => res.json())
+        // .subscribe(response => {
+        //   console.log(response);
+        //   if (response.isSuccess) {
+        //     console.log('match preferences inserted successfully');
+        //     const matchPreferencesListObj = response['matchPreferences'];
+        //     console.log(matchPreferencesListObj);
+        //     this.storageUtils.storeData('preferences', matchPreferencesListObj);
+        //   }
+        // }, err => {
+        //   console.error('ERROR: ', JSON.stringify(err));
+        //   loader.dismiss();
+        // });
       }
 
       createMatchPreferenceArr(matchProfile: any) {
@@ -330,6 +334,13 @@ export class CreateMatchProfilePage {
       }
       if (this.dogEnergies.indexOf(ALL_STR) > -1) {
         this.dogEnergies = [ALL_STR];
+      }
+    }
+
+    private dismissLoader(loader: any) {
+      if (loader) {
+        loader.dismiss();
+        loader = null;
       }
     }
   }
