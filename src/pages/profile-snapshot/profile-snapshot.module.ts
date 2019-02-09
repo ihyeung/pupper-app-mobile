@@ -12,7 +12,7 @@ import { Dialogs } from '@ionic-native/dialogs';
   ],
   exports: [
     ProfileSnapshotPage
-  ],
+    ],
   providers: [
     Dialogs
   ]
