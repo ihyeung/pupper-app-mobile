@@ -168,35 +168,32 @@ export class CreateMatchProfilePage {
       });
       loader.present();
 
-      if (!this.matchingPreferencesHandler()) {
-        this.dismissLoader(loader);
-        console.log('Matching preference data not selected');
-        return;
-      }
       const matchProfileObj = this.getDataFromInputFields();
-      this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
 
-      // const userProfileId = this.userProfile['id'];
-      // this.matchProfiles.createMatchProfile(
-      //   JSON.stringify(matchProfileObj), userProfileId)
-      //   .map(res => res.json())
-      //   .subscribe(response => {
-      //     console.log(response);
-      //     if (response.isSuccess) {
-      //       const matchProfileObj = response['matchProfiles'][0];
-      //
-      //       this.uploadProfileImageForMatchProfile(matchProfileObj, loader);
-      //
-      //       // this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
-      //
-      //       //Re-retrieve updated list of match profiles from server (server handles isDefault logic)
-      //
-      //       this.retrieveAllMatchProfiles();
-      //     }
-      //   }, err => {
-      //     console.error('ERROR: ', JSON.stringify(err));
-      //     this.dismissLoader(loader);
-      //   });
+      const userProfileId = this.userProfile['id'];
+      this.matchProfiles.createMatchProfile(
+        JSON.stringify(matchProfileObj), userProfileId)
+        .map(res => res.json())
+        .subscribe(response => {
+          console.log(response);
+          if (response.isSuccess) {
+            const matchProfileObj = response['matchProfiles'][0];
+
+            if (this.imageFilePath) {
+              this.uploadProfileImageForMatchProfile(matchProfileObj, loader); //Contains nested call to insert matching preferences
+            } else {
+              //No need to upload image and set profileImage field for matchProfileObj, continue
+              this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
+            }
+
+            //Re-retrieve updated list of match profiles from server (server handles isDefault logic)
+
+            this.retrieveAllMatchProfiles();
+          }
+        }, err => {
+          console.error('ERROR: ', JSON.stringify(err));
+          this.dismissLoader(loader);
+        });
       }
 
       async uploadProfileImageForMatchProfile(matchProfileObj: any, loader: any) {
@@ -214,35 +211,42 @@ export class CreateMatchProfilePage {
         this.dismissLoader(loader);
         const responseObj = JSON.parse(response.response);
         if (responseObj.isSuccess) {
-          this.utils.presentAutoDismissToast("Image upload success");
           const profileImage = responseObj.imageUrl;
           matchProfileObj['profileImage'] = profileImage; //Update profileImage field after upload before storing in storage
-          this.storageUtils.storeData('match', matchProfileObj);
-          this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
-
-          this.navCtrl.push('TabsPage');
+          this.insertAndStoreMatchingPreferences(matchProfileObj, loader);
         }
       }
 
       insertAndStoreMatchingPreferences(matchProfileObj: any, loader: any) {
+        this.matchingPreferencesDefaultHandler(); //Fill in defaults for any incomplete matching preference fields
 
         const matchPreferences = this.createMatchPreferenceArr(matchProfileObj);
         console.log("Match preferences array: ");
         console.log(JSON.stringify(matchPreferences));
-        // this.matchProfiles.insertMatchPreferences(matchProfileObj['id'], JSON.stringify(matchPreferences))
-        // .map(res => res.json())
-        // .subscribe(response => {
-        //   console.log(response);
-        //   if (response.isSuccess) {
-        //     console.log('match preferences inserted successfully');
-        //     const matchPreferencesListObj = response['matchPreferences'];
-        //     console.log(matchPreferencesListObj);
-        //     this.storageUtils.storeData('preferences', matchPreferencesListObj);
-        //   }
-        // }, err => {
-        //   console.error('ERROR: ', JSON.stringify(err));
-        //   loader.dismiss();
-        // });
+        this.matchProfiles.insertMatchPreferences(matchProfileObj['id'], JSON.stringify(matchPreferences))
+        .map(res => res.json())
+        .subscribe(response => {
+          console.log(response);
+          this.dismissLoader(loader);
+          if (response.isSuccess) {
+            console.log('match preferences inserted successfully');
+            const matchPreferencesListObj = response['matchPreferences'];
+            console.log(matchPreferencesListObj);
+            this.storageUtils.storeData('preferences', matchPreferencesListObj);
+
+            this.createMatchProfileSuccessHandler(matchProfileObj);
+          }
+        }, err => {
+          console.error('ERROR: ', JSON.stringify(err));
+          loader.dismiss();
+        });
+      }
+
+      createMatchProfileSuccessHandler(matchProfileObj: any) {
+        this.storageUtils.storeData('match', matchProfileObj);
+        this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
+
+        this.navCtrl.push('TabsPage');
       }
 
       createMatchPreferenceArr(matchProfile: any) {
@@ -252,17 +256,15 @@ export class CreateMatchProfilePage {
         this.dogSizes.forEach(size => {
           matchingPreferences.push(this.addMatchPreference(matchProfile, 'SIZE', size));
         });
-        console.log('Size matching preferences added: ' + this.dogSizes.length);
 
         this.dogAges.forEach(age => {
           matchingPreferences.push(this.addMatchPreference(matchProfile, 'AGE', age));
         });
-        console.log('Age matching preferences added: ' + this.dogAges.length);
 
         this.dogEnergies.forEach(energy => {
           matchingPreferences.push(this.addMatchPreference(matchProfile, 'ENERGY', energy));
         });
-        console.log('Energy matching preferences added: ' + this.dogEnergies.length);
+        console.log('Total number of matching preferences added: ' + matchingPreferences.length);
 
         return matchingPreferences;
       }
@@ -271,7 +273,7 @@ export class CreateMatchProfilePage {
         return new MatchPreference({
           matchProfile: matchProfile,
           preferenceType: type,
-          preference: value
+          matchingPreference: value
         });
       }
 
@@ -340,23 +342,24 @@ export class CreateMatchProfilePage {
         }
       }
 
-      private matchingPreferencesHandler() {
-        if (this.dogSizes.length == 0 || this.dogAges.length == 0 || this.dogEnergies.length == 0) {
-          console.log('not all matching preference fields have been filled in ');
-          return false;
-        } else {
-        const dogPreferences = this.dogSizes.concat(this.dogAges, this.dogEnergies);
-        console.log("Dog preferences: " + dogPreferences);
-        const dogPreferencesSanitized = this.sanitizeMatchingPreferences();
-        console.log("Sanitized: " + dogPreferencesSanitized);
-        return true;
+      private matchingPreferencesDefaultHandler() {
+        const DEFAULT_PREFERENCE = 'ALL';
+
+        if (this.dogSizes === undefined || this.dogSizes.length == 0) {
+          this.dogSizes = [DEFAULT_PREFERENCE];
+        }
+        if (this.dogAges === undefined || this.dogAges.length == 0) {
+          this.dogAges = [DEFAULT_PREFERENCE];
+        }
+        if (this.dogEnergies === undefined || this.dogEnergies.length == 0) {
+          this.dogEnergies = [DEFAULT_PREFERENCE];
         }
       }
 
-      private dismissLoader(loader: any) {
-        if (loader) {
-          loader.dismiss();
-          loader = null;
+        private dismissLoader(loader: any) {
+          if (loader) {
+            loader.dismiss();
+            loader = null;
+          }
         }
       }
-    }
