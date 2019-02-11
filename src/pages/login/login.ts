@@ -89,7 +89,6 @@ export class LoginPage {
           let alert = this.utils.presentAlert("Email is in use for an existing account.");
           alert.present();
           alert.onDidDismiss(() => {
-            console.log('dismissed');
               this.navCtrl.push('CreateMatchProfilePage');
           });
         } else {
@@ -139,7 +138,6 @@ export class LoginPage {
           let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
           alert.present();
           alert.onDidDismiss(() => {
-           console.log('Dismissed');
              this.navCtrl.push('CreateUserProfilePage');
           });
         }

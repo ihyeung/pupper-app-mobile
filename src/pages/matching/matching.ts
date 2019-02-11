@@ -58,7 +58,6 @@ export class MatchingPage {
           let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
           alert.present();
           alert.onDidDismiss(() => {
-           console.log('Dismissed');
            this.navCtrl.push('CreateMatchProfilePage');
 
           });
