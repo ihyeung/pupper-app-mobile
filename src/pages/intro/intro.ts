@@ -9,8 +9,7 @@ import { environment as ENV } from '../../environments/environment';
   templateUrl: 'intro.html',
 })
 export class IntroPage {
-  introReady: boolean = false;
-
+  
   constructor(public navCtrl: NavController, public navParams: NavParams,
   public util: StorageUtilities) { }
 
@@ -30,8 +29,6 @@ export class IntroPage {
         } else {
           this.navCtrl.push('HomePage');
         }
-      } else {
-        this.introReady = true;
       }
     });
   }
