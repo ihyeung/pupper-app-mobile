@@ -101,10 +101,11 @@ export class CreateMatchProfilePage {
       this.imagePreview = this.navParams.get('imagePreview');
       this.imageFilePath = this.navParams.get('filePath');
       const profileData = this.navParams.get('formData');
+      const preferenceData = this.navParams.get('matchPreferenceData');
       console.log('Image URI: ' + this.imageFilePath);
       if (profileData) {
         console.log('profile form data passed back from image upload page');
-        this.repopulateInputFieldData(profileData);
+        this.repopulateInputFieldData(profileData, preferenceData);
       }
       const newUser = this.navParams.get('isNewUser');
       newUser === null || !newUser ?   this.retrieveDataFromStorage(false):
@@ -122,11 +123,14 @@ export class CreateMatchProfilePage {
 
       this.storageUtils.getDataFromStorage('user').then(val => {
         if (!val) {
-          this.utils.presentAutoDismissToast(USER_PROFILE_ERROR);
           if (ENV.AUTO_PROCEED_FOR_TESTING) {
             console.log('Bypassing user profile error encountered when retrieving user key from storage');
           } else {
-            this.navCtrl.push('CreateUserProfilePage');
+            let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
+            alert.present();
+            alert.onDidDismiss(() => {
+              this.navCtrl.push('CreateUserProfilePage');
+            });
           }
         } else {
           this.userProfile = val;
@@ -205,7 +209,8 @@ export class CreateMatchProfilePage {
         } catch(err) {
           console.error(JSON.stringify(err));
           this.dismissLoader(loader);
-          this.utils.presentDismissableToast('Error uploading profile image');
+          let alert = this.utils.presentAlert('Error uploading profile image');
+          alert.present();
         }
         console.log('response from file upload: ' + JSON.stringify(response));
         this.dismissLoader(loader);
@@ -244,7 +249,7 @@ export class CreateMatchProfilePage {
 
       createMatchProfileSuccessHandler(matchProfileObj: any) {
         this.storageUtils.storeData('match', matchProfileObj);
-        this.utils.presentAutoDismissToast("Match Profile Created! Please wait ...");
+        this.utils.presentToast("Match Profile Created! Please wait ...");
 
         this.navCtrl.push('TabsPage');
       }
@@ -264,7 +269,6 @@ export class CreateMatchProfilePage {
         this.dogEnergies.forEach(energy => {
           matchingPreferences.push(this.addMatchPreference(matchProfile, 'ENERGY', energy));
         });
-        console.log('Total number of matching preferences added: ' + matchingPreferences.length);
 
         return matchingPreferences;
       }
@@ -280,8 +284,18 @@ export class CreateMatchProfilePage {
       selectProfileImage() {
         this.navCtrl.push('ImageUploadPage', {
           profileType: 'match',
-          formData: this.getDataFromInputFields()
+          formData: this.getDataFromInputFields(),
+          matchPreferenceData: this.matchPreferenceMapper()
         });
+      }
+
+      matchPreferenceMapper() {
+        const mapper = new Map();
+        mapper.set('SIZE', this.dogSizes);
+        mapper.set('AGE', this.dogAges);
+        mapper.set('ENERGY', this.dogEnergies);
+
+        return mapper;
       }
 
       private getDataFromInputFields() {
@@ -302,7 +316,7 @@ export class CreateMatchProfilePage {
         };
       }
 
-      repopulateInputFieldData(profile: any) {
+      repopulateInputFieldData(profile: any, preferences: any) {
         this.names = profile.names;
         this.sex = profile.sex;
         this.breed = profile.breed;
@@ -315,6 +329,12 @@ export class CreateMatchProfilePage {
         this.isActiveMatchProfile = profile.isDefault;
         this.userProfile = profile.userProfile;
         this.radius = profile.zipRadius;
+
+        if (preferences) {
+          this.dogAges = preferences.get('AGE');
+          this.dogSizes = preferences.get('SIZE');
+          this.dogEnergies = preferences.get('ENERGY');
+        }
       }
 
       /**
