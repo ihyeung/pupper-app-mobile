@@ -28,7 +28,7 @@ export class MessageInboxPage {
     ionViewDidLoad() {
       this.storageUtils.getDataFromStorage('match').then(val => {
         if (!val) {
-          this.utils.presentAutoDismissToast(MATCH_PROFILE_ERROR);
+          this.utils.presentToast(MATCH_PROFILE_ERROR);
           this.navCtrl.push('CreateMatchProfilePage');
         }
         this.matchProfileId = val['id'];

@@ -7,9 +7,9 @@
 </ion-header>
 <ion-content>
   <div>
-  <h2 [hidden]="imageURI != null ">SELECT A IMAGE FILE FOR UPLOAD</h2>
+  <h3 [hidden]="imageURI != null ">SELECT A IMAGE FILE FOR UPLOAD</h3>
   </div>
-    <h5 [hidden]="imageURI == null">Image URI/path: </h5>
+    <h5 [hidden]="imageURI == null">Image URI/path:</h5>
     <ion-item [hidden]="imagePathForUpload == null">'{{imageURI}}'</ion-item>
     <ion-card>
     <img [src]="imageURI" [hidden]="imageURI == null" width="300" />

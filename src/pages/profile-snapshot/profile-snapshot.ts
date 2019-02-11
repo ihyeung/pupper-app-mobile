@@ -35,8 +35,11 @@ export class ProfileSnapshotPage {
         if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
           this.storageUtils.getDataFromStorage('user').then(user => {
             if (!user) {
-              this.utils.presentDismissableToast(USER_PROFILE_ERROR);
-              this.navCtrl.push('CreateUserProfilePage');
+              let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
+              alert.present();
+              alert.onDidDismiss(() => {
+                this.navCtrl.push('CreateUserProfilePage');
+              });
             } else {
               this.initUserData(user);
               this.retrieveMatchProfilesForUser(user);
@@ -130,15 +133,18 @@ export class ProfileSnapshotPage {
       }
 
       private promptCreateMatchProfile() {
-        this.utils.presentDismissableToast(MATCH_PROFILE_ERROR);
-        this.navCtrl.push('CreateMatchProfilePage');
+        let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
+        alert.present();
+        alert.onDidDismiss(() => {
+          this.navCtrl.push('CreateMatchProfilePage');
+        });
       }
 
       createMatchProfile() {
         if (!this.matchProfilesList || this.matchProfilesList.length < 3) {
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
-          this.utils.presentAutoDismissToast('A maximum of 3 matching profiles can be created for a given user.');
+          this.utils.presentToast('A maximum of 3 matching profiles can be created for a given user.');
         }
       }
 
@@ -168,7 +174,8 @@ export class ProfileSnapshotPage {
             .subscribe(resp => {
               console.log(resp);
               if (resp.isSuccess) {
-                this.utils.presentDismissableToast(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
+                let alert = this.utils.presentAlert(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
+                alert.present();
                 this.updateActiveMatchProfile();
               }
 
@@ -230,7 +237,8 @@ export class ProfileSnapshotPage {
             return;
           }
           if (obj.input1 === undefined || !obj.input1 || !zipRegEx.test(obj.input1)) {
-            this.utils.presentDismissableToast("Please enter a valid US 5-digit zip code.");
+            let alert = this.utils.presentAlert("Please enter a valid US 5-digit zip code.");
+            alert.present();
             console.log('Invalid zipcode');
             return;
           }
@@ -245,7 +253,8 @@ export class ProfileSnapshotPage {
               console.log('zip code successfully updated');
               this.userProfileObj = updatedUserObj;
               this.storageUtils.storeData('user', this.userProfileObj);
-              this.utils.presentDismissableToast(`Profile zip code location updated to '${obj.input1}'`);
+              let alert = this.utils.presentAlert(`Profile zip code location updated to '${obj.input1}'`);
+              alert.present();
             } else {
               console.log(resp);
 

@@ -4,7 +4,7 @@ import { environment as ENV } from '../../environments/environment';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AccountValidator } from  '../../validators/account.validator';
 import { Utilities, StorageUtilities, Users, MatchProfiles  } from '../../providers';
-import { USER_PROFILE_ERROR } from '../';
+import { USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 
 
 @IonicPage()
@@ -83,10 +83,14 @@ export class LoginPage {
       //Validate username is available but don't actually register until create user profile page
       this.userService.getUserAccountByEmail(this.email, this.authHeaders)
       .map(res => res.json())
-      .subscribe(response => {
+      .subscribe(async response => {
         if(response.isSuccess){ //Username is taken
           this.errorMessage = "Please enter a unique email to create a user account."
-          this.utils.presentDismissableToast("Email is in use for an existing account.");
+          let alert = this.utils.presentAlert("Email is in use for an existing account.");
+          alert.present();
+          alert.onDidDismiss(() => {
+              this.navCtrl.push('CreateMatchProfilePage');
+          });
         } else {
           this.storageUtils.storeData('email', this.email);
           this.storageUtils.storeData('password', this.password);
@@ -101,7 +105,7 @@ export class LoginPage {
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
         const authObj = this.storageUtils.extractAndStoreAuthHeaders(response);
-        // this.utils.presentAutoDismissToast("Login success! Please wait...");
+        // this.utils.presentToast("Login success! Please wait...");
         let loader = this.loadCtrl.create({
           content: "Login success. Loading user data ..."
         });
@@ -110,8 +114,8 @@ export class LoginPage {
         this.retrieveUserProfile(headers, loader);
 
       }, error => {
-        console.error('ERROR: ', JSON.stringify(error));
-        this.utils.presentDismissableToast("Invalid login credentials, please try again.");
+        let alert = this.utils.presentAlert("Invalid login credentials, please try again.");
+        alert.present();
       });
     }
 
@@ -127,14 +131,15 @@ export class LoginPage {
         } else {
           this.dismissLoader(loader);
 
-          //Happens when user created user account but never created user profile (only possible with old flow)
-          this.utils.presentDismissableToast(USER_PROFILE_ERROR);
 
           this.storageUtils.storeData('email', this.email);
           this.storageUtils.storeData('password', this.password);
-
-          this.navCtrl.push('CreateUserProfilePage');
-
+          //Happens when user created user account but never created user profile (only possible with old flow)
+          let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
+          alert.present();
+          alert.onDidDismiss(() => {
+             this.navCtrl.push('CreateUserProfilePage');
+          });
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
@@ -168,8 +173,15 @@ export class LoginPage {
     private storeUserAndNavToMain(userProfileObj: any, loader: any, navPage: string) {
       this.storageUtils.storeData('user', userProfileObj); //Store user
       this.dismissLoader(loader);
-      this.navCtrl.push(navPage); //Only proceed after user/match profile data has been stored (for displaying on profile snapshot page)
-
+      if (navPage == 'CreateMatchProfilePage') {
+        let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
+        alert.present();
+        alert.onDidDismiss(() => {
+          this.navCtrl.push(navPage);
+        });
+      } else {
+        this.navCtrl.push(navPage); //Only proceed after user/match profile data has been stored (for displaying on profile snapshot page)
+      }
     }
 
     retrieveMatchProfileData(userProfileObj: number, loader: any) {

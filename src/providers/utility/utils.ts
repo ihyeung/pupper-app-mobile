@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from 'ionic-angular';
+import { ToastController, AlertController } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { environment as ENV } from '../../environments/environment';
 
@@ -8,7 +8,7 @@ export class Utilities {
 
   constructor(
     public http: Http,
-    private toastCtrl: ToastController) { }
+    private toastCtrl: ToastController, private alertCtrl: AlertController) { }
 
     /*
     Generates today's date as a string with the format yyyy-MM-dd
@@ -95,18 +95,22 @@ export class Utilities {
       }
     }
 
-    presentDismissableToast(message) {
-      const toast = this.toastCtrl.create({
+    presentAlert(message: string) {
+      const alert = this.alertCtrl.create({
         message: message,
-        position: 'middle',
-        showCloseButton: true,
-        closeButtonText: 'OK',
-        dismissOnPageChange: true
+        buttons: [ {
+        text: 'OK',
+        handler: () => {
+          console.log('OK CLICKED');
+        }
+      }],
+      enableBackdropDismiss: false
       });
-      toast.present();
+
+      return alert;
     }
 
-    presentAutoDismissToast(message) {
+    presentToast(message) {
       const toast = this.toastCtrl.create({
         message: message,
         duration: 2000,
