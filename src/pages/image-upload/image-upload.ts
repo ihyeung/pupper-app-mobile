@@ -4,6 +4,9 @@ import { ActionSheetController, Platform } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FilePath } from '@ionic-native/file-path';
 import { normalizeURL } from 'ionic-angular';
+import { File } from '@ionic-native/file';
+
+declare var cordova: any;
 
 @IonicPage()
 @Component({
@@ -15,13 +18,15 @@ export class ImageUploadPage {
   profileData: any;
   imageURI: string; //Normalized uri for displaying image on image-upload page after selecting image
   imagePathForUpload: string; //Image path to be used for image upload
+  imageURICopied: string;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private camera: Camera,
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform,
-    private filePath: FilePath) { }
+    private filePath: FilePath,
+    private file: File) { }
 
     ionViewDidLoad() {
       this.imageFor = this.navParams.get('profileType');
@@ -47,6 +52,12 @@ export class ImageUploadPage {
           this.imageURI = normalizeURL(imagePath);
           // this.imageURI = this.wv.convertFileSrc(imagePath);
           console.log('NORMALIZED IMAGE PATH: ' + this.imageURI);
+
+          const currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+          const correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+          const newFileName = new Date().getUTCDate() + '.jpg';
+          console.log('New file name will be : ' + newFileName);
+          this.copyFileToLocalDir(correctPath, currentName, newFileName);
         }
         else if (this.platform.is('android') &&
         sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
@@ -58,6 +69,12 @@ export class ImageUploadPage {
             this.imageURI = filePath;
             // this.imageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
             this.imagePathForUpload = filePath;
+
+            const correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+            const currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+            const newFileName = new Date().getUTCDate() + '.jpg';
+            console.log('New file name will be : ' + newFileName);
+            this.copyFileToLocalDir(correctPath, currentName, newFileName);
           }).catch(err => console.error('ERROR: ' + JSON.stringify(err)));
         }
         else if (this.platform.is('android') &&
@@ -66,8 +83,21 @@ export class ImageUploadPage {
           this.imageURI = imagePath;
           this.imagePathForUpload = imagePath;
           // this.imageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
+          const currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+          const correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+          const newFileName = new Date().getUTCDate() + '.jpg';
+          console.log('New file name will be : ' + newFileName);
+          this.copyFileToLocalDir(correctPath, currentName, newFileName);
         }
       }).catch(err => console.error('ERROR: ' + JSON.stringify(err)));
+    }
+
+    private copyFileToLocalDir(namePath: string, currentName: string, newFileName: string) {
+      this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success => {
+        this.imageURICopied = newFileName;
+      }, error => {
+        console.error('ERROR: ' + JSON.stringify(error));
+      });
     }
 
     passImageUriForUpload() {
