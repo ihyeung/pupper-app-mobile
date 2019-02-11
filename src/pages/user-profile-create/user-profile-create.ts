@@ -132,14 +132,15 @@ export class CreateUserProfilePage {
          console.error(JSON.stringify(err));
          this.dismissLoader(loader);
 
-         this.utils.presentDismissableToast('Error uploading profile image: please select a smaller image');
+         let alert = this.utils.presentAlert('Error uploading profile image: please select a smaller image');
+         alert.present();
       }
       console.log('response from file upload: ' + JSON.stringify(response));
       this.dismissLoader(loader);
 
       const responseObj = JSON.parse(response.response);
       if (responseObj.isSuccess) {
-        this.utils.presentAutoDismissToast("Image upload success");
+        this.utils.presentToast("Image upload success");
         const profileImage = responseObj.imageUrl;
         userProfileObj['profileImage'] = profileImage; //Update profile image field
         this.storeUserAndProceedToNextPage(userProfileObj);
@@ -148,7 +149,7 @@ export class CreateUserProfilePage {
 
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
-      this.utils.presentAutoDismissToast("User Profile Created! Please wait ...");
+      this.utils.presentToast("User Profile Created! Please wait ...");
       this.navCtrl.push('CreateMatchProfilePage', {
         isNewUser: true  //If new user, don't retrieve match profiles list on create match profile page
       });

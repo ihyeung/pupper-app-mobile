@@ -19,6 +19,7 @@ export class ImageUploadPage {
   profileData: any;
   imageURI: string; //Normalized uri for displaying image on image-upload page after selecting image
   imagePathForUpload: string; //Image path to be used for image upload
+  preferenceData: any;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -32,6 +33,7 @@ export class ImageUploadPage {
     ionViewDidLoad() {
       this.imageFor = this.navParams.get('profileType');
       this.profileData = this.navParams.get('formData');
+      this.preferenceData = this.navParams.get('matchPreferenceData');
     }
 
     selectProfileImage(sourceType: any) {
@@ -106,7 +108,8 @@ export class ImageUploadPage {
       const profileData = {
         filePath: this.imagePathForUpload, //Pass original image uri for uploading image on create profile page
         imagePreview: this.imageURI, //Pass normalized uri for displaying image on create profile page
-        formData: this.profileData //Pass data from create profile page back to restore state
+        formData: this.profileData, //Pass data from create profile page back to restore state
+        matchPreferenceData: this.preferenceData
       };
 
       if (this.imageFor == 'user') {

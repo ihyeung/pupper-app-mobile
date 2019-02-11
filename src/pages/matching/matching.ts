@@ -55,8 +55,14 @@ export class MatchingPage {
       this.matchingResults = new Array<MatchingResult>();
       this.storageUtils.getDataFromStorage('match').then(val => {
         if (!val) {
-          this.utils.presentDismissableToast(MATCH_PROFILE_ERROR);
-          this.navCtrl.push('CreateMatchProfilePage');
+          let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
+          alert.present();
+          alert.onDidDismiss(() => {
+           console.log('Dismissed');
+           this.navCtrl.push('CreateMatchProfilePage');
+
+          });
+
         } else {
           this.matchProfileObj = val;
           this.retrieveNextProfileBatch();
