@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController } from 'ionic-angular';
 import { StorageUtilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
 
@@ -9,13 +9,11 @@ import { environment as ENV } from '../../environments/environment';
   templateUrl: 'intro.html',
 })
 export class IntroPage {
-  
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-  public util: StorageUtilities) { }
+
+  constructor(public navCtrl: NavController, public util: StorageUtilities) { }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad IntroPage');
-
 
     this.util.getDataFromStorage('introComplete').then(val =>  {
       if (val) {
@@ -34,7 +32,6 @@ export class IntroPage {
   }
 
   finishIntro() {
-    console.log('Intro finished, adding to storage');
     this.util.storeData('introComplete', true);
 
     this.navCtrl.push('HomePage');
