@@ -18,18 +18,7 @@ export class HomePage {
     public userService: Users, public utils: Utilities) { }
 
     ionViewDidLoad() {
-      this.initApp();
-    }
-
-    private initApp() {
-      if (ENV.CLEAR_STORAGE_ON_HOME) {
-        this.storageUtils.clearStorage().then(() => {
-
-          this.retrieveBreedList();
-        });
-      } else {
-        this.retrieveBreedList();
-      }
+      this.retrieveBreedList();
     }
 
     login(){
