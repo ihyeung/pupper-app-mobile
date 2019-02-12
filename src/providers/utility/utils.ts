@@ -28,10 +28,13 @@ export class Utilities {
     */
     convertTimestampToDate(timestamp: string) {
       if (timestamp.indexOf('Z') == -1) {
-        return new Date(timestamp + 'Z');
-      } else {
-        return new Date(timestamp);
+        timestamp = timestamp + 'Z';
       }
+      if (timestamp.indexOf('T') == -1) {
+        timestamp = timestamp.replace(' ', 'T');
+      }
+      console.log('Timestamp to be converted to date: ' + timestamp);
+      return new Date(timestamp);
     }
 
     /*
@@ -70,29 +73,37 @@ export class Utilities {
       return imageUri;
     }
 
-    getMessageAgeFromTimestamp(timestamp: string) {
-      const standardizedTimestamp = this.convertTimestampToDate(timestamp);
+    getHistoricalAgeFromTimestamp(timestamp: Date) {
       const now = new Date().getTime();
-      const difference = now - standardizedTimestamp.getTime();
+      const difference = now - timestamp.getTime();
+      console.log("Difference: " + difference);
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
       if (difference >= ONE_DAY_MS) {
         const days = Math.round(difference/ONE_DAY_MS);
         if (days >= 14) {
           const weeks = Math.round(days/7);
-          return `${weeks} weeks ago`;
+          const weekUnits = this.formatTimeUnits('weeks', weeks);
+          return `${weeks} ${weekUnits} ago`;
         }
-        return `${days} days ago`;
+        const dayUnits = this.formatTimeUnits('days', days);
+        return `${days} ${dayUnits} ago`;
       }
       else {
         if (difference >= ONE_DAY_MS/24) {
           const hours = Math.round(difference/(ONE_DAY_MS/24));
-          return `${hours} hours ago`;
+          const hourUnits = this.formatTimeUnits('hours', hours);
+
+          return `${hours} ${hourUnits} ago`;
         } else {
           const min = Math.round(difference/(ONE_DAY_MS/(24*60)));
-          console.log('minutes: ' + min);
-          return `${min} minutes ago`;
+          const minUnits = this.formatTimeUnits('minutes', min);
+          return `${min} ${minUnits} ago`;
         }
       }
+    }
+
+    formatTimeUnits(units: string, count: number) {
+      return count == 1 ? units.substring(0, units.length - 1) : units;
     }
 
     presentAlert(message: string) {
