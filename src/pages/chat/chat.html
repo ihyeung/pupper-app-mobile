@@ -24,7 +24,7 @@
       </ion-card>
       <br>
   <ion-item>
-    <ion-input type="text" placeholder="{{messagePlaceholder}}" [(ngModel)]="message"></ion-input>
+    <ion-input type="text" placeholder="{{messagePlaceholder}}" [(ngModel)]="message" (click)="typeMessage()"></ion-input>
     <button ion-button expandable item-right (click)="sendMessage()">SEND</button>
   </ion-item>
 </ion-content>

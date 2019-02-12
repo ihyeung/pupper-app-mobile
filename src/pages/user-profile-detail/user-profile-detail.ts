@@ -42,7 +42,9 @@ export class UserProfileDetailPage {
           this.profile = response['userProfiles'][0];
           console.log('proflie image: ' + this.profile.profileImage);
           this.profile.profileImage =
-              this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
+          this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
+          this.profile.lastLogin = this.utils.getHistoricalAgeFromTimestamp(new Date(this.profile.lastLogin));
+
           this.profileReady = true;
         }
 
@@ -54,6 +56,7 @@ export class UserProfileDetailPage {
             this.profile = val;
             this.profile.profileImage =
                 this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_USER_IMG);
+            this.profile.lastLogin = this.utils.getHistoricalAgeFromTimestamp(new Date(val.lastLogin));
             this.profileReady = true;
           }
         });

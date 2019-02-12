@@ -79,8 +79,8 @@ export class MessageInboxPage {
             if ( otherMatchProfile['id'] == this.matchProfileId) { //Make sure to add the other user's id and name to message array
             otherMatchProfile = history[0]['matchProfileReceiver'];
           }
-
-          const previewTimestamp = this.utils.getMessageAgeFromTimestamp(history[0]['timestamp']);
+          const standardizedTimeStamp = this.utils.convertTimestampToDate(history[0]['timestamp']);
+          const previewTimestamp = this.utils.getHistoricalAgeFromTimestamp(standardizedTimeStamp);
 
           let previewImage =
             this.utils.validateImageUri(otherMatchProfile['profileImage'], DEFAULT_IMG);
