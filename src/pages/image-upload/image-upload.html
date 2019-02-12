@@ -6,13 +6,13 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <div>
-  <h3 [hidden]="imageURI != null ">SELECT A IMAGE FILE FOR UPLOAD</h3>
+  <div id="image_upload_div">
+  <h3 [hidden]="normalizedImageURI != null ">SELECT AN IMAGE FILE FOR UPLOAD</h3>
+    <h5 [hidden]="normalizedImageURI == null">Image URI/path:</h5>
+    <ion-item [hidden]="normalizedImageURI == null">{{normalizedImageURI}}</ion-item>
   </div>
-    <h5 [hidden]="imageURI == null">Image URI/path:</h5>
-    <ion-item [hidden]="imagePathForUpload == null">'{{imageURI}}'</ion-item>
-    <ion-card>
-    <img [src]="imageURI" [hidden]="imageURI == null" width="300" />
+    <ion-card class="img_preview">
+    <img [src]="normalizedImageURI" [hidden]="normalizedImageURI == null" width="300" />
   </ion-card>
 </ion-content>
 <ion-footer>

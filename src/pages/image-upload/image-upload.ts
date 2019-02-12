@@ -6,6 +6,8 @@ import { FilePath } from '@ionic-native/file-path';
 import { normalizeURL } from 'ionic-angular';
 import { File } from '@ionic-native/file';
 import { Utilities } from '../../providers';
+import { MAX_IMAGE_BYTES } from '../';
+
 
 declare var cordova: any;
 
@@ -17,7 +19,7 @@ declare var cordova: any;
 export class ImageUploadPage {
   imageFor: string;
   profileData: any;
-  imageURI: string; //Normalized uri for displaying image on image-upload page after selecting image
+  normalizedImageURI: string; //Normalized uri for displaying image on image-upload page after selecting image
   imagePathForUpload: string; //Image path to be used for image upload
   preferenceData: any;
 
@@ -38,13 +40,13 @@ export class ImageUploadPage {
 
     selectProfileImage(sourceType: any) {
       const options: CameraOptions = {
-        quality: 50,
+        quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
         sourceType: sourceType,
         encodingType: this.camera.EncodingType.JPEG,
         correctOrientation: true,
         mediaType: this.camera.MediaType.PICTURE,
-        allowEdit: true //Allows image to be cropped/edited
+        allowEdit: false //Allows image to be cropped/edited
       };
 
       this.camera.getPicture(options).then(imagePath => {
@@ -56,20 +58,20 @@ export class ImageUploadPage {
           this.filePath.resolveNativePath(imagePath)
           .then(filePath => {
             console.log('Resolved native path: ', filePath);
-            // this.imageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
+            // this.normalizedImageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
             this.copyFileToLocalDir(filePath, true);
           }).catch(err => console.error('ERROR: ' + JSON.stringify(err)));
         }
         else if (this.platform.is('ios')){
           console.log('ios');
-          // this.imageURI = this.wv.convertFileSrc(imagePath);
+          // this.normalizedImageURI = this.wv.convertFileSrc(imagePath);
           this.copyFileToLocalDir(imagePath, false);
 
         }
         else if (this.platform.is('android') &&
         sourceType === this.camera.PictureSourceType.CAMERA) {
           console.log('Android camera');
-          // this.imageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
+          // this.normalizedImageURI = this.domSanitizer.bypassSecurityTrustUrl(normalizeURL(imagePath));
           this.copyFileToLocalDir(imagePath, false);
         }
       }).catch(err => console.error('ERROR: ' + JSON.stringify(err)));
@@ -79,13 +81,31 @@ export class ImageUploadPage {
       const pathToFile = this.parsePathForFile(imagePath);
       const name = this.parseFileNameForFile(imagePath, androidPhotoLibrary);
       const newFileName = this.createTempFileName();
-      this.file.copyFile(pathToFile, name, cordova.file.dataDirectory, newFileName).then(success => {
+      this.file.copyFile(pathToFile, name, cordova.file.dataDirectory, newFileName).then(async success => {
         const copiedFilePath = cordova.file.dataDirectory + newFileName;
         console.log("Image successfully copied: " + copiedFilePath);
-        this.imagePathForUpload = copiedFilePath;
-        this.imageURI = normalizeURL(copiedFilePath);
+        this.imagePathForUpload = imagePath;
+        this.normalizedImageURI = normalizeURL(imagePath);
+        this.validateImageSize(copiedFilePath);
+
       }, error => {
         console.error('ERROR: ' + JSON.stringify(error));
+      });
+    }
+
+    validateImageSize(imagePath: string) {
+      this.file.resolveLocalFilesystemUrl(imagePath)
+      .then(fileEntry => {
+        fileEntry.getMetadata(metadata => {
+          console.log("Image bytes: " + metadata.size);
+          if (metadata.size > MAX_IMAGE_BYTES) {
+            this.imagePathForUpload = null;
+            this.normalizedImageURI = null;
+            let alert = this.utils.presentAlert("Selected image exceeds max allowable file size. " +
+            "Please select a different image, or crop the photo prior to upload.");
+            alert.present();
+          }
+        })
       });
     }
 
@@ -107,7 +127,7 @@ export class ImageUploadPage {
     passImageUriForUpload() {
       const profileData = {
         filePath: this.imagePathForUpload, //Pass original image uri for uploading image on create profile page
-        imagePreview: this.imageURI, //Pass normalized uri for displaying image on create profile page
+        imagePreview: this.normalizedImageURI, //Pass normalized uri for displaying image on create profile page
         formData: this.profileData, //Pass data from create profile page back to restore state
         matchPreferenceData: this.preferenceData
       };
