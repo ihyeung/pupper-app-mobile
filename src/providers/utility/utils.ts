@@ -76,7 +76,6 @@ export class Utilities {
     getHistoricalAgeFromTimestamp(timestamp: Date) {
       const now = new Date().getTime();
       const difference = now - timestamp.getTime();
-      console.log("Difference: " + difference);
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
       if (difference >= ONE_DAY_MS) {
         const days = Math.round(difference/ONE_DAY_MS);
@@ -97,7 +96,7 @@ export class Utilities {
         } else {
           const min = Math.round(difference/(ONE_DAY_MS/(24*60)));
           const minUnits = this.formatTimeUnits('minutes', min);
-          return `${min} ${minUnits} ago`;
+          return min <= 3 ? 'just now' : `${min} ${minUnits} ago`;
         }
       }
     }
