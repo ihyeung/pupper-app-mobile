@@ -70,26 +70,32 @@ export class ChatPage {
   displayMessageHistory(recentMessages) {
     recentMessages.forEach(msg => {
 
-      const message = this.utils.getMessageAgeFromTimestamp(msg['timestamp']);
+      const standardizedTimeStamp = this.utils.convertTimestampToDate(msg['timestamp']);
+      const messageAge = this.utils.getHistoricalAgeFromTimestamp(standardizedTimeStamp);
       this.chatMessages.push({
         message: msg['message'],
-        timestamp: message,
+        timestamp: messageAge,
         incomingMessage: this.isIncomingMessage(msg)
       });
     });
     this.historyReady = true;
   }
 
+  typeMessage() {
+    this.message = '';
+  }
+
   sendMessage() {
     const messageTimeStamp = this.utils.isoStringToUTCTimestamp(new Date().toISOString());
-    const messageTimeStampFormatted = this.utils.getMessageAgeFromTimestamp(messageTimeStamp);
+    const standardizedTimeStamp = this.utils.convertTimestampToDate(messageTimeStamp);
+    const messageTimeStampFormatted = this.utils.getHistoricalAgeFromTimestamp(standardizedTimeStamp);
 
     this.msgService.sendMessage(this.fromMatchProfile, this.toMatchProfile, this.message,
       messageTimeStamp)
       .map(res => res.json())
       .subscribe(response => {
-        console.log(response);
-        if (response['isSuccess'] == 200) {
+        console.log(JSON.stringify(response));
+        if (response['isSuccess']) {
 
           this.chatMessages.push({
             message: this.message,
