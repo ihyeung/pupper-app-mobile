@@ -40,13 +40,13 @@ export class ImageUploadPage {
 
     selectProfileImage(sourceType: any) {
       const options: CameraOptions = {
-        quality: 50,
+        quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
         sourceType: sourceType,
         encodingType: this.camera.EncodingType.JPEG,
         correctOrientation: true,
         mediaType: this.camera.MediaType.PICTURE,
-        allowEdit: true //Allows image to be cropped/edited
+        allowEdit: false //Allows image to be cropped/edited
       };
 
       this.camera.getPicture(options).then(imagePath => {
@@ -81,31 +81,29 @@ export class ImageUploadPage {
       const pathToFile = this.parsePathForFile(imagePath);
       const name = this.parseFileNameForFile(imagePath, androidPhotoLibrary);
       const newFileName = this.createTempFileName();
-      this.file.copyFile(pathToFile, name, cordova.file.dataDirectory, newFileName).then(success => {
+      this.file.copyFile(pathToFile, name, cordova.file.dataDirectory, newFileName).then(async success => {
         const copiedFilePath = cordova.file.dataDirectory + newFileName;
         console.log("Image successfully copied: " + copiedFilePath);
-        this.imagePathForUpload = copiedFilePath;
-        this.normalizedImageURI = normalizeURL(copiedFilePath);
+        this.imagePathForUpload = imagePath;
+        this.normalizedImageURI = normalizeURL(imagePath);
+        this.validateImageSize(copiedFilePath);
 
-        this.validateImageSize();
       }, error => {
         console.error('ERROR: ' + JSON.stringify(error));
       });
     }
 
-    validateImageSize() {
-      this.file.resolveLocalFilesystemUrl(this.imagePathForUpload)
+    validateImageSize(imagePath: string) {
+      this.file.resolveLocalFilesystemUrl(imagePath)
       .then(fileEntry => {
         fileEntry.getMetadata(metadata => {
           console.log("Image bytes: " + metadata.size);
           if (metadata.size > MAX_IMAGE_BYTES) {
+            this.imagePathForUpload = null;
+            this.normalizedImageURI = null;
             let alert = this.utils.presentAlert("Selected image exceeds max allowable file size. " +
             "Please select a different image, or crop the photo prior to upload.");
             alert.present();
-            alert.onDidDismiss(() => {
-              this.imagePathForUpload = null;
-              this.normalizedImageURI = null;
-            });
           }
         })
       });
