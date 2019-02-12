@@ -40,13 +40,13 @@ export class ImageUploadPage {
 
     selectProfileImage(sourceType: any) {
       const options: CameraOptions = {
-        quality: 100,
+        quality: 50,
         destinationType: this.camera.DestinationType.FILE_URI,
         sourceType: sourceType,
         encodingType: this.camera.EncodingType.JPEG,
         correctOrientation: true,
         mediaType: this.camera.MediaType.PICTURE,
-        allowEdit: false //Allows image to be cropped/edited
+        allowEdit: true //Allows image to be cropped/edited
       };
 
       this.camera.getPicture(options).then(imagePath => {
