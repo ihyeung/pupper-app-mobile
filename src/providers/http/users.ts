@@ -11,7 +11,6 @@ export class Users {
 
   constructor(public http: Http, public utils: StorageUtilities) {
     this.basicHeaders = new Headers({ 'Content-Type': 'application/json' });
-    // ,'Origin': ENV.SERVICE_URL});
   }
 
   createUserAccount(username, password) {
@@ -37,7 +36,7 @@ export class Users {
   }
 
   getUserAccountByEmail(username: string, headers: any) {
-    const getUserAccountByEmailUrl = `${ENV.BASE_URL}/account?email=${username}`;
+    const getUserAccountByEmailUrl = this.authEndpointWithEmailParam(username);
 
     this.authHeaders = headers;
     console.log(getUserAccountByEmailUrl);
@@ -46,12 +45,16 @@ export class Users {
 
   updateUserAccount(userAccount: any) {
     const email = userAccount['username'];
-    const url = `${ENV.BASE_URL}/account?email=${email}`;
+    const url = this.authEndpointWithEmailParam(email);
     console.log(url);
     return this.http.put(url, userAccount, { headers: this.authHeaders });
   }
 
-  deleteUserAccount(user)
+  deleteUserAccount(email: string) {
+    const url = this.authEndpointWithEmailParam(email);
+    console.log(url);
+    return this.http.delete(url, { headers: this.authHeaders });
+  }
 
   getUserProfile(userProfileId: number, headers: any) {
     const url = `${ENV.BASE_URL}/user/${userProfileId}`;
@@ -63,7 +66,7 @@ export class Users {
   }
 
   getUserProfileByEmail(userEmail: string, headers: any) {
-    const retrieveUserProfileUrl = `${ENV.BASE_URL}/user?email=${userEmail}`;
+    const retrieveUserProfileUrl = this.authEndpointWithEmailParam(userEmail);
     console.log(retrieveUserProfileUrl);
 
     this.authHeaders = headers;
@@ -75,35 +78,36 @@ export class Users {
     const createUserProfileUrl = `${ENV.BASE_URL}/user`;
     console.log('Creating a new user profile: ' + createUserProfileUrl);
 
-    return this.http.post(createUserProfileUrl, userProfileObj,
-      { headers: authHeaders });
-    }
+    return this.http.post(createUserProfileUrl, userProfileObj, { headers: authHeaders });
+  }
 
-    updateUserProfileById(userProfileObj: any, userId: number) {
-      const url = `${ENV.BASE_URL}/user/${userId}`;
-      console.log('Updating user profile: ' + url);
+  updateUserProfileById(userProfileObj: any, userId: number) {
+    const url = `${ENV.BASE_URL}/user/${userId}`;
+    console.log('Updating user profile: ' + url);
 
-      return this.http.put(url, userProfileObj, { headers: this.authHeaders });
-    }
+    return this.http.put(url, userProfileObj, { headers: this.authHeaders });
+  }
 
-    updateLastLogin(userProfileObj: any, date: string) {
-      const updateLastLoginUrlString = ENV.BASE_URL +
-      "/user/" + userProfileObj['id'] + "?lastLogin=" + date;
+  updateLastLogin(userProfileObj: any, date: string) {
+    const updateLastLoginUrlString = `${ENV.BASE_URL}/user/${userProfileObj['id']}?lastLogin=${date}`;
 
-      console.log('updating last login: ' + updateLastLoginUrlString);
-      return this.http.put(updateLastLoginUrlString, userProfileObj,
-        { headers: this.authHeaders });
-      }
+    console.log('updating last login: ' + updateLastLoginUrlString);
+    return this.http.put(updateLastLoginUrlString, userProfileObj, { headers: this.authHeaders });
+  }
 
-      deleteUserAccount(email: string) {
-        const url = `${ENV.BASE_URL}/account?email=${email}`;
-        console.log(url);
-        return this.http.delete(url, { headers: this.authHeaders });
-      }
+  deleteUserProfileByEmail(email: string) {
+    const url = `${ENV.BASE_URL}/user?email=${email}`;
+    console.log(url);
+    return this.http.delete(url, { headers: this.authHeaders });
+  }
 
-      deleteUserProfile(email: string) {
-        const url = `${ENV.BASE_URL}/user?email=${email}`;
-        return this.http.delete(url, { headers: this.authHeaders });
-      }
+  deleteUserProfileByUserId(id: number) {
+    const url = `${ENV.BASE_URL}/user/${id}`;
+    console.log(url);
+    return this.http.delete(url, { headers: this.authHeaders });
+  }
 
-    }
+  private authEndpointWithEmailParam(email: string) {
+    return `${ENV.BASE_URL}/account?email=${email}`;
+  }
+}

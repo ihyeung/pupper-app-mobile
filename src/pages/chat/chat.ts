@@ -110,6 +110,9 @@ export class ChatPage {
 
   }
 
+  /*
+  * Use this method later to determine whether to display message bubble on left or right side of chat window
+  */
   private isIncomingMessage(message: any) {
     const senderId = message['matchProfileSender']['id'];
     if (senderId == this.toMatchProfile['id']) {
