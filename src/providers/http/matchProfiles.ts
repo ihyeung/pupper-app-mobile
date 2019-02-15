@@ -33,7 +33,7 @@ export class MatchProfiles {
 
     deleteMatchProfileById(userId: number, matchProfileId: number) {
       const url = `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
-      console.log("Deleting match profile:" + url);
+      console.log("Deleting match profile: " + url);
 
       return this.http.delete(url, { headers: this.authHeaders });
     }
