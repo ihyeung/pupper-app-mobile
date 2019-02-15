@@ -80,6 +80,7 @@ export class SettingsPage {
     }
 
     deleteAccount() {
+      console.log('delete account');
       this.dialog.prompt(
         'Are you sure you want to permanently delete your account and all associated user data? This action cannot be undone.',
         'Delete Account', ['Confirm', 'Cancel'], 'Enter your account email to confirm.')
@@ -99,11 +100,12 @@ export class SettingsPage {
     }
 
     deleteAllUserData() {
-      console.log('NOT IMPLEMENTED YET');
+      console.log('IMPLEMENTATION IS INCOMPLETE');
 
+      this.deleteMatchProfiles();
       //Required delete order (due to foreign key constraints):
-      this.deleteMatchPreferences();
-      this.deleteMessages();
+      // this.deleteMatchPreferences();
+      // this.deleteMessages();
       //1. delete all messages
       //1. delete match results
       //2. delete pupper profiles (if implemented)
@@ -154,11 +156,45 @@ export class SettingsPage {
     }
 
     deleteMatchProfiles() {
+      // this.matchProfiles.deleteAllMatchProfilesByUserId(this.userObj['id'])
+      this.matchProfiles.deleteAllMatchProfilesByUserId(94)
+      .map(res => res.json())
+      .subscribe(resp => {
+        console.log(resp);
+        if (resp.isSuccess) {
+          // console.log('all match profiles created by user id =' + this.userObj['id'] + ' were successfully deleted');
 
+          this.deleteUserProfile();
+        }
+      }, err => console.error("Error: ", JSON.stringify(err)));
     }
 
     deleteUserProfile() {
+      // this.users.deleteUserProfileByUserId(this.userObj['id'])
+      this.users.deleteUserProfileByUserId(94)
+      .map(res => res.json())
+      .subscribe(resp => {
+        console.log(resp);
+        if (resp.isSuccess) {
+          // console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
 
+          this.deleteUserAccount();
+        }
+      }, err => console.error("Error: ", JSON.stringify(err)));
+    }
+
+    deleteUserAccount() {
+      // const email = this.userObj['userAccount']['email'];
+      const email = "bryan@gmail.com";
+      console.log('Delete user account corresponding to email = ' + email);
+      this.users.deleteUserAccount(email)
+      .map(res => res.json())
+      .subscribe(resp => {
+        console.log(resp);
+        if (resp.isSuccess) {
+          console.log('user account was successfully deleted');
+        }
+      }, err => console.error("Error: ", JSON.stringify(err)));
     }
 
 
