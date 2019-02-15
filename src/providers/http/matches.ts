@@ -44,11 +44,12 @@ export class Matches {
     return this.http.post(submitUrl, requestBody, { headers: this.authHeaders });
   }
 
-  deleteMutualMatchResult(matchProfileId1: number, matchProfileId2: number) {
-    const url = `${ENV.BASE_URL}/matcher/result?matchProfileId1=${matchProfileId1}&matchProfileId2=${matchProfileId2}`;
+  updateMatchResult(matchProfileId: number, resultForMatchProfileId: number, result: boolean) {
+    const url = `${ENV.BASE_URL}/matcher/result?matchProfileId=${matchProfileId}` +
+    `&resultFor=${resultForMatchProfileId}&isMatch=${result}`;
     console.log(url);
 
-    return this.http.delete(url, { headers: this.authHeaders });
+    return this.http.post(url, {}, { headers: this.authHeaders });
   }
 
   deleteMatchResultsForMatchProfile(matchProfileId: number) {
