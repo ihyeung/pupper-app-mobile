@@ -32,7 +32,20 @@ export class Messages {
     `${ENV.BASE_URL}/message?sendFrom=${fromProfile['id']}&sendTo=${toProfile['id']}`;
 
     console.log('Sending message ' + sendMessageUrl);
-    return this.http.post(sendMessageUrl, requestBody,
-      { headers:  this.authHeaders });
+    return this.http.post(sendMessageUrl, requestBody, { headers: this.authHeaders });
+  }
+
+  deleteMessagesForMatchProfile(matchProfileId: number) {
+    const url = `${ENV.BASE_URL}/message/matchProfile/${matchProfileId}`;
+    console.log(url);
+
+    return this.http.delete(url, { headers: this.authHeaders });
+  }
+
+  deleteMessageHistory(matchProfileId1: number, matchProfileId2: number) {
+    const url = `${ENV.BASE_URL}/message?matchProfileId1=${matchProfileId1}&matchProfileId2=${matchProfileId2}`;
+    console.log(url);
+
+    return this.http.delete(url, { headers: this.authHeaders });
   }
 }

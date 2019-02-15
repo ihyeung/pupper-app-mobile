@@ -123,7 +123,7 @@ export class LoginPage {
       this.userService.getUserProfileByEmail(this.email, headers)
       .map(res => res.json())
       .subscribe(resp => {
-        console.log(resp);
+        console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
 
           const userProfileObj = resp['userProfiles'][0];
