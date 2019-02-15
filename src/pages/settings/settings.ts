@@ -82,15 +82,18 @@ export class SettingsPage {
     deleteAccount() {
       console.log('delete account');
       this.dialog.prompt(
-        'Are you sure you want to permanently delete your account and all associated user data? This action cannot be undone.',
-        'Delete Account', ['Confirm', 'Cancel'], 'Enter your account email to confirm.')
+        'Are you sure you want to permanently delete your account and all associated user data?'+
+        'This action cannot be undone. Enter your account email below and click to confirm.',
+        'Delete Account', ['Confirm', 'Cancel'], 'Enter your account email')
       .then(obj => {
         if (obj.buttonIndex != 1) {
           return;
         }
-          if (obj.input1 === undefined || !obj.input1 ||
+        if (obj.input1 === undefined || !obj.input1 ||
                       obj.input1 != this.userObj['userAccount']['username']) {
             console.log('Email address does not match');
+            let alert = this.utils.presentAlert('Error: The email address entered was invalid. Please try again.');
+            alert.present();
           } else {
             this.deleteAllUserData();
             this.returnToHomeScreen();
@@ -119,6 +122,7 @@ export class SettingsPage {
 
       this.app.getRootNav().setRoot('HomePage');
       // this.app.getRootNav().popToRoot();
+      //this.app.getRootNavById(); //TODO: update the above deprecated call
     }
 
     private promptCreateProfile(error: string, navTo: string) {
@@ -156,13 +160,12 @@ export class SettingsPage {
     }
 
     deleteMatchProfiles() {
-      // this.matchProfiles.deleteAllMatchProfilesByUserId(this.userObj['id'])
-      this.matchProfiles.deleteAllMatchProfilesByUserId(94)
+      this.matchProfiles.deleteAllMatchProfilesByUserId(this.userObj['id'])
       .map(res => res.json())
       .subscribe(resp => {
         console.log(resp);
         if (resp.isSuccess) {
-          // console.log('all match profiles created by user id =' + this.userObj['id'] + ' were successfully deleted');
+          console.log('all match profiles created by user id =' + this.userObj['id'] + ' were successfully deleted');
 
           this.deleteUserProfile();
         }
@@ -170,13 +173,12 @@ export class SettingsPage {
     }
 
     deleteUserProfile() {
-      // this.users.deleteUserProfileByUserId(this.userObj['id'])
-      this.users.deleteUserProfileByUserId(94)
+      this.users.deleteUserProfileByUserId(this.userObj['id'])
       .map(res => res.json())
       .subscribe(resp => {
         console.log(resp);
         if (resp.isSuccess) {
-          // console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
+          console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
 
           this.deleteUserAccount();
         }
@@ -184,8 +186,7 @@ export class SettingsPage {
     }
 
     deleteUserAccount() {
-      // const email = this.userObj['userAccount']['email'];
-      const email = "bryan@gmail.com";
+      const email = this.userObj['userAccount']['email'];
       console.log('Delete user account corresponding to email = ' + email);
       this.users.deleteUserAccount(email)
       .map(res => res.json())
