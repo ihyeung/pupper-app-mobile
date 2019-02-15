@@ -65,12 +65,12 @@ export class Users {
     return this.http.get(url, { headers: this.authHeaders });
   }
 
-  getUserProfileByEmail(userEmail: string, headers: any) {
-    const retrieveUserProfileUrl = this.authEndpointWithEmailParam(userEmail);
-    console.log(retrieveUserProfileUrl);
+  getUserProfileByEmail(email: string, headers: any) {
+    const url = `${ENV.BASE_URL}/user?email=${email}`;
+    console.log(url);
 
     this.authHeaders = headers;
-    return this.http.get(retrieveUserProfileUrl, { headers: this.authHeaders });
+    return this.http.get(url, { headers: this.authHeaders });
   }
 
   createUserProfile(userProfileObj, authHeaders) {
