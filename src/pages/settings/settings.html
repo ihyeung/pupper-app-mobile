@@ -61,16 +61,18 @@
         </ion-item>
       </ion-list>
 
-      <button ion-item (click)="saveSettings()">Save Settings</button>
+      <button ion-item (click)="saveSettings()">Save Changes</button>
       <button ion-item (click)="updateActiveMatchProfile()">Switch Active Match Profile </button>
 
     </ion-card>
 
       <ion-list>
         <button ion-item  full color="primary" (click)="editUserProfile()">Edit user profile</button>
-        <button ion-item outline color="primary" (click)="editMatchProfiles()">Edit profiles</button>
-        <button ion-item full color="primary" (click)="logout()">Log out</button>
+        <button ion-item outline color="primary" (click)="editMatchProfiles()">Edit matching profiles</button>
+        <br>
+        <button ion-item outline color="primary" (click)="editAccount()">Edit Account</button>
         <button ion-item outline color="primary" (click)="deleteAccount()">Delete Account</button>
+        <button ion-item full color="primary" (click)="logout()">Log out</button>
       </ion-list>
   </div>
 </ion-content>

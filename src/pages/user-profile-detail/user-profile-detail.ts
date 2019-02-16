@@ -64,7 +64,13 @@ export class UserProfileDetailPage {
     }
 
     editProfile(id: number) {
-      console.log('Editing user profile by id ' + id);
-      console.log('Not implemented yet');
+      console.log('Editing user profile by id ');
+
+      const profileData = {
+        imagePreview: this.profile.profileImage,
+        formData: this.profile,
+        isUpdate: true
+      };
+      this.navCtrl.push('CreateUserProfilePage', profileData);
     }
   }

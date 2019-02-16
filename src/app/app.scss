@@ -65,5 +65,10 @@ $toast-width: 75%;
 }
 
 .img_preview {
-  //ion-card image preview on create profile pages, image upload page
+  display: block;
+  width: 80vw;
+  height: 80vw;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }

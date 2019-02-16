@@ -80,7 +80,6 @@ export class ProfileSnapshotPage {
                 this.numMatchProfiles = resp['matchProfiles'].length;
                 this.matchProfilesList = resp['matchProfiles'];
 
-                this.storageUtils.storeData('profiles', this.matchProfilesList);
                 this.findAndStoreActiveMatchProfile();
               }
             }, err => console.error('ERROR: ', JSON.stringify(err)));
@@ -96,14 +95,22 @@ export class ProfileSnapshotPage {
             if (profile['isDefault']) {
               console.log('found active match profile');
               this.activeMatchProfileObj = profile;
+
+              this.storageUtils.storeData('profiles', this.matchProfilesList);
             }
           });
 
           if (this.activeMatchProfileObj === undefined || !this.activeMatchProfileObj) { //No active match profile set, default to first
+            console.log('no match profile is marked as default, defaulting to first match profile in list');
+
             this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
             this.activeMatchProfileObj['isDefault'] = true;
             this.updateMatchProfile(this.activeMatchProfileObj);
+            if (!this.matchProfilesList[0]['isDefault']) {
+              console.log('need to update reference to active match prfoile in match profile list before storing match profile list in storage');
+            }
           }
+          this.storageUtils.storeData('profiles', this.matchProfilesList);
           this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
         }
       }
@@ -114,7 +121,7 @@ export class ProfileSnapshotPage {
         this.matchProfService.updateMatchProfile(matchProfile, userId)
         .map(res => res.json())
         .subscribe(resp => {
-          if (!resp.isSuccess) {
+          if (resp.isSuccess) {
             console.log(resp);
           }
         }, err => console.error('ERROR: ', JSON.stringify(err)));
@@ -126,6 +133,7 @@ export class ProfileSnapshotPage {
             readOnly : readOnly,
             matchProfiles: this.matchProfilesList,
             matchProfile: this.activeMatchProfileObj
+            //TODO: pass in the desired match profile instead of always passing in the default match profile
           });
         } else {
           this.promptCreateMatchProfile();
@@ -144,7 +152,8 @@ export class ProfileSnapshotPage {
         if (!this.matchProfilesList || this.matchProfilesList.length < 3) {
           this.navCtrl.push('CreateMatchProfilePage');
         } else {
-          this.utils.presentToast('A maximum of 3 matching profiles can be created for a given user.');
+          let alert = this.utils.presentAlert('A maximum of 3 matching profiles can be created for a given user.');
+          alert.present();
         }
       }
 

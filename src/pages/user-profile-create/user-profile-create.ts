@@ -22,6 +22,8 @@ export class CreateUserProfilePage {
   userAccount: any;
   authHeaders: any;
   imagePreview: string;
+  uploadButtonLabel: string = 'Upload profile image';
+  createButtonLabel: string = 'Create profile';
 
 
   constructor (
@@ -57,6 +59,10 @@ export class CreateUserProfilePage {
     }
 
     extractNavParams() {
+      if (this.navParams.get('isUpdate')) {
+        this.uploadButtonLabel = 'Select a new profile image';
+        this.createButtonLabel = 'Update profile';
+      }
       const userData = this.navParams.get('formData');
       if (userData) {
         this.userAccount = userData.userAccount;
