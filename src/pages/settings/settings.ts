@@ -15,6 +15,7 @@ export class SettingsPage {
   matchProfileObj: any = [];
   userObj: any = [];
   matchProfileList: any = [];
+  deleteCount = 0;
 
   constructor(public navCtrl: NavController, public app: App,
     private storage: StorageUtilities, private dialog: Dialogs,
@@ -65,7 +66,10 @@ export class SettingsPage {
 
     editMatchProfiles() {
       this.dialog.alert('Match Profile button clicked')
-      .then(() => console.log('Dialog dismissed'))
+      .then(() => {
+        console.log('Dialog dismissed');
+        // this.profileModal(false);
+      })
       .catch(e => console.log('Error displaying dialog', e));
     }
 
@@ -80,18 +84,21 @@ export class SettingsPage {
     }
 
     deleteAccount() {
-      console.log('delete account');
+      if (!this.userObj) {
+        console.log('null user object, delete of user data failed');
+        return;
+      }
+      const placeholder = 'Enter your account email';
       this.dialog.prompt(
         'Are you sure you want to permanently delete your account and all associated user data?'+
         'This action cannot be undone. Enter your account email below and click to confirm.',
-        'Delete Account', ['Confirm', 'Cancel'], 'Enter your account email')
+        'Delete Account', ['Confirm', 'Cancel'], placeholder)
       .then(obj => {
         if (obj.buttonIndex != 1) {
           return;
         }
-        if (obj.input1 === undefined || !obj.input1 ||
+        if (obj.input1 === undefined || !obj.input1 || obj.input1.indexOf(placeholder) >= 0 ||
                       obj.input1 != this.userObj['userAccount']['username']) {
-            console.log('Email address does not match');
             let alert = this.utils.presentAlert('Error: The email address entered was invalid. Please try again.');
             alert.present();
           } else {
@@ -105,16 +112,13 @@ export class SettingsPage {
     deleteAllUserData() {
       console.log('IMPLEMENTATION IS INCOMPLETE');
 
-      this.deleteMatchProfiles();
-      //Required delete order (due to foreign key constraints):
-      // this.deleteMatchPreferences();
-      // this.deleteMessages();
-      //1. delete all messages
-      //1. delete match results
-      //2. delete pupper profiles (if implemented)
-      //3. delete match Profiles
-      //4. delete user profile
-      //5. delete user account
+      if (!this.matchProfileList || this.matchProfileList.length == 0 || !this.userObj) {
+        console.log('error deleting all user data: match profile list is null or empty, or user object is null');
+        return;
+      }
+      this.matchProfileList.forEach(matchProfile => {
+        this.deleteMatchPreferences(matchProfile['id']);
+      });
     }
 
     returnToHomeScreen() {
@@ -139,31 +143,58 @@ export class SettingsPage {
       return await modal.present();
     }
 
-    deleteMatchPreferences() {
-      this.matchProfiles.deleteMatchPreferences(this.matchProfileObj['id'])
+    deleteMatchPreferences(matchProfileId: number) {
+
+      this.matchProfiles.deleteMatchPreferences(matchProfileId)
       .map(res => res.json())
       .subscribe(response => {
-        console.log(response);
+        console.log(JSON.stringify(response));
         if (response.isSuccess) {
-          console.log('match preferences deleted');
+          console.log('match preferences deleted for matchProfileId=' + matchProfileId);
+          this.deleteMessages(matchProfileId);
         }
       }
       , err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
-    deleteMessages() {
-
+    deleteMessages(matchProfileId: number) {
+      this.msgs.deleteMessagesForMatchProfile(matchProfileId)
+      .map(res => res.json())
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        if (response.isSuccess) {
+          console.log('messages deleted for matchProfileId=' + matchProfileId);
+          this.deleteMatchResults(matchProfileId);
+        }
+      }
+      , err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
-    deleteMatchResults() {
+    deleteMatchResults(matchProfileId: number) {
+      this.matches.deleteMatchResultsForMatchProfile(matchProfileId)
+      .map(res => res.json())
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        if (response.isSuccess) {
+          console.log('match result data deleted for matchProfileId=' + matchProfileId);
+          this.deleteCount++;
+          if (this.deleteCount == this.matchProfileList.length) {
+            //Only delete match profiles after all message/preference/matchresult
+            //data referencing the match profiles to delete has been deleted
+            console.log('finished deleting message, match_preferences, and match_result data for all match profiles');
 
+            this.deleteMatchProfiles();
+          }
+        }
+      }
+      , err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     deleteMatchProfiles() {
       this.matchProfiles.deleteAllMatchProfilesByUserId(this.userObj['id'])
       .map(res => res.json())
       .subscribe(resp => {
-        console.log(resp);
+        console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
           console.log('all match profiles created by user id =' + this.userObj['id'] + ' were successfully deleted');
 
@@ -176,7 +207,7 @@ export class SettingsPage {
       this.users.deleteUserProfileByUserId(this.userObj['id'])
       .map(res => res.json())
       .subscribe(resp => {
-        console.log(resp);
+        console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
           console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
 
@@ -191,11 +222,15 @@ export class SettingsPage {
       this.users.deleteUserAccount(email)
       .map(res => res.json())
       .subscribe(resp => {
-        console.log(resp);
+        console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
           console.log('user account was successfully deleted');
         }
       }, err => console.error("Error: ", JSON.stringify(err)));
+    }
+
+    editAccount() {
+      console.log('not implemented yet');
     }
 
 
