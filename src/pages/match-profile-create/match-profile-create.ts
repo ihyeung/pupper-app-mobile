@@ -57,6 +57,9 @@ export class CreateMatchProfilePage {
   dogAges: string[];
   dogEnergies: string[];
 
+  uploadButtonLabel: string = 'Upload profile image';
+  createButtonLabel: string = 'Create profile';
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public storageUtils: StorageUtilities,
     public matchProfiles: MatchProfiles, public users: Users,
@@ -98,6 +101,10 @@ export class CreateMatchProfilePage {
     }
 
     extractNavParamsAndRetrieveStoredData() {
+      if (this.navParams.get('isUpdate')) {
+        this.uploadButtonLabel = 'Select a new profile image';
+        this.createButtonLabel = 'Update profile';
+      }
       this.imagePreview = this.navParams.get('imagePreview');
       this.imageFilePath = this.navParams.get('filePath');
       const profileData = this.navParams.get('formData');
@@ -108,7 +115,7 @@ export class CreateMatchProfilePage {
         this.repopulateInputFieldData(profileData, preferenceData);
       }
       const newUser = this.navParams.get('isNewUser');
-      newUser === null || !newUser ?   this.retrieveDataFromStorage(false):
+      newUser === null || !newUser ? this.retrieveDataFromStorage(false):
       this.retrieveDataFromStorage(true);
     }
 
