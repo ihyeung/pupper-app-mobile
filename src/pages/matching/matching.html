@@ -19,9 +19,10 @@
           <ion-label>{{card.lastActive}}</ion-label>
           <ion-label>{{card.info}}</ion-label>
           <ion-label>IS MATCH: '{{card.isMatch}}'</ion-label>
+          <ion-label [hidden]="card.message == null">{{card.message}}</ion-label>
           </ion-list>
         </div>
-      <div clas="card_info">  
+      <div clas="card_info">
       </div>
     </sc-card>
   </div>
