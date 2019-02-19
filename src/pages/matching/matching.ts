@@ -82,12 +82,13 @@ export class MatchingPage {
       .subscribe(resp => {
         console.log(JSON.stringify(resp));
         if (resp.length == 0) {
-          this.displayErrorModal();
+          this.matchingErrorModal();
         } else {
           this.addToDeck(resp);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
+
 
     addToDeck(nextBatch: any) {
       nextBatch.forEach(profile => {
@@ -154,9 +155,11 @@ export class MatchingPage {
       });
     }
 
-    private displayErrorModal() {
+    private matchingErrorModal() {
       console.log('No more profiles left');
-      //TODO: Implement this
+      this.deckOfCards.push({
+        message: "There are no more match profiles to display. Try expanding your zip code radius"
+      });
     }
 
     onMutualMatch(profileId: number) {
