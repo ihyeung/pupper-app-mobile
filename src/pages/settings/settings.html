@@ -13,7 +13,7 @@
         <ion-item-divider>
           Your Match Profiles
         </ion-item-divider>
-        <button ion-item *ngFor="let profile of profiles" (click)="viewMatchProfile(profile)">
+        <button ion-item *ngFor="let profile of matchProfileList" (click)="viewMatchProfile(profile)">
           <ion-avatar item-start>
             <img src="{{profile.profileImage}}">
           </ion-avatar>
@@ -31,8 +31,8 @@
         </ion-item>
         <ion-item>
           <ion-label color="primary">Match Radius</ion-label>
-          <ion-range [(ngModel)]="searchRadius" min="0" max="50" step="5" pin="true" color="secondary">
-            <ion-label range-left>0 miles</ion-label>
+          <ion-range [(ngModel)]="searchRadius" min="3" max="50" step="5" pin="true" color="secondary">
+            <ion-label range-left>3 miles</ion-label>
             <ion-label range-right>50 miles</ion-label>
           </ion-range>
         </ion-item>
