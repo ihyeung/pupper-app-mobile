@@ -21,6 +21,8 @@
   <div [ngSwitch]="inboxSelector">
     <div class="inbox-container" *ngIf="messagesReady">
       <!-- <ion-card> -->
+      <ion-searchbar placeholder="Search messages" [(ngModel)]="messageSearchInput" (ionInput)="filterMessages()"></ion-searchbar>
+
       <ion-list *ngSwitchCase="'messages'">
         <button ion-item *ngFor="let inboxMessagePreview of inboxMessagePreviews" (click)="viewMessageHistory(inboxMessagePreview)">
           <ion-avatar item-start>
@@ -34,6 +36,7 @@
     </div>
     <div class="match-container" *ngIf="matchesReady">
       <!-- <ion-card> -->
+      <ion-searchbar placeholder="Search matches" [(ngModel)]="matchSearchInput" (ionInput)="filterMatches()"></ion-searchbar>
       <ion-list *ngSwitchCase="'matches'">
         <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)">
           <ion-avatar item-start>

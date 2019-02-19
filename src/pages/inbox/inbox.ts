@@ -17,7 +17,8 @@ export class MessageInboxPage {
   matchesList: any = [];
   messagesReady: boolean = false;
   matchesReady: boolean = false;
-
+  matchSearchInput: string = '';
+  messageSearchInput: string = '';
 
   constructor(public navCtrl: NavController,
     public matchService: Matches, public msgService: Messages,
@@ -120,4 +121,11 @@ export class MessageInboxPage {
     });
   }
 
+  filterMessages() {
+    console.log('not implemented yet');
+  }
+  
+  filterMatches() {
+    console.log('not implemented yet');
+  }
 }
