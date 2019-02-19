@@ -125,12 +125,10 @@ export class LoginPage {
       .subscribe(resp => {
         console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
-
           const userProfileObj = resp['userProfiles'][0];
           this.retrieveMatchProfileData(userProfileObj, loader);
         } else {
           this.dismissLoader(loader);
-
 
           this.storageUtils.storeData('email', this.email);
           this.storageUtils.storeData('password', this.password);
