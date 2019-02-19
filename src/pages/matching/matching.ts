@@ -58,7 +58,7 @@ export class MatchingPage {
           let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
           alert.present();
           alert.onDidDismiss(() => {
-           this.navCtrl.push('CreateMatchProfilePage');
+            this.navCtrl.push('CreateMatchProfilePage');
 
           });
 
@@ -74,12 +74,13 @@ export class MatchingPage {
 
       let httpGet;
       if (ENV.RETRIEVE_WITH_ZIP_DATA) {
-        httpGet = this.matchesService.getNextBatch(matchProfileId, false, true);
+        httpGet = this.matchesService.getNextBatch(matchProfileId, false, false);
       } else {
         httpGet = this.matchesService.getNextBatch(matchProfileId, true, false);
       }
       httpGet.map(res => res.json())
-        .subscribe(resp => {
+      .subscribe(resp => {
+        console.log(JSON.stringify(resp));
         if (resp.length == 0) {
           this.displayErrorModal();
         } else {
