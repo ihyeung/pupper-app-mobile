@@ -48,9 +48,12 @@ export class MatchProfiles {
     getMatchProfilesByUserId(userProfileId: number){
       const url = `${ENV.BASE_URL}/user/${userProfileId}/matchProfile`;
 
+      if (!this.authHeaders) {
+        console.log("Auth headers failed to be retrieved from storage");
+      }
       console.log("Retrieving match profiles for user: " + url);
-      return this.http.get(
-        url, { headers: this.authHeaders });
+
+      return this.http.get(url, { headers: this.authHeaders });
     }
 
     getMatchProfileByMatchProfileId(matchProfileId: number) {
