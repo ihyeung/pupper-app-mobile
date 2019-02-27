@@ -253,16 +253,26 @@ export class SettingsPage {
         }, err => console.error("Error: ", JSON.stringify(err)));
       }
 
+      // deleteUserProfile() {
+      //   this.users.deleteUserProfileByUserId(this.userObj['id'])
+      //   .map(res => res.json())
+      //   .subscribe(resp => {
+      //     console.log(JSON.stringify(resp));
+      //     if (resp.isSuccess) {
+      //       console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
+      //
+      //       this.deleteUserAccount();
+      //     }
+      //   }, err => console.error("Error: ", JSON.stringify(err)));
+      // }
+
       deleteUserProfile() {
-        this.users.deleteUserProfileByUserId(this.userObj['id'])
+        this.users.deleteUserProfileByEmail(this.userObj['userAccount']['username'])
         .map(res => res.json())
         .subscribe(resp => {
           console.log(JSON.stringify(resp));
-          if (resp.isSuccess) {
-            console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
-
+          //Delete user profile by user email endpoint returns void
             this.deleteUserAccount();
-          }
         }, err => console.error("Error: ", JSON.stringify(err)));
       }
 
