@@ -15,7 +15,7 @@ export class SettingsPage {
   matchProfileObj: any = [];
   userObj: any = [];
   matchProfileList: any = [];
-
+  matchPreferences: any = []; //match preferences for default match profile
   hideProfile: boolean = false;
   showSimilar: boolean = false;
   size: any = [];
@@ -31,11 +31,32 @@ export class SettingsPage {
     private users: Users, private msgs: Messages, private utils: Utilities,
     public modal: ModalController) { }
 
+
     ionViewDidLoad() {
       console.log('ionViewDidLoad SettingsPage');
+      this.retrieveDataFromStorage();
+    }
+
+    retrieveDataFromStorage() {
       this.storage.getDataFromStorage('match').then(val => {
-        this.matchProfileObj = val;
-        this.userObj = val['userProfile'];
+        if (!val) {
+          console.log("Error: no default match profile was retrieved from storage");
+        } else {
+          this.matchProfileObj = val;
+          this.userObj = val['userProfile'];
+        }
+      });
+
+      this.storage.getDataFromStorage('preferences').then(val => {
+        if (!val) {
+          console.log("No matching preferences found in storage");
+          if (this.matchProfileObj) {
+            console.log('Making http call to retrieve matching preferences for match profile id =' + this.matchProfileObj.id);
+            this.getMatchPreferencesForDefaultMatchProfile(this.matchProfileObj.id);
+          }
+        } else {
+          this.matchPreferences = val;
+        }
       });
 
       this.storage.getDataFromStorage('profiles').then(val => {
@@ -43,10 +64,24 @@ export class SettingsPage {
       });
     }
 
+    getMatchPreferencesForDefaultMatchProfile(matchProfileId: number) {
+      this.matchProfiles.getMatchProfileByMatchProfileId(matchProfileId)
+      .map(res => res.json())
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        if (response.isSuccess) {
+          this.matchPreferences = response['matchPreferences'];
+          console.log(JSON.stringify(this.matchPreferences));
+          this.storage.storeData('preferences', this.matchPreferences);
+        }
+      }
+      , err => console.error('ERROR: ', JSON.stringify(err)));
+    }
+
     updateActiveMatchProfile() {
       if (!this.matchProfileObj) {
-        console.log('No active match profile was stored in storage, means no match profiles were found for user');
-        this.promptCreateProfile(MATCH_PROFILE_ERROR, 'CreateMatchProfilePage');
+        console.log('No active match profile: either no match profiles for user, or none of the existing match profiles were marked as default');
+        // this.promptCreateProfile(MATCH_PROFILE_ERROR, 'CreateMatchProfilePage');
       } else {
         console.log('total number of match profiles: ' + this.matchProfileList.length);
         this.matchProfileList.forEach(each => {

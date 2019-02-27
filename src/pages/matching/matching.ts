@@ -55,6 +55,7 @@ export class MatchingPage {
       this.matchingResults = new Array<MatchingResult>();
       this.storageUtils.getDataFromStorage('match').then(val => {
         if (!val) {
+          console.log('No default match profile was found in storage');
           let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
           alert.present();
           alert.onDidDismiss(() => {
@@ -72,13 +73,8 @@ export class MatchingPage {
     retrieveNextProfileBatch() {
       const matchProfileId = this.matchProfileObj['id'];
 
-      let httpGet;
-      if (ENV.RETRIEVE_WITH_ZIP_DATA) {
-        httpGet = this.matchesService.getNextBatch(matchProfileId, false, false);
-      } else {
-        httpGet = this.matchesService.getNextBatch(matchProfileId, true, false);
-      }
-      httpGet.map(res => res.json())
+      this.matchesService.getNextBatch(matchProfileId, ENV.RANDOMIZE_MATCHING, ENV.RETRIEVE_WITH_ZIP_DATA)
+      .map(res => res.json())
       .subscribe(resp => {
         console.log(JSON.stringify(resp));
         if (resp.length == 0) {
