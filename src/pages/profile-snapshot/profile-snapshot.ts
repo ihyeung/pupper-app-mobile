@@ -32,7 +32,10 @@ export class ProfileSnapshotPage {
 
     loadProfileSnapshotData() {
       this.storageUtils.getDataFromStorage('match').then(match => {
-        if (!match) { //No match profile in storage yet (i.e., profile snapshot page from user login)
+        if (!match) {
+          //No match profile in storage yet (2 use cases):
+          //1. Routed from user login
+          //2. Routed after creating a new match profile that the user DID NOT mark as default/active match profile
           this.storageUtils.getDataFromStorage('user').then(user => {
             if (!user) {
               let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
@@ -45,7 +48,8 @@ export class ProfileSnapshotPage {
               this.retrieveMatchProfilesForUser(user);
             }
           });
-        } else { //Match profile retreived from storage (i.e., profile snapshot page from create match profile page)
+        } else {
+           //Match profile retreived from storage (i.e., profile snapshot page from create match profile page where user created a default match profile)
           this.initUserData(match.userProfile);
           this.retrieveMatchProfilesForUser(match.userProfile);
         }
