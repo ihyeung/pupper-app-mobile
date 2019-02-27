@@ -244,9 +244,8 @@ export class CreateMatchProfilePage {
             console.log('match preferences inserted successfully');
             const matchPreferencesListObj = response['matchPreferences'];
             console.log(matchPreferencesListObj);
-            this.storageUtils.storeData('preferences', matchPreferencesListObj);
 
-            this.createMatchProfileSuccessHandler(matchProfileObj);
+            this.createMatchProfileSuccessHandler(matchProfileObj, matchPreferencesListObj);
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
@@ -254,10 +253,12 @@ export class CreateMatchProfilePage {
         });
       }
 
-      createMatchProfileSuccessHandler(matchProfileObj: any) {
-        this.storageUtils.storeData('match', matchProfileObj);
+      createMatchProfileSuccessHandler(matchProfileObj: any, matchPreferences: any) {
+        if (this.isActiveMatchProfile) { //Only store newly created match profile and match preferences if it was marked as default
+          this.storageUtils.storeData('preferences', matchPreferences);
+          this.storageUtils.storeData('match', matchProfileObj);
+        }
         this.utils.presentToast("Match Profile Created! Please wait ...");
-
         this.navCtrl.push('TabsPage');
       }
 
