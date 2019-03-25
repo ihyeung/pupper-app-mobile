@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 import { StorageUtilities, Utilities, Messages, Matches  } from '../../providers';
-import { DEFAULT_IMG, MATCH_PROFILE_ERROR } from '../';
+import { DEFAULT_IMG, MATCH_PROFILE_ERROR, DEFAULT_ABOUT_ME } from '../';
 
 @IonicPage()
 @Component({
@@ -47,6 +47,9 @@ export class MessageInboxPage {
         matchProfileList.forEach(match => {
           console.log(match);
 
+          const profileBio = match['aboutMe'] === undefined || match['aboutMe'] === '' ?
+                      DEFAULT_ABOUT_ME : match['aboutMe'];
+
           const img = this.utils.validateImageUri(match['profileImage'], DEFAULT_IMG);
           this.matchesList.push({
             id: match['id'],
@@ -55,7 +58,7 @@ export class MessageInboxPage {
             breed: match['breed'],
             lifeStage: match['lifeStage'],
             energyLevel: match['energyLevel'],
-            aboutMe: match['aboutMe'],
+            aboutMe: profileBio,
             birthdate: match['birthdate'],
             sex: match['sex'],
             userProfile: match['userProfile']
@@ -121,10 +124,22 @@ export class MessageInboxPage {
     });
   }
 
+  unmatchWithMatchProfile(id: number) {
+    console.log('unmatch with match profile: ' + id);
+    console.log('not implemented yet');
+
+  }
+
+  reportUser(userProfile: any) {
+    console.log('reporting user: ' + userProfile.id);
+    console.log('not implemented yet');
+
+  }
+
   filterMessages() {
     console.log('not implemented yet');
   }
-  
+
   filterMatches() {
     console.log('not implemented yet');
   }
