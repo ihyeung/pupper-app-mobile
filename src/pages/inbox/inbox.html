@@ -20,10 +20,10 @@
 
   <div [ngSwitch]="inboxSelector">
     <div class="inbox-container" *ngIf="messagesReady">
-      <!-- <ion-card> -->
-      <ion-searchbar placeholder="Search messages" [(ngModel)]="messageSearchInput" (ionInput)="filterMessages()"></ion-searchbar>
+      <ion-searchbar *ngSwitchCase="'messages'" placeholder="Search messages" [(ngModel)]="messageSearchInput" (ionInput)="filterMessages()"></ion-searchbar>
 
       <ion-list *ngSwitchCase="'messages'">
+        <ion-item>
         <button ion-item *ngFor="let inboxMessagePreview of inboxMessagePreviews" (click)="viewMessageHistory(inboxMessagePreview)">
           <ion-avatar item-start>
             <img src="{{inboxMessagePreview.image}}">
@@ -32,13 +32,17 @@
           <h3>{{inboxMessagePreview.timestamp}}</h3>
           <p>{{inboxMessagePreview.message}}</p>
         </button>
+        </ion-item>
       </ion-list>
     </div>
     <div class="match-container" *ngIf="matchesReady">
       <!-- <ion-card> -->
-      <ion-searchbar placeholder="Search matches" [(ngModel)]="matchSearchInput" (ionInput)="filterMatches()"></ion-searchbar>
-      <ion-list *ngSwitchCase="'matches'">
-        <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)">
+      <ion-searchbar *ngSwitchCase="'matches'" placeholder="Search matches" [(ngModel)]="matchSearchInput" (ionInput)="filterMatches()"></ion-searchbar>
+      <ion-list *ngSwitchCase="'matches'" lines="none">
+        <!-- <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)"> -->
+        <ion-item *ngFor="let match of matchesList">
+          <ion-item-sliding>
+            <ion-item>
           <ion-avatar item-start>
             <img src="{{match.profileImage}}">
           </ion-avatar>
@@ -47,10 +51,24 @@
           <h3>{{match.sex}}</h3>
           <h4>ENERGY LEVEL  {{match.energyLevel}}  |   AGE   {{match.lifeStage}}</h4>
           <p>{{match.aboutMe}}</p>
-        </button>
-
+          </ion-item>
+          <ion-item-options>
+            <button ion-button color="primary" (click)="viewMatchProfile(match)">
+              <ion-icon name="open" item-start></ion-icon>
+              VIEW
+            </button>
+            <button ion-button color="secondary" (click)="unmatchWithMatchProfile(match.id)">
+              <ion-icon name="shuffle" item-start></ion-icon>
+              UNMATCH
+            </button>
+            <button ion-button color="dark" (click)="reportUser(match.userProfile)">
+              <ion-icon name="flag" item-start></ion-icon>
+              REPORT
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-item>
       </ion-list>
-      <!-- </ion-card> -->
     </div>
   </div>
 </ion-content>

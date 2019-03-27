@@ -56,7 +56,7 @@ export class Utilities {
 
     validateImageUri(imageUri: string, defaultImg: string) {
       if (imageUri === undefined || !imageUri) {
-        console.log('Error: undefined or null');
+        console.log('Error: Image URI undefined or null');
         return defaultImg;
       }
       if (!(imageUri.startsWith("https://") || imageUri.startsWith("http://"))) {
