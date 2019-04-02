@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, App, IonicPage, ModalController } from 'ionic-angular';
 import { StorageUtilities, Utilities, Matches, MatchProfiles, Users, Messages } from '../../providers';
 import { Dialogs } from '@ionic-native/dialogs';
-import { MATCH_PROFILE_ERROR } from '../';
+// import { MATCH_PROFILE_ERROR } from '../';
 import { UserProfileDetailPage } from '../user-profile-detail/user-profile-detail';
 
 @IonicPage()
@@ -114,7 +114,6 @@ export class SettingsPage {
       this.dialog.alert('Match Profile button clicked')
       .then(() => {
         console.log('Dialog dismissed');
-        // this.profileModal(false);
       })
       .catch(e => console.log('Error displaying dialog', e));
     }
@@ -252,19 +251,6 @@ export class SettingsPage {
           }
         }, err => console.error("Error: ", JSON.stringify(err)));
       }
-
-      // deleteUserProfile() {
-      //   this.users.deleteUserProfileByUserId(this.userObj['id'])
-      //   .map(res => res.json())
-      //   .subscribe(resp => {
-      //     console.log(JSON.stringify(resp));
-      //     if (resp.isSuccess) {
-      //       console.log('user profile for user id =' + this.userObj['id'] + ' was successfully deleted');
-      //
-      //       this.deleteUserAccount();
-      //     }
-      //   }, err => console.error("Error: ", JSON.stringify(err)));
-      // }
 
       deleteUserProfile() {
         this.users.deleteUserProfileByEmail(this.userObj['userAccount']['username'])
