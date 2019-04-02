@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { Utilities, Users, StorageUtilities } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
@@ -117,9 +116,9 @@ export class CreateUserProfilePage {
           if (this.imageFilePath) {
             this.uploadProfileImageForUser(userProfileObj, loader);
           } else {
-              console.log('No image file uploaded, skip profile image upload logic');
-              this.dismissLoader(loader);
-              this.storeUserAndProceedToNextPage(userProfileObj);
+            console.log('No image file uploaded, skip profile image upload logic');
+            this.dismissLoader(loader);
+            this.storeUserAndProceedToNextPage(userProfileObj);
           }
         }
       }, err => {
@@ -135,11 +134,11 @@ export class CreateUserProfilePage {
       try {
         response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
       } catch(err) {
-         console.error(JSON.stringify(err));
-         this.dismissLoader(loader);
+        console.error(JSON.stringify(err));
+        this.dismissLoader(loader);
 
-         let alert = this.utils.presentAlert('Error uploading profile image: please select a smaller image');
-         alert.present();
+        let alert = this.utils.presentAlert('Error uploading profile image: please select a smaller image');
+        alert.present();
       }
       console.log('response from file upload: ' + JSON.stringify(response));
       this.dismissLoader(loader);
