@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { StorageUtilities } from '../../providers';
 import { environment as ENV } from '../../environments/environment';
-import { User } from '../../models/user';
+// import { User } from '../../models/user';
 
 @Injectable()
 export class Users {
