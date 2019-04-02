@@ -113,7 +113,7 @@ export class CreateUserProfilePage {
         if (result.isSuccess) {
           const userProfileObj = result['userProfiles'][0];
           console.log('User Profile created successfully');
-
+          //TODO: use loader/spinner
           if (this.imageFilePath) {
             this.uploadProfileImageForUser(userProfileObj, loader);
           } else {
@@ -155,7 +155,7 @@ export class CreateUserProfilePage {
 
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
-      this.utils.presentToast("User Profile Created! Please wait ...");
+      console.log("User Profile Created! Please wait ...");
       this.navCtrl.push('CreateMatchProfilePage', {
         isNewUser: true  //If new user, don't retrieve match profiles list on create match profile page
       });
