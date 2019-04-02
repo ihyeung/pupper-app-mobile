@@ -105,7 +105,6 @@ export class LoginPage {
       .subscribe(response => {
         //A response is only received if login is successful (only applies to this specific endpoint)
         const authObj = this.storageUtils.extractAndStoreAuthHeaders(response);
-        // this.utils.presentToast("Login success! Please wait...");
         let loader = this.loadCtrl.create({
           content: "Login success. Loading user data ..."
         });
@@ -188,7 +187,6 @@ export class LoginPage {
       .subscribe(resp => {
         if (resp.isSuccess) {
           this.updateLastLogin(userProfileObj, loader, 'TabsPage'); //Update last login, pass in TabsPage since matchProfiles were successfully retrieved
-          // console.log(JSON.stringify(resp.matchProfiles));
           const profiles = resp.matchProfiles;
           this.storageUtils.storeData('profiles', profiles);
         } else  {

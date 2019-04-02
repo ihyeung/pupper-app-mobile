@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { Utilities, Users, StorageUtilities } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
@@ -113,13 +112,13 @@ export class CreateUserProfilePage {
         if (result.isSuccess) {
           const userProfileObj = result['userProfiles'][0];
           console.log('User Profile created successfully');
-
+          //TODO: use loader/spinner
           if (this.imageFilePath) {
             this.uploadProfileImageForUser(userProfileObj, loader);
           } else {
-              console.log('No image file uploaded, skip profile image upload logic');
-              this.dismissLoader(loader);
-              this.storeUserAndProceedToNextPage(userProfileObj);
+            console.log('No image file uploaded, skip profile image upload logic');
+            this.dismissLoader(loader);
+            this.storeUserAndProceedToNextPage(userProfileObj);
           }
         }
       }, err => {
@@ -135,11 +134,11 @@ export class CreateUserProfilePage {
       try {
         response = await this.storageUtils.uploadFile(userId, null, this.imageFilePath);
       } catch(err) {
-         console.error(JSON.stringify(err));
-         this.dismissLoader(loader);
+        console.error(JSON.stringify(err));
+        this.dismissLoader(loader);
 
-         let alert = this.utils.presentAlert('Error uploading profile image: please select a smaller image');
-         alert.present();
+        let alert = this.utils.presentAlert('Error uploading profile image: please select a smaller image');
+        alert.present();
       }
       console.log('response from file upload: ' + JSON.stringify(response));
       this.dismissLoader(loader);
@@ -155,7 +154,7 @@ export class CreateUserProfilePage {
 
     private storeUserAndProceedToNextPage(userProfileObj: any) {
       this.storageUtils.storeData('user', userProfileObj);
-      this.utils.presentToast("User Profile Created! Please wait ...");
+      console.log("User Profile Created! Please wait ...");
       this.navCtrl.push('CreateMatchProfilePage', {
         isNewUser: true  //If new user, don't retrieve match profiles list on create match profile page
       });
