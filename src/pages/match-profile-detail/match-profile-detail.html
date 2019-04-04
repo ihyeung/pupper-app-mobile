@@ -1,16 +1,11 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title *ngIf="profileReady">{{ profile.names }}</ion-title>
   </ion-navbar>
-
 </ion-header>
-
-
 <ion-content>
   <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
   </div>
-
   <div class="profile-detail" padding *ngIf="profileReady">
     <h2>{{profile.names}}</h2>
     <h2>{{profile.sex}}</h2>
@@ -22,7 +17,5 @@
     <button ion-item  full color="secondary" (click)="editMatchProfile(profile)" *ngIf="!readOnly && profileReady">Edit Match Profile</button>
     <button ion-button outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profileReady && !isDefaultForActiveUser">Set As Default Match Profile</button>
     <button ion-item  full color="secondary" (click)="viewUserProfile(profile)" *ngIf="readOnly && profileReady">View My Owner's Profile</button>
-
   </div>
-
 </ion-content>

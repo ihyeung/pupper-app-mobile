@@ -36,7 +36,6 @@
       </ion-list>
     </div>
     <div class="match-container" *ngIf="matchesReady">
-      <!-- <ion-card> -->
       <ion-searchbar *ngSwitchCase="'matches'" placeholder="Search matches" [(ngModel)]="matchSearchInput" (ionInput)="filterMatches()"></ion-searchbar>
       <ion-list *ngSwitchCase="'matches'" lines="none">
         <!-- <button ion-item *ngFor="let match of matchesList" (click)="viewMatchProfile(match)"> -->

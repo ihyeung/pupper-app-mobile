@@ -1,16 +1,11 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title *ngIf="profileReady">{{ profile.firstName }} {{ profile.lastName[0] }}.</ion-title>
   </ion-navbar>
-
 </ion-header>
-
-
 <ion-content>
   <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
   </div>
-
   <div class="profile-detail" padding *ngIf="profileReady">
     <h2>{{profile.firstName}} {{profile.lastName}}</h2>
     <h3>Last active {{profile.lastLogin}}</h3>
@@ -18,8 +13,6 @@
     <h3>{{profile.birthdate}} {{profile.sex}}</h3>
     <p>{{profile.maritalStatus}}</p>
     <p>{{profile.zip}}</p>
-
     <button ion-item  full color="secondary" (click)="editProfile(profile.id)" *ngIf="profileReady && !readOnly">Edit Profile</button>
-
   </div>
 </ion-content>

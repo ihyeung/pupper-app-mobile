@@ -7,7 +7,6 @@
 </ion-header>
 
 <ion-content padding>
-  <!-- <ion-card> -->
   <div padding>
     <ion-segment [(ngModel)]="userAuthType" color="primary">
       <ion-segment-button value="log in" class="segmentButton">
@@ -18,7 +17,6 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-
   <p *ngIf="loginAttempted" style="color: #ea6153;">{{errorMessage}}</p>
     <form #signForm="ngForm" [formGroup]="userForm" (ngSubmit)="authenticateUser()">
       <ion-list no-lines>
@@ -45,7 +43,5 @@
       </ion-item>
   <button ion-button full color="primary" type="submit" class="btn" [disabled]="userAuthType == 'sign up' && !(userForm.controls.password.value == userForm.controls.confirm.value)">{{userAuthType}}</button>
 </ion-list>
-
 </form>
-<!-- </ion-card> -->
 </ion-content>
