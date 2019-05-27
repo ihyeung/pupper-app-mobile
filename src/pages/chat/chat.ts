@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage} from 'ionic-angular';
-import { Http } from '@angular/http';
-import { Utilities, StorageUtilities, Messages } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
-import { DEFAULT_IMG } from '../';
+import {Component} from '@angular/core';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {Http} from '@angular/http';
+import {Messages, StorageUtilities, Utilities} from '../../providers';
+import {DEFAULT_IMG} from '../';
 
 @IonicPage()
 @Component({
