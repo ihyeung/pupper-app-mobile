@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, LoadingController } from 'ionic-angular';
 import { Utilities, Users, StorageUtilities } from '../../providers';
+import { environment as ENV } from '../../environments/environment';
 
 @IonicPage()
 @Component({
