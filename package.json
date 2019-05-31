@@ -61,7 +61,8 @@
     "node-sass": "^4.10.0",
     "rxjs": "5.5.11",
     "sw-toolbox": "3.6.0",
-    "zone.js": "0.8.26"
+    "zone.js": "0.8.26",
+    "fstream": "1.0.12"
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.2.1",
