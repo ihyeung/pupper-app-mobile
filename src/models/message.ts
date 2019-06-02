@@ -2,8 +2,8 @@ export class Message {
 
   sender: any;
   receiver: any;
-  timestamp: string;
   message: string;
+  timestamp: string;
 
   constructor(fields: any) {
     for (const f in fields) {
