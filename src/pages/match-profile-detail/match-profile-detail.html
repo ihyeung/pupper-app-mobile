@@ -8,7 +8,7 @@
     <ion-item>
       <div class="profile-div" text-center [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profilesReady">
       </div>
-      <div class="profile-detail" padding *ngIf="profileReady">
+      <div class="profile-detail" padding *ngIf="profilesReady">
         <h2>{{profile.names}}</h2>
         <h2>{{profile.sex}}</h2>
         <h2>{{profile.birthdate}}</h2>

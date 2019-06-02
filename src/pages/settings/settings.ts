@@ -105,7 +105,8 @@ export class SettingsPage {
 
     viewActiveMatchProfile() {
       this.navCtrl.push('MatchProfileDetailPage', {
-        matchProfile: this.matchProfileObj,
+        matchProfileList: [this.matchProfileObj],
+        // matchProfile: this.matchProfileObj,
         readOnly : false
       });
     }
