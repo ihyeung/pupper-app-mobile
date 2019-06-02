@@ -6,7 +6,7 @@
 <ion-content>
   <ion-list *ngFor="let profile of matchProfiles">
     <ion-item>
-      <div class="profile-div" text-center [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
+      <div class="profile-div" text-center [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profilesReady">
       </div>
       <div class="profile-detail" padding *ngIf="profileReady">
         <h2>{{profile.names}}</h2>
@@ -16,10 +16,10 @@
         <h2>{{profile.lifeStage}}</h2>
         <h2>{{profile.breed.name}}</h2>
         <p>{{profile.aboutMe}}</p>
-        <button ion-item  full color="secondary" (click)="editMatchProfile(profile)" *ngIf="!readOnly && profileReady">Edit Match Profile</button>
+        <button ion-item  full color="secondary" (click)="editMatchProfile(profile)" *ngIf="!readOnly && profilesReady">Edit Match Profile</button>
         <!--        <button ion-button outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profileReady && !isDefaultForActiveUser">Set As Default Match Profile</button>-->
-        <button ion-button outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profileReady && !profile.isDefault">Set As Default Match Profile</button>
-        <button ion-item  full color="secondary" (click)="viewUserProfile(profile)" *ngIf="readOnly && profileReady">View My Owner's Profile</button>
+        <button ion-button outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profilesReady && !profile.isDefault">Set As Default Match Profile</button>
+        <button ion-item  full color="secondary" (click)="viewUserProfile(profile)" *ngIf="readOnly && profilesReady">View My Owner's Profile</button>
       </div>
     </ion-item>
   </ion-list>

@@ -13,7 +13,7 @@ export class MatchProfileDetailPage {
 
   id: number;
   // profile: any;
-  profileReady: boolean = false;
+  profilesReady: boolean = false;
   readOnly: boolean = true;
   matchProfiles: any = []; //Routed from view match profiles button from profile snapshot page, modal will show list of match profiles with active match profile at the top
   matchPreferences: any = [];
@@ -57,15 +57,17 @@ export class MatchProfileDetailPage {
     }
 
     retrieveMatchPreferences() {
-      console.log('retrieving match preferences detail for ' + this.id);
-      this.matchProfileService.getMatchPreferences(this.id)
+      console.log('retrieving match preferences detail for each match profile in list');
+      this.matchProfiles.forEach(each => {
+      this.matchProfileService.getMatchPreferences(each['id'])
       .map(res => res.json())
       .subscribe(response => {
         if (response.isSuccess) {
-          console.log('successfully retrieved match preferences');
-          this.matchPreferences = response.matchPreferences;
+          console.log('successfully retrieved match preferences for matchProfileId=' + each['id']);
+          this.matchPreferences.push(response.matchPreferences);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
+      });
     }
 
     retrieveProfileData() {
@@ -79,8 +81,8 @@ export class MatchProfileDetailPage {
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
-    // initProfileData(profile: any) {
     initProfileData() {
+      // initProfileData(profile: any) {
       // this.profile = profile;
       // this.id = this.profile['id'];
       // this.profile['profileImage'] = this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
@@ -88,9 +90,8 @@ export class MatchProfileDetailPage {
       // this.profileReady = true;
       this.matchProfiles.forEach(each => {
         each['profileImage'] = this.utils.validateImageUri(each['profileImage'], DEFAULT_IMG);
-        this.profileReady = true;
       });
-
+      this.profilesReady = true;
     }
 
     editMatchProfile(matchProfile: any) {
