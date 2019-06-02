@@ -3,13 +3,14 @@ export class User {
   id: number;
   firstName: string;
   lastName: string;
-  zip: string;
   sex: string;
   birthdate: string;
   maritalStatus: string;
-  profileImage: string;
+  zip: string;
   dateJoin: string;
   lastLogin: string;
+  profileImage: string;
+
   userAccount: any;
 
   constructor(fields: any) {

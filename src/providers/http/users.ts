@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { StorageUtilities } from '../../providers';
-import { environment as ENV } from '../../environments/environment';
-// import { User } from '../../models/user';
+import {Injectable} from '@angular/core';
+import {Headers, Http} from '@angular/http';
+import {StorageUtilities} from '../../providers';
+import {environment as ENV} from '../../environments/environment';
 
 @Injectable()
 export class Users {
@@ -73,7 +72,7 @@ export class Users {
     return this.http.get(url, { headers: this.authHeaders });
   }
 
-  createUserProfile(userProfileObj, authHeaders) {
+  createUserProfile(userProfileObj: any, authHeaders: any) {
     this.authHeaders = authHeaders;
     const createUserProfileUrl = `${ENV.BASE_URL}/user`;
     console.log('Creating a new user profile: ' + createUserProfileUrl);

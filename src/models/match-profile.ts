@@ -2,18 +2,21 @@ export class MatchProfile {
 
   id: number;
   names: string;
-  breed: any;
+  numDogs: number;
+  sex: string;
   birthdate: string;
+  breed: any;
+  size: string;
+  energyLevel: string;
+  lifeStage: string;
+  score: number;
   aboutMe: string;
   profileImage: string;
-  numDogs: number;
-  lifeStage: string;
-  energyLevel: string;
   userProfile: any;
-  sex: string;
-  size: string;
   zipRadius: number;
   isDefault: boolean;
+  showSimilar: boolean; //TODO: implement this functionality
+  isHidden: boolean; //TODO: implement this functionality
 
   constructor(fields: any) {
     for (const f in fields) {

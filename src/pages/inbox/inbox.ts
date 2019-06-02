@@ -93,7 +93,6 @@ export class MessageInboxPage {
             matchProfileObj: otherMatchProfile,
             matchProfileName: otherMatchProfile['names'],
             image: previewImage,
-            // image: otherMatchProfile['profileImage'] ? otherMatchProfile['profileImage'] : DEFAULT_IMG,
             message: history[0]['message'],
             timestamp: previewTimestamp
           });
@@ -107,7 +106,8 @@ export class MessageInboxPage {
   viewMatchProfile(matchProfile: any) {
     console.log('clicked on match profile for matchProfileId=' + matchProfile['id']);
     this.navCtrl.push('MatchProfileDetailPage', {
-      matchProfile: matchProfile,
+      matchProfileList: [matchProfile],
+      // matchProfile: matchProfile,
       readOnly: true
     });
   }

@@ -6,24 +6,24 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-    <ion-card>
-      <ion-card-header *ngIf="profileReady">
+  <ion-card>
+    <ion-card-header *ngIf="profileReady">
       <ion-avatar>
         <img src="{{ chatProfileImage }}">
       </ion-avatar>
-      </ion-card-header>
-      <ion-card-content *ngIf="historyReady">
-        <ion-list *ngFor="let message of chatMessages">
-          <ion-item>
-            <h3>{{ message.message }}</h3>
-            <p>{{ message.timestamp }}</p>
-          </ion-item>
-        </ion-list>
-        </ion-card-content>
-      </ion-card>
-      <br>
+    </ion-card-header>
+    <ion-card-content *ngIf="historyReady">
+      <ion-list *ngFor="let message of chatMessages">
+        <ion-item>
+          <h3>{{ message.message }}</h3>
+          <p>{{ message.timestamp }}</p>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <br>
   <ion-item>
-    <ion-input type="text" placeholder="{{messagePlaceholder}}" [(ngModel)]="message" (click)="typeMessage()"></ion-input>
+    <ion-input type="text" placeholder="{{MESSAGE_PLACEHOLDER}}" [(ngModel)]="message" (click)="typeMessage()"></ion-input>
     <button ion-button expandable item-right (click)="sendMessage()">SEND</button>
   </ion-item>
 </ion-content>

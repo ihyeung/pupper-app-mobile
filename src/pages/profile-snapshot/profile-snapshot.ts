@@ -4,6 +4,7 @@ import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../provide
 import { DEFAULT_USER_IMG, USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 import { Dialogs } from '@ionic-native/dialogs';
 import { UserProfileDetailPage } from '../user-profile-detail/user-profile-detail';
+import {MatchProfile} from "../../models/match-profile";
 
 
 @IonicPage()
@@ -17,7 +18,6 @@ export class ProfileSnapshotPage {
   image: string;
   userProfileObj: any = [];
   userReady: boolean = false;
-  matchProfileReady: boolean = false;
   matchProfilesList: any = [];
   activeMatchProfileObj: any;
   numMatchProfiles: number = 0;
@@ -135,13 +135,29 @@ export class ProfileSnapshotPage {
         if (this.numMatchProfiles > 0) {
           this.navCtrl.push('MatchProfileDetailPage', {
             readOnly : readOnly,
-            matchProfiles: this.matchProfilesList,
-            matchProfile: this.activeMatchProfileObj
+            matchProfiles: this.sortMatchProfileList(),
+            // matchProfile: this.activeMatchProfileObj
             //TODO: pass in the desired match profile instead of always passing in the default match profile
           });
         } else {
           this.promptCreateMatchProfile();
         }
+      }
+
+      private sortMatchProfileList() {
+        let sortedList = new Array<MatchProfile>();
+        if (this.numMatchProfiles > 1) {
+          sortedList.push(this.activeMatchProfileObj);
+
+          this.matchProfilesList.forEach(profile => {
+            if (profile['id'] == this.activeMatchProfileObj['id']) {
+              console.log('Already added active match profile to list, skip');
+            } else {
+              sortedList.push(profile);
+            }
+          });
+        }
+        return sortedList;
       }
 
       private promptCreateMatchProfile() {

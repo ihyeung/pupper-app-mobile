@@ -12,17 +12,16 @@ import { DEFAULT_IMG } from '../';
 export class MatchProfileDetailPage {
 
   id: number;
-  profile: any;
-  profileReady: boolean = false;
+  // profile: any;
+  profilesReady: boolean = false;
   readOnly: boolean = true;
   matchProfiles: any = []; //Routed from view match profiles button from profile snapshot page, modal will show list of match profiles with active match profile at the top
   matchPreferences: any = [];
-  isDefaultForActiveUser: boolean = false;
+  // isDefaultForActiveUser: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public utils: Utilities, public matchProfileService: MatchProfiles,
-    public storage: StorageUtilities) {
-    }
+    public storage: StorageUtilities) { }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad MatchProfileDetailPage');
@@ -30,40 +29,45 @@ export class MatchProfileDetailPage {
       //TODO: Display modal pane with match profiles you can swipe through
       //TODO: if matchProfiles nav param is passed, then there should also be a
       // matchProfile param representing the active/default match profile, this should be displayed
-      //at the top of the list of profiles
+      // at the top of the list of profiles
     }
 
     init() {
       this.id = this.navParams.get('matchProfileId');//Only sent from matching page
       this.readOnly = this.navParams.get('readOnly');//Determines whether or not to display edit button
-      this.matchProfiles = this.navParams.get('matchProfiles');//Passed from profile snapshot page
-      const matchProfile = this.navParams.get('matchProfile'); //Passed from inbox page, if passed from profile snapshot page, represents first (ie active/default) match profile to display in list
+      this.matchProfiles = this.navParams.get('matchProfiles');//List passed from profile snapshot page, otherwise list containing single match profile element when coming from settings, matching, or inbox pages
+      // const matchProfile = this.navParams.get('matchProfile'); //Passed from inbox page, if passed from profile snapshot page, represents first (ie active/default) match profile to display in list
 
       if (this.id) {
         this.retrieveProfileData();
       }
-      else if (matchProfile) {
-        this.initProfileData(matchProfile);
+      if (this.matchProfiles) {
+        console.log('User has ' + this.matchProfiles.length + ' match profiles');
+        this.initProfileData();
+
       }
+      // else if (matchProfile) {
+      //   this.initProfileData(matchProfile);
+      // }
       if (this.readOnly !== undefined && !this.readOnly) {
         console.log('not read only, retrieve match preference data');
         this.retrieveMatchPreferences();
       }
-      if (this.matchProfiles) {
-        console.log('User has ' + this.matchProfiles.length + ' match profiles');
-      }
+
     }
 
     retrieveMatchPreferences() {
-      console.log('retrieving match preferences detail for ' + this.id);
-      this.matchProfileService.getMatchPreferences(this.id)
+      console.log('retrieving match preferences detail for each match profile in list');
+      this.matchProfiles.forEach(each => {
+      this.matchProfileService.getMatchPreferences(each['id'])
       .map(res => res.json())
       .subscribe(response => {
         if (response.isSuccess) {
-          console.log('successfully retrieved match preferences');
-          this.matchPreferences = response.matchPreferences;
+          console.log('successfully retrieved match preferences for matchProfileId=' + each['id']);
+          this.matchPreferences.push(response.matchPreferences);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
+      });
     }
 
     retrieveProfileData() {
@@ -72,25 +76,30 @@ export class MatchProfileDetailPage {
       .map(res => res.json())
       .subscribe(response => { //Directly maps to matchProfile object
         console.log('successfully retrieved match profile by id');
-        this.initProfileData(response);
+        this.matchProfiles = response;
+        this.initProfileData();
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
-    initProfileData(profile: any) {
-      this.profile = profile;
-      this.id = this.profile['id'];
-      this.profile['profileImage'] =
-      this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
-      this.isDefaultForActiveUser = this.profile.isDefault;
-      this.profileReady = true;
+    initProfileData() {
+      // initProfileData(profile: any) {
+      // this.profile = profile;
+      // this.id = this.profile['id'];
+      // this.profile['profileImage'] = this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
+      // this.isDefaultForActiveUser = this.profile.isDefault;
+      // this.profileReady = true;
+      this.matchProfiles.forEach(each => {
+        each['profileImage'] = this.utils.validateImageUri(each['profileImage'], DEFAULT_IMG);
+      });
+      this.profilesReady = true;
     }
 
     editMatchProfile(matchProfile: any) {
       console.log("retrieving match profile for edit/update with id = " + matchProfile['id']);
 
       const profileData = {
-        imagePreview: this.profile.profileImage,
-        formData: this.profile,
+        imagePreview: matchProfile['profileImage'],
+        formData: matchProfile,
         isUpdate: true,
         matchPreferenceData: this.buildMatchPreferenceMap()
       };
