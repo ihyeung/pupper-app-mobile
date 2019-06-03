@@ -12,7 +12,7 @@
         <ion-item-divider>
           Your Match Profiles
         </ion-item-divider>
-        <!-- <button ion-item *ngFor="let profile of matchProfileList" (click)="viewMatchProfile(profile)">
+        <!-- <button ion-item *ngFor="let profile of matchProfilesList" (click)="viewMatchProfile(profile)">
         <ion-avatar item-start>
         <img src="{{profile.profileImage}}">
       </ion-avatar>
@@ -46,21 +46,21 @@
 
     <ion-item>
       <ion-label color="primary">Dog Size Range</ion-label>
-      <ion-range (ngModel)]="size">
+      <ion-range [(ngModel)]="size">
         <ion-label range-left>TOY/PETITE</ion-label>
         <ion-label range-right>EXTRA LARGE</ion-label>
       </ion-range>
     </ion-item>
     <ion-item>
       <ion-label color="primary">Dog Age Range</ion-label>
-      <ion-range (ngModel)]="age">
+      <ion-range [(ngModel)]="age">
         <ion-label range-left>PUPPY</ion-label>
         <ion-label range-right>MATURE</ion-label>
       </ion-range>
     </ion-item>
     <ion-item>
       <ion-label color="primary">Dog Energy Range</ion-label>
-      <ion-range (ngModel)]="energy">
+      <ion-range [(ngModel)]="energy">
         <ion-label range-left>MINIMAL</ion-label>
         <ion-label range-right>EXTREME</ion-label>
       </ion-range>

@@ -1,14 +1,22 @@
 page-match-profile-detail {
   .profile-div {
     width: 100%;
+    height: 100%;
+    //background: white;
+    //position: relative;
+  }
+  .profile-image-div {
+    width: 100%;
     background-position: center center;
     background-size: cover;
     height: 250px;
+    //height: 80%;
   }
 
   .profile-detail {
     width: 100%;
+    height: 20%;
     background: white;
-    position: absolute;
+    position: relative;
   }
 }
