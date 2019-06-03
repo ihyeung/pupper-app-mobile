@@ -70,10 +70,8 @@ export class ProfileSnapshotPage {
     this.storageUtils.getDataFromStorage('profiles').then(val => {
       if (val) { //May have been previously stored on login page
         this.matchProfilesList = val;
-        console.log('successfully retrieved match profiles from storage');
         console.log(JSON.stringify(this.matchProfilesList));
         this.numMatchProfiles = val.length;
-        console.log('NUM MATCH PROFILES: ' + this.numMatchProfiles);
 
         this.findAndStoreActiveMatchProfile();
       } else {
@@ -83,11 +81,8 @@ export class ProfileSnapshotPage {
           .subscribe(resp => {
             if (!resp.isSuccess ||
               (resp['matchProfiles'] === undefined || !resp['matchProfiles'])) {
-              console.log("No match profiles for user");
               this.promptCreateMatchProfile();
             } else {
-              console.log('Match profiles for user id=' + user['id'] + ' successfully retrieved via API call');
-              console.log('Number fo match profiles for this user: ' + resp['matchProfiles'].length);
               this.numMatchProfiles = resp['matchProfiles'].length;
               this.matchProfilesList = resp['matchProfiles'];
 
@@ -144,8 +139,6 @@ export class ProfileSnapshotPage {
       this.navCtrl.push('MatchProfileDetailPage', {
         readOnly : readOnly,
         matchProfiles: this.sortMatchProfileList(),
-        // matchProfile: this.activeMatchProfileObj
-        //TODO: pass in the desired match profile instead of always passing in the default match profile
       });
     } else {
       this.promptCreateMatchProfile();
