@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { NavController, App, IonicPage, ModalController } from 'ionic-angular';
 import { StorageUtilities, Utilities, Matches, MatchProfiles, Users, Messages } from '../../providers';
 import { Dialogs } from '@ionic-native/dialogs';
-// import { MATCH_PROFILE_ERROR } from '../';
 import { UserProfileDetailPage } from '../user-profile-detail/user-profile-detail';
+import {MATCH_PROFILE_ERROR} from "../index";
 
 @IonicPage()
 @Component({
@@ -14,7 +14,7 @@ export class SettingsPage {
 
   matchProfileObj: any = [];
   userObj: any = [];
-  matchProfileList: any = [];
+  matchProfilesList: any = [];
   matchPreferences: any = []; //match preferences for default match profile
   hideProfile: boolean = false;
   showSimilar: boolean = false;
@@ -22,6 +22,7 @@ export class SettingsPage {
   energy: any = [];
   age: any = [];
   searchRadius: number;
+  timezone: string;
 
   deleteCount = 0;
 
@@ -60,7 +61,7 @@ export class SettingsPage {
       });
 
       this.storage.getDataFromStorage('profiles').then(val => {
-        this.matchProfileList = val;
+        this.matchProfilesList = val;
       });
     }
 
@@ -81,15 +82,12 @@ export class SettingsPage {
     updateActiveMatchProfile() {
       if (!this.matchProfileObj) {
         console.log('No active match profile: either no match profiles for user, or none of the existing match profiles were marked as default');
-        // this.promptCreateProfile(MATCH_PROFILE_ERROR, 'CreateMatchProfilePage');
+        this.promptCreateProfile(MATCH_PROFILE_ERROR, 'CreateMatchProfilePage');
       } else {
-        console.log('total number of match profiles: ' + this.matchProfileList.length);
-        this.matchProfileList.forEach(each => {
-          if (each['id'] != this.matchProfileObj['id']) { //Only list other match profiles that are not the current default
-            console.log('match profile: ' + each.names);
-
-            //TODO: Display modal with brief match profile info with button to select as new active match profile
-          }
+        console.log('total number of match profiles: ' + this.matchProfilesList.length);
+        this.navCtrl.push('MatchProfileDetailPage', {
+          readOnly : true,
+          matchProfiles: this.matchProfilesList
         });
       }
     }
@@ -105,8 +103,7 @@ export class SettingsPage {
 
     viewActiveMatchProfile() {
       this.navCtrl.push('MatchProfileDetailPage', {
-        matchProfileList: [this.matchProfileObj],
-        // matchProfile: this.matchProfileObj,
+        matchProfiles: [this.matchProfileObj],
         readOnly : false
       });
     }
@@ -162,11 +159,11 @@ export class SettingsPage {
       deleteAllUserData() {
         console.log('IMPLEMENTATION IS INCOMPLETE');
 
-        if (!this.matchProfileList || this.matchProfileList.length == 0 || !this.userObj) {
+        if (!this.matchProfilesList || this.matchProfilesList.length == 0 || !this.userObj) {
           console.log('error deleting all user data: match profile list is null or empty, or user object is null');
           return;
         }
-        this.matchProfileList.forEach(matchProfile => {
+        this.matchProfilesList.forEach(matchProfile => {
           this.deleteMatchPreferences(matchProfile['id']);
         });
       }
@@ -228,7 +225,7 @@ export class SettingsPage {
           if (response.isSuccess) {
             console.log('match result data deleted for matchProfileId=' + matchProfileId);
             this.deleteCount++;
-            if (this.deleteCount == this.matchProfileList.length) {
+            if (this.deleteCount == this.matchProfilesList.length) {
               //Only delete match profiles after all message/preference/matchresult
               //data referencing the match profiles to delete has been deleted
               console.log('finished deleting message, match_preferences, and match_result data for all match profiles');

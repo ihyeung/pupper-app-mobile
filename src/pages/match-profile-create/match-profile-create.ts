@@ -35,11 +35,11 @@ export class CreateMatchProfilePage {
   isActiveMatchProfile: boolean = true;
 
   //Objects needed for creating profile
-  authHeaders: any;
-  userProfile: any;
+  authHeaders: any = [];
+  userProfile: any = [];
   imageFilePath: string;
   imagePreview: string;
-  matchProfilesList: any;
+  matchProfilesList: any = [];
 
   //Match profile ion options
   lifeStages: any = ['PUPPY', 'YOUNG', 'ADULT', 'MATURE'];
@@ -166,8 +166,8 @@ export class CreateMatchProfilePage {
       this.matchProfiles.getMatchProfilesByUserId(this.userProfile['id'])
       .map(res => res.json())
       .subscribe(resp => {
-        if (resp.isSuccess && resp.matchProfiles) {
-          this.matchProfilesList = resp.matchProfiles;
+        if (resp.isSuccess && resp.matchProfilesList) {
+          this.matchProfilesList = resp.matchProfilesList;
           this.storageUtils.storeData('profiles', this.matchProfilesList);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));

@@ -4,7 +4,6 @@ import { StorageUtilities, Utilities, MatchProfiles, Users } from '../../provide
 import { DEFAULT_USER_IMG, USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 import { Dialogs } from '@ionic-native/dialogs';
 import { UserProfileDetailPage } from '../user-profile-detail/user-profile-detail';
-import {MatchProfile} from "../../models/match-profile";
 
 
 @IonicPage()
@@ -138,27 +137,11 @@ export class ProfileSnapshotPage {
     if (this.numMatchProfiles > 0) {
       this.navCtrl.push('MatchProfileDetailPage', {
         readOnly : readOnly,
-        matchProfiles: this.sortMatchProfileList(),
+        matchProfiles: this.matchProfilesList
       });
     } else {
       this.promptCreateMatchProfile();
     }
-  }
-
-  private sortMatchProfileList() {
-    console.log('Sorting match profiles in list (so active match profile precedes any others');
-
-    let sortedList = new Array<MatchProfile>();
-    sortedList.push(this.activeMatchProfileObj);
-
-    this.matchProfilesList.forEach(profile => {
-      if (profile['id'] == this.activeMatchProfileObj['id']) {
-        console.log('Already added active match profile to list, skip');
-      } else {
-        sortedList.push(profile);
-      }
-    });
-    return sortedList;
   }
 
   private promptCreateMatchProfile() {
