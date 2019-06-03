@@ -42,6 +42,7 @@ export class MatchProfileDetailPage {
         this.retrieveProfileData();
       }
       if (this.matchProfiles) {
+        console.log(this.matchProfiles);
         console.log('User has ' + this.matchProfiles.length + ' match profiles');
         this.initProfileData();
 
