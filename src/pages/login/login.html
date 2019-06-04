@@ -18,7 +18,7 @@
     </ion-segment>
   </div>
   <p *ngIf="loginAttempted" style="color: #ea6153;">{{errorMessage}}</p>
-    <form #signForm="ngForm" [formGroup]="userForm" (ngSubmit)="authenticateUser()">
+    <form [formGroup]="userForm" (ngSubmit)="authenticateUser()">
       <ion-list no-lines>
       <ion-item>
         <ion-label floating>USERNAME/EMAIL</ion-label>

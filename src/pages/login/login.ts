@@ -14,7 +14,6 @@ import { USER_PROFILE_ERROR, MATCH_PROFILE_ERROR } from '../';
 })
 export class LoginPage {
   errorMessage: string = 'Please verify all fields are completed and are valid.';
-  responseData: any;
   email: string;
   password: string;
   userForm: FormGroup;
@@ -89,7 +88,9 @@ export class LoginPage {
           let alert = this.utils.presentAlert("Email is in use for an existing account.");
           alert.present();
           alert.onDidDismiss(() => {
-              this.navCtrl.push('CreateMatchProfilePage');
+              this.userForm.controls.email.reset('');
+              this.userForm.controls.password.reset('');
+              this.userForm.controls.confirm.reset('');
           });
         } else {
           this.storageUtils.storeData('email', this.email);
@@ -113,6 +114,7 @@ export class LoginPage {
         this.retrieveUserProfile(headers, loader);
 
       }, error => {
+        console.error('ERROR: ', JSON.stringify(error));
         let alert = this.utils.presentAlert("Invalid login credentials, please try again.");
         alert.present();
       });
@@ -127,7 +129,7 @@ export class LoginPage {
           const userProfileObj = resp['userProfiles'][0];
           this.retrieveMatchProfileData(userProfileObj, loader);
         } else {
-          this.dismissLoader(loader);
+          LoginPage.dismissLoader(loader);
 
           this.storageUtils.storeData('email', this.email);
           this.storageUtils.storeData('password', this.password);
@@ -140,7 +142,7 @@ export class LoginPage {
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
-        this.dismissLoader(loader);
+        LoginPage.dismissLoader(loader);
       });
     }
 
@@ -160,7 +162,7 @@ export class LoginPage {
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
-          this.dismissLoader(loader);
+          LoginPage.dismissLoader(loader);
         });
       } else {
         this.storeUserAndNavToMain(userProfileObj, loader, navPage);
@@ -169,7 +171,7 @@ export class LoginPage {
 
     private storeUserAndNavToMain(userProfileObj: any, loader: any, navPage: string) {
       this.storageUtils.storeData('user', userProfileObj); //Store user
-      this.dismissLoader(loader);
+      LoginPage.dismissLoader(loader);
       if (navPage == 'CreateMatchProfilePage') {
         let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
         alert.present();
@@ -195,11 +197,11 @@ export class LoginPage {
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
-        this.dismissLoader(loader);
+        LoginPage.dismissLoader(loader);
       });
     }
 
-    private dismissLoader(loader: any) {
+    private static dismissLoader(loader: any) {
       if (loader) {
         loader.dismiss();
         loader = null;

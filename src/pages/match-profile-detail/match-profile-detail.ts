@@ -17,6 +17,7 @@ export class MatchProfileDetailPage {
   readOnly: boolean = true;
   matchProfilesList: any = []; //Routed from view match profiles button from profile snapshot page, modal will show list of match profiles with active match profile at the top
   matchPreferences: any = [];
+  privateView: boolean = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public utils: Utilities, public matchProfileService: MatchProfiles,
@@ -30,15 +31,16 @@ export class MatchProfileDetailPage {
   init() {
     this.id = this.navParams.get('matchProfileId');//Only sent from matching page
     this.readOnly = this.navParams.get('readOnly');//Determines whether or not to display edit button
-
-    const matchProfiles = this.navParams.get('matchProfilesList');//List passed from profile snapshot page, otherwise list containing single match profile element when coming from settings, matching, or inbox pages
-
-    this.sortMatchProfileList(matchProfiles);
+    this.privateView = this.navParams.get('privateView'); //Nav param set when displaying detail page for own match profiles
+    const matchProfiles = this.navParams.get('matchProfiles');//List passed from profile snapshot page, otherwise list containing single match profile element when coming from settings, matching, or inbox pages
 
     if (this.id) {
       this.retrieveProfileData();
     }
-    if (this.matchProfilesList) {
+    if (matchProfiles) {
+      this.matchProfilesList = matchProfiles;
+      MatchProfileDetailPage.sortMatchProfileList(matchProfiles);
+
       this.initProfileData();
     }
 
@@ -49,7 +51,7 @@ export class MatchProfileDetailPage {
 
   }
 
-  private sortMatchProfileList(matchProfileList: any) {
+  private static sortMatchProfileList(matchProfileList: any) {
     console.log('Sorting match profiles in list (so active match profile precedes any others');
 
     let sortedList = new Array<MatchProfile>();
@@ -94,12 +96,6 @@ export class MatchProfileDetailPage {
   }
 
   initProfileData() {
-    // initProfileData(profile: any) {
-    // this.profile = profile;
-    // this.id = this.profile['id'];
-    // this.profile['profileImage'] = this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
-    // this.isDefaultForActiveUser = this.profile.isDefault;
-    // this.profileReady = true;
     this.matchProfilesList.forEach(each => {
       each['profileImage'] = this.utils.validateImageUri(each['profileImage'], DEFAULT_IMG);
     });
@@ -119,14 +115,16 @@ export class MatchProfileDetailPage {
 
   }
 
-  viewUserProfile(matchProfile: any) {
-    console.log(matchProfile);
-    const userId = matchProfile['userProfile']['id'];
-    console.log("retrieving user profile with id = " + userId);
-    this.navCtrl.push('UserProfileDetailPage', {
-      userId: userId,
-      readOnly : true
-    });
+  viewUserProfile() {
+    if (this.matchProfilesList != null && this.matchProfilesList.length > 0) {
+      const userId = this.matchProfilesList[0]['userProfile']['id'];
+      console.log("retrieving user profile with id = " + userId);
+      this.navCtrl.push('UserProfileDetailPage', {
+        userId: userId,
+        readOnly: true,
+        privateView: this.privateView
+      });
+    }
   }
 
   buildMatchPreferenceMap() {

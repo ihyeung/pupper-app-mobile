@@ -1,29 +1,36 @@
 <ion-header>
   <ion-navbar>
-    <ion-title *ngIf="profilesReady">Match Profile Detail Page</ion-title>
+    <ion-title *ngIf="profilesReady">MATCH PROFILES</ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
   <ion-scroll style="height: 100%" scrollY="true">
-  <ion-list *ngFor="let profile of matchProfilesList">
     <ion-item>
-      <div class="profile-div">
-        <div class="profile-image-div" text-center [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profilesReady">
-        </div>
-        <div class="profile-detail" padding *ngIf="profilesReady">
-          <h2>{{profile.names}}</h2>
-          <h4>{{profile.sex}} || {{profile.breed.name}}</h4>
-          <h4>ENERGY LEVEL: {{profile.energyLevel}} || LIFESTAGE: {{profile.lifeStage}} || SIZE: {{profile.size}}</h4>
-          <p>{{profile.aboutMe}}</p>
-        </div>
-        <div>
-          <button ion-item  full color="secondary" (click)="editMatchProfile(profile)" *ngIf="!readOnly && profilesReady">Edit Match Profile</button>
-          <!--        <button ion-button outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profileReady && !isDefaultForActiveUser">Set As Default Match Profile</button>-->
-          <button ion-button full outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profilesReady && !profile.isDefault">Set As Default Match Profile</button>
-          <button ion-item  full color="secondary" (click)="viewUserProfile(profile)" *ngIf="readOnly && profilesReady">View My Owner's Profile</button>
-        </div>
-      </div>
+      <button ion-item  full color="secondary" (click)="viewUserProfile()" *ngIf="privateView && profilesReady">VIEW OWNER PROFILE</button>
     </ion-item>
-  </ion-list>
+    <ion-list *ngFor="let profile of matchProfilesList">
+      <ion-card>
+        <div class="profile-div">
+          <div class="profile-image-div" [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profilesReady">
+          </div>
+          <div class="profile-detail" padding *ngIf="profilesReady">
+            <ion-card-title><h1>{{profile.names}}</h1></ion-card-title>
+            <ion-card-header>
+              <h2>{{profile.sex}}   |   {{profile.breed.name}}</h2>
+              <h2>SIZE:   {{profile.size}}</h2>
+              <h2>ENERGY LEVEL:   {{profile.energyLevel}}</h2>
+              <h2>LIFESTAGE:    {{profile.lifeStage}}</h2>
+            </ion-card-header>
+            <ion-card-content>
+              <p>{{profile.aboutMe}}</p>
+            </ion-card-content>
+          </div>
+          <div>
+            <button ion-item  full color="secondary" (click)="editMatchProfile(profile)" *ngIf="!readOnly && profilesReady">Edit Match Profile</button>
+            <button ion-item full outline (click)="updateActiveMatchProfile()" class="btn-home-fill" *ngIf="!readOnly && profilesReady && !profile.isDefault">SET AS DEFAULT</button>
+          </div>
+        </div>
+      </ion-card>
+    </ion-list>
   </ion-scroll>
 </ion-content>

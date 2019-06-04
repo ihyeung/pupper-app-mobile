@@ -6,8 +6,9 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-card class="img_preview">
-    <img [src]="imagePreview" [hidden]="imagePreview == null" width="150" />
+  <ion-scroll style="height: 100%" scrollY="true">
+  <ion-card class="img_preview" [hidden]="imagePreview == null" >
+    <img [src]="imagePreview" />
   </ion-card>
   <ion-item>
     <ion-label floating>FIRST NAME</ion-label>
@@ -47,4 +48,5 @@
   <br><br>
   <button ion-button full class="btn" (click)="addProfileImage()">{{uploadButtonLabel}}</button>
   <button ion-button full class="btn" (click)="createUser()">{{createButtonLabel}}</button>
+  </ion-scroll>
 </ion-content>

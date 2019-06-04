@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { environment as ENV } from '../../environments/environment';
-import { StorageUtilities } from '../../providers/utility/storage';
-import { Message } from '../../models/message';
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
+import {environment as ENV} from '../../environments/environment';
+import {StorageUtilities} from '../../providers/utility/storage';
 
 @Injectable()
 export class Messages {
@@ -14,7 +13,7 @@ export class Messages {
       });
   }
 
-  retrieveMessagesForInbox(matchProfileId) {
+  retrieveMessagesForInbox(matchProfileId: number) {
     const getMessagesUrl = `${ENV.BASE_URL}/message/recent?matchProfileId=${matchProfileId}`;
     console.log('Retrieving messages for matchProfile at ' + getMessagesUrl);
     return this.http.get(getMessagesUrl, {headers: this.authHeaders});
@@ -47,5 +46,12 @@ export class Messages {
     console.log(url);
 
     return this.http.delete(url, { headers: this.authHeaders });
+  }
+
+  retrieveUserMessages(requestedByUserId: number, requestedForUserId: number) {
+    const getUserMessagesUrl = `${ENV.BASE_URL}/message/recent?userId=${requestedByUserId}&userId=${requestedForUserId}`;
+    console.log('Retrieving messages between userId=' + requestedByUserId + ' and userId=' + requestedForUserId);
+    console.log('NOT IMPLEMENTED YET');
+    return this.http.get(getUserMessagesUrl, {headers: this.authHeaders});
   }
 }
