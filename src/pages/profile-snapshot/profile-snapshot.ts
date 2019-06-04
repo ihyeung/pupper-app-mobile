@@ -112,7 +112,7 @@ export class ProfileSnapshotPage {
         this.activeMatchProfileObj['isDefault'] = true;
         this.updateMatchProfile(this.activeMatchProfileObj);
         if (!this.matchProfilesList[0]['isDefault']) {
-          console.log('need to update reference to active match prfoile in match profile list before storing match profile list in storage');
+          console.log('need to update reference to active match profile in match profile list before storing match profile list in storage');
         }
       }
 
@@ -137,7 +137,8 @@ export class ProfileSnapshotPage {
     if (this.numMatchProfiles > 0) {
       this.navCtrl.push('MatchProfileDetailPage', {
         readOnly : readOnly,
-        matchProfiles: this.matchProfilesList
+        matchProfiles: this.matchProfilesList,
+        privateView: true
       });
     } else {
       this.promptCreateMatchProfile();
@@ -179,7 +180,7 @@ export class ProfileSnapshotPage {
           console.log('deleting matching profile ', this.activeMatchProfileObj['names']);
 
           //TODO: DELETE MATCH_RESULT AND PUPPER_MESSAGES LINKED TO THIS MATCH PROFILE FIRST
-          this.deleteMatchProfileData(this.activeMatchProfileObj['id']);
+          ProfileSnapshotPage.deleteMatchProfileData(this.activeMatchProfileObj['id']);
 
           this.matchProfService.deleteMatchProfileById(this.userProfileObj['id'],
             this.activeMatchProfileObj['id'])
@@ -234,7 +235,7 @@ export class ProfileSnapshotPage {
     return await modal.present();
   }
 
-  deleteMatchProfileData(matchProfileId: number) {
+  static deleteMatchProfileData(matchProfileId: number) {
     console.log("Deleting match profile data for match profile id = " + matchProfileId);
     console.log("not implemented yet");
     //1. delete match_result records
