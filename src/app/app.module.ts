@@ -4,18 +4,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
-import { UserProfileDetailPage } from '../pages/user-profile-detail/user-profile-detail';
+// import { UserProfileDetailPage } from '../pages/user-profile-detail/user-profile-detail';
 
 import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Utilities, Messages, Matches, MatchProfiles, Users, StorageUtilities } from '../providers';
 import { ValidatorsModule } from '../validators/validators.module';
-import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { FileTransfer} from '@ionic-native/file-transfer';
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserProfileDetailPage
+    // UserProfileDetailPage
   ],
   imports: [
     BrowserModule,
@@ -27,7 +27,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
   bootstrap: [IonicApp],
   entryComponents: [
     AppComponent,
-    UserProfileDetailPage
+    // UserProfileDetailPage
   ],
   providers: [
     SplashScreen,
