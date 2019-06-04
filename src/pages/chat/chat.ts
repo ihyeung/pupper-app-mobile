@@ -20,6 +20,8 @@ export class ChatPage {
   chatProfileImage: string;
   authHeaders: any;
   profileReady: boolean = false;
+  toUser: any;
+  fromUser: any;
 
   constructor(public navParams: NavParams,
     public navCtrl: NavController,
@@ -41,6 +43,7 @@ export class ChatPage {
         this.navCtrl.push('CreateMatchProfilePage');
       } else {
       this.fromMatchProfile = val;
+      this.fromUser = val['userProfile'];
       this.extractNavParamData();
     }
   });
@@ -49,22 +52,52 @@ export class ChatPage {
 
   extractNavParamData() {
     this.toMatchProfile = this.navParams.get('matchProfileReceiver');
-    if (!this.toMatchProfile) {
-      console.log("ERROR RETRIEVING MATCH PROFILE RECEIVER");
+    this.toUser = this.navParams.get('toUser');
+    if (!this.toMatchProfile && !this.toUser) {
+      console.log("ERROR: toUser or matchProfileReceiver must not be null");
       return;
     }
+    if (this.toMatchProfile) {
+      this.initMatchProfileChat();
+    } else if (this.toUser) {
+      this.initUserChat();
+    }
+  }
+
+  private initMatchProfileChat() {
+    console.log('Loading chat page between match profiles');
     this.chatProfileImage =
-        this.utils.validateImageUri(this.toMatchProfile['profileImage'], DEFAULT_IMG);
+      this.utils.validateImageUri(this.toMatchProfile['profileImage'], DEFAULT_IMG);
 
     this.profileReady = true;
 
     if (!this.navParams.get('newMatch')) { //Exclude routing from matching page mutual match dialog
       const recentMessages = this.navParams.get('messages');
+
       this.displayMessageHistory(recentMessages);
     }
   }
 
-  displayMessageHistory(recentMessages) {
+  private initUserChat() {
+    console.log('loading chat page between users');
+    this.chatProfileImage =
+      this.utils.validateImageUri(this.toUser['profileImage'], DEFAULT_IMG);
+
+    this.profileReady = true;
+
+    this.msgService.retrieveUserMessages(this.fromUser['id'], this.toUser['id'])
+      .map(res => res.json())
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        if (response['isSuccess']) {
+          //TODO: extract messages from response then call this.displayMessageHistory()
+        } else {
+          console.log('Error sending message');
+        }
+      }, err => console.error('ERROR: ', JSON.stringify(err)));
+  }
+
+  displayMessageHistory(recentMessages: any) {
     recentMessages.forEach(msg => {
 
       const standardizedTimeStamp = this.utils.convertTimestampToDate(msg['timestamp']);
