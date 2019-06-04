@@ -1,17 +1,18 @@
 <ion-header>
   <ion-navbar color="primary" class="nav">
     <ion-title class="navTitle">
-      CREATE MATCHING PROFILE
+      CREATE MATCH PROFILE
     </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
+  <ion-scroll style="height: 100%" scrollY="true">
   <ion-list no-lines>
-    <ion-card class="img_preview">
-    <img [src]="imagePreview" [hidden]="imagePreview == null" width="150" />
+    <ion-card class="img_preview" [hidden]="imagePreview == null">
+    <img [src]="imagePreview" />
     </ion-card>
     <ion-item-divider>
-      MATCH PROFILE
+      MATCHING PROFILE
     </ion-item-divider>
     <ion-item>
       <ion-label floating>DOG NAME</ion-label>
@@ -75,9 +76,9 @@
         <ion-label range-right>50 miles</ion-label>
       </ion-range>
     </ion-item>
-    <h2>MATCH ME WITH THE FOLLOWING MATCH PROFILE TYPES...</h2>
+    <h2>Preferred Matching Attributes</h2>
     <ion-item>
-      <ion-label>SELECT SIZES</ion-label>
+      <ion-label>PREFERRED SIZES</ion-label>
       <ion-select [(ngModel)]="dogSizes" multiple="true">
           <ion-option *ngFor="let size of sizePreferences" [value]="size.value">
             <p>{{size.option}}</p>
@@ -85,7 +86,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>SELECT LIFESTAGES/AGE GROUPS</ion-label>
+        <ion-label>PREFERRED LIFESTAGES/AGE GROUPS</ion-label>
         <ion-select [(ngModel)]="dogAges" multiple="true">
           <ion-option *ngFor="let age of lifeStagePreferences" [value]="age.value">
             <p>{{age.option}}</p>
@@ -93,7 +94,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>SELECT ENERGY LEVELS</ion-label>
+        <ion-label>PREFERRED ENERGY LEVELS</ion-label>
         <ion-select [(ngModel)]="dogEnergies" multiple="true">
           <ion-option *ngFor="let energy of energyLevelPreferences" [value]="energy.value">
             <p>{{energy.option}}</p>
@@ -101,11 +102,12 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label color="primary">SET AS DEFAULT</ion-label>
+        <ion-label color="primary">SET PROFILE AS DEFAULT</ion-label>
         <ion-toggle item-end right color="secondary" checked="true" [(ngModel)]="isActiveMatchProfile"></ion-toggle>
       </ion-item>
     </ion-list>
-    <br><br>
+    <br>
     <button ion-button full class="btn" (click)="selectProfileImage()">{{uploadButtonLabel}}</button>
     <button ion-button full class="btn" (click)="createMatchProfile()">{{createButtonLabel}}</button>
-  </ion-content>
+    </ion-scroll>
+</ion-content>
