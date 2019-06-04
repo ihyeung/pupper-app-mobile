@@ -39,7 +39,7 @@ export class MatchProfileDetailPage {
     }
     if (matchProfiles) {
       this.matchProfilesList = matchProfiles;
-      this.sortMatchProfileList(matchProfiles);
+      MatchProfileDetailPage.sortMatchProfileList(matchProfiles);
 
       this.initProfileData();
     }
@@ -51,7 +51,7 @@ export class MatchProfileDetailPage {
 
   }
 
-  private sortMatchProfileList(matchProfileList: any) {
+  private static sortMatchProfileList(matchProfileList: any) {
     console.log('Sorting match profiles in list (so active match profile precedes any others');
 
     let sortedList = new Array<MatchProfile>();
@@ -96,12 +96,6 @@ export class MatchProfileDetailPage {
   }
 
   initProfileData() {
-    // initProfileData(profile: any) {
-    // this.profile = profile;
-    // this.id = this.profile['id'];
-    // this.profile['profileImage'] = this.utils.validateImageUri(this.profile['profileImage'], DEFAULT_IMG);
-    // this.isDefaultForActiveUser = this.profile.isDefault;
-    // this.profileReady = true;
     this.matchProfilesList.forEach(each => {
       each['profileImage'] = this.utils.validateImageUri(each['profileImage'], DEFAULT_IMG);
     });
