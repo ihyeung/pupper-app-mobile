@@ -14,6 +14,7 @@ export class UserProfileDetailPage {
   profileReady: boolean = false;
   readOnly: boolean = true;
   authHeaders: any;
+  privateView: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public storageUtils: StorageUtilities, public utils: Utilities, public users: Users) { }
@@ -21,10 +22,12 @@ export class UserProfileDetailPage {
     ionViewDidLoad() {
       console.log('ionViewDidLoad UserProfileDetailPage');
       this.readOnly = this.navParams.get('readOnly');
+      this.privateView = this.navParams.get('privateView'); //Show edit profile button and hide message user button if privateView
 
       this.storageUtils.getDataFromStorage('authHeaders').then(val => {
         if (val) {
           this.authHeaders = val;
+
           const id = this.navParams.get('userId');
           this.retrieveUserProfile(id);
         }
@@ -63,14 +66,18 @@ export class UserProfileDetailPage {
       }
     }
 
-    editProfile(id: number) {
-      console.log('Editing user profile by id ');
-
+    editProfile() {
       const profileData = {
         imagePreview: this.profile.profileImage,
         formData: this.profile,
         isUpdate: true
       };
       this.navCtrl.push('CreateUserProfilePage', profileData);
+    }
+
+    messageUser() {
+      this.navCtrl.push('UserChatPage', {
+        toUser: this.profile
+      });
     }
   }
