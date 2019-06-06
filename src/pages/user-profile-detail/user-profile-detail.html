@@ -1,21 +1,27 @@
 <ion-header>
   <ion-navbar>
-    <ion-title *ngIf="profileReady">{{ profile.firstName }} {{ profile.lastName[0] }}.</ion-title>
+    <ion-title *ngIf="profileReady">{{ userProfile.firstName }} {{ userProfile.lastName[0] }}.</ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profileReady">
+  <div class="profile-div" text-center #profileImage [style.background-image]="'url(' + userProfile.profileImage + ')'" *ngIf="profileReady">
   </div>
   <div class="profile-detail" padding *ngIf="profileReady">
-    <h2>{{profile.firstName}} {{profile.lastName}}</h2>
-    <h3>Last active {{profile.lastLogin}}</h3>
-    <h3>Member since {{profile.dateJoin}}</h3>
-    <h3>{{profile.birthdate}} {{profile.sex}}</h3>
-    <p>{{profile.maritalStatus}}</p>
-    <p>{{profile.zip}}</p>
+    <h2>{{userProfile.firstName}} {{userProfile.lastName}}</h2>
+    <h3>Last active {{userProfile.lastLogin}}</h3>
+    <h3>Member since {{userProfile.dateJoin}}</h3>
+    <h3>{{userProfile.birthdate}} {{userProfile.sex}}</h3>
+    <p>{{userProfile.maritalStatus}}</p>
+    <p>{{userProfile.zip}}</p>
     <button ion-item  full color="secondary" (click)="editProfile()" *ngIf="privateView && profileReady && !readOnly">EDIT USER PROFILE</button>
+<!--    <ion-item>-->
+<!--      <button ion-item  full color="secondary" (click)="messageUser()" *ngIf="!privateView && profileReady">MESSAGE USER</button>-->
+<!--    </ion-item>-->
     <ion-item>
-      <button ion-item  full color="secondary" (click)="messageUser()" *ngIf="!privateView && profileReady">MESSAGE USER</button>
+      <button ion-item  full color="secondary" (click)="viewMatchProfiles()" *ngIf="profileReady">VIEW MATCH PROFILES</button>
+    </ion-item>
+    <ion-item>
+      <button ion-item  full color="secondary" (click)="reportUser()" *ngIf="!privateView && profileReady">REPORT USER</button>
     </ion-item>
   </div>
 </ion-content>

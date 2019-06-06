@@ -35,7 +35,7 @@ export class MatchProfileDetailPage {
     const matchProfiles = this.navParams.get('matchProfiles');//List passed from profile snapshot page, otherwise list containing single match profile element when coming from settings, matching, or inbox pages
 
     if (this.id) {
-      this.retrieveProfileData();
+      this.retrieveMatchProfileById();
     }
     if (matchProfiles) {
       this.matchProfilesList = matchProfiles;
@@ -84,7 +84,7 @@ export class MatchProfileDetailPage {
     });
   }
 
-  retrieveProfileData() {
+  retrieveMatchProfileById() {
     console.log('retrieving match profile detail for ' + this.id);
     this.matchProfileService.getMatchProfileByMatchProfileId(this.id)
       .map(res => res.json())
@@ -121,7 +121,7 @@ export class MatchProfileDetailPage {
       console.log("retrieving user profile with id = " + userId);
       this.navCtrl.push('UserProfileDetailPage', {
         userId: userId,
-        readOnly: true,
+        readOnly: this.readOnly,
         privateView: this.privateView
       });
     }

@@ -33,6 +33,7 @@ export class CreateMatchProfilePage {
   size: string;
   radius: number = 5;
   isActiveMatchProfile: boolean = true;
+  title: string = 'CREATE A MATCH PROFILE';
 
   //Objects needed for creating profile
   authHeaders: any = [];
@@ -104,9 +105,11 @@ export class CreateMatchProfilePage {
       if (this.navParams.get('isUpdate')) {
         this.uploadButtonLabel = 'Select a new profile image';
         this.createButtonLabel = 'Update profile';
+        this.title = 'UPDATE MATCH PROFILE';
       }
       this.imagePreview = this.navParams.get('imagePreview');
       this.imageFilePath = this.navParams.get('filePath');
+
       const profileData = this.navParams.get('formData');
       const preferenceData = this.navParams.get('matchPreferenceData');
       console.log('Image URI: ' + this.imageFilePath);
@@ -150,7 +153,7 @@ export class CreateMatchProfilePage {
         return;
       }
 
-      this.storageUtils.getDataFromStorage('profiles').then(val => {
+      this.storageUtils.getDataFromStorage('matchProfiles').then(val => {
         if (val) {
           this.matchProfilesList = val;
         } else {
@@ -168,7 +171,7 @@ export class CreateMatchProfilePage {
       .subscribe(resp => {
         if (resp.isSuccess && resp.matchProfilesList) {
           this.matchProfilesList = resp.matchProfilesList;
-          this.storageUtils.storeData('profiles', this.matchProfilesList);
+          this.storageUtils.storeData('matchProfiles', this.matchProfilesList);
         }
       }, err => console.error('ERROR: ', JSON.stringify(err)));
     }

@@ -60,7 +60,7 @@ export class SettingsPage {
         }
       });
 
-      this.storage.getDataFromStorage('profiles').then(val => {
+      this.storage.getDataFromStorage('matchProfiles').then(val => {
         this.matchProfilesList = val;
       });
     }
