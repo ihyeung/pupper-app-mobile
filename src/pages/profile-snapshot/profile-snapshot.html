@@ -18,7 +18,6 @@
       <ion-label>USER PROFILE SETTINGS</ion-label>
     </ion-item-divider>
     <ion-item-sliding>
-      <ion-item-divider></ion-item-divider>
       <ion-item>
         <ion-label color="primary" >ZIPCODE/LOCATION:</ion-label><ion-label> {{userProfileObj.zip}}</ion-label>
       </ion-item>
@@ -57,7 +56,7 @@
         </ion-label>
       </ion-item>
       <ion-item-options>
-        <button ion-button color="primary" (click)="matchProfileModal(false)">
+        <button ion-button color="primary" (click)="matchProfileModal(null)">
           <ion-icon name="swap" item-content></ion-icon>
           SWAP ACTIVE
         </button>
@@ -65,28 +64,42 @@
     </ion-item-sliding>
     <ion-item-sliding>
       <ion-item>
-        <ion-label color="primary">MATCH PROFILES</ion-label>
+        <ion-label color="primary">ACTIVE/DEFAULT MATCH PROFILE</ion-label>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button color="secondary" (click)="matchProfileModal(activeMatchProfileObj)" *ngIf="numMatchProfiles > 0">
+          <ion-icon name="open" item-start></ion-icon>
+          VIEW
+        </button>
+        <button ion-button color="light" (click)="editActiveMatchProfile()" *ngIf="numMatchProfiles > 0">
+          <ion-icon name="create" item-start></ion-icon>
+          EDIT
+        </button>
+        <button ion-button color="dark" (click)="deleteMatchProfileHandler(activeMatchProfileObj)" *ngIf="numMatchProfiles > 0">
+          <ion-icon name="trash" item-start></ion-icon>
+          DELETE
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+    <ion-item-sliding>
+      <ion-item>
+        <ion-label color="primary">ALL MATCH PROFILES</ion-label>
       </ion-item>
       <ion-item-options>
         <button ion-button color="primary" (click)="createMatchProfile()">
           <ion-icon name="add" item-start></ion-icon>
-          ADD
+          CREATE
         </button>
-        <button ion-button color="secondary" (click)="matchProfileModal(true)" *ngIf="numMatchProfiles > 0">
+        <button ion-button color="secondary" (click)="matchProfileModal(null)" *ngIf="numMatchProfiles > 0">
           <ion-icon name="open" item-start></ion-icon>
           VIEW
         </button>
-        <button ion-button color="light" (click)="matchProfileModal(false)" *ngIf="numMatchProfiles > 0">
-          <ion-icon name="create" item-start></ion-icon>
-          EDIT
-        </button>
-        <button ion-button color="dark" (click)="deleteActiveMatchProfile()" *ngIf="numMatchProfiles > 0">
+        <button ion-button color="dark" (click)="deleteMatchProfileHandler(matchProfilesList)" *ngIf="numMatchProfiles > 0">
           <ion-icon name="trash" item-start></ion-icon>
-          DELETE ACTIVE
+          DELETE ALL
         </button>
       </ion-item-options>
     </ion-item-sliding>
-
 
 
   </ion-list>

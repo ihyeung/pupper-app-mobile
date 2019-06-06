@@ -20,16 +20,17 @@ export class ProfileSnapshotPage {
   matchProfilesList: any = [];
   activeMatchProfileObj: any;
   numMatchProfiles: number = 0;
+  privateView: boolean = false; //Whether active user is accessing user/match detail pages linked to their own account
 
   constructor(public navCtrl: NavController, public utils: Utilities,
               public storageUtils: StorageUtilities, public matchProfService: MatchProfiles,
               public dialogs: Dialogs, public users: Users, public modal: ModalController) {}
 
   ionViewDidLoad() {
-    this.loadProfileSnapshotData();
+    this.loadDataFromStorage();
   }
 
-  loadProfileSnapshotData() {
+  loadDataFromStorage() {
     this.storageUtils.getDataFromStorage('match').then(match => {
       if (match) {
         //Match profile retreived from storage (i.e., profile snapshot page from create match profile page where user created a default match profile)
@@ -66,7 +67,7 @@ export class ProfileSnapshotPage {
 
   retrieveMatchProfilesForUser(user: any){
 
-    this.storageUtils.getDataFromStorage('profiles').then(val => {
+    this.storageUtils.getDataFromStorage('matchProfiles').then(val => {
       if (val) { //May have been previously stored on login page
         this.matchProfilesList = val;
         console.log(JSON.stringify(this.matchProfilesList));
@@ -80,7 +81,7 @@ export class ProfileSnapshotPage {
           .subscribe(resp => {
             if (!resp.isSuccess ||
               (resp['matchProfiles'] === undefined || !resp['matchProfiles'])) {
-              this.promptCreateMatchProfile();
+              this.matchProfileNotFoundHandler();
             } else {
               this.numMatchProfiles = resp['matchProfiles'].length;
               this.matchProfilesList = resp['matchProfiles'];
@@ -93,13 +94,13 @@ export class ProfileSnapshotPage {
   }
 
   private findAndStoreActiveMatchProfile() {
-    if (!this.matchProfilesList) {
-      this.promptCreateMatchProfile();
+    if (!this.matchProfilesList || this.numMatchProfiles == 0) {
+      this.matchProfileNotFoundHandler();
     } else {
 
       this.matchProfilesList.forEach(profile => {
         if (profile['isDefault']) {
-          console.log('found active match profile');
+          console.log('found active match profile, setting as activeMatchProfileObj local var');
           this.activeMatchProfileObj = profile;
 
         }
@@ -110,18 +111,18 @@ export class ProfileSnapshotPage {
 
         this.activeMatchProfileObj = this.matchProfilesList[0]; //Set default to first result for now
         this.activeMatchProfileObj['isDefault'] = true;
-        this.updateMatchProfile(this.activeMatchProfileObj);
+        this.setMatchProfileAsDefault(this.activeMatchProfileObj);
         if (!this.matchProfilesList[0]['isDefault']) {
           console.log('need to update reference to active match profile in match profile list before storing match profile list in storage');
         }
       }
 
-      this.storageUtils.storeData('profiles', this.matchProfilesList);
+      this.storageUtils.storeData('matchProfiles', this.matchProfilesList);
       this.storageUtils.storeData('match', this.activeMatchProfileObj); //Replace stored match profile with activeMatchProfile
     }
   }
 
-  updateMatchProfile(matchProfile: any) {
+  setMatchProfileAsDefault(matchProfile: any) {
     const userId = matchProfile['userProfile']['id'];
 
     this.matchProfService.updateMatchProfile(matchProfile, userId)
@@ -133,24 +134,17 @@ export class ProfileSnapshotPage {
       }, err => console.error('ERROR: ', JSON.stringify(err)));
   }
 
-  matchProfileModal(readOnly: boolean) {
+  // matchProfileModal(readOnly: boolean) {
+  matchProfileModal(matchProfile: any) { //'VIEW ACTIVE/DEFAULT' button is the only use case where a matchProfile object (the active/default) is passed in
     if (this.numMatchProfiles > 0) {
       this.navCtrl.push('MatchProfileDetailPage', {
-        readOnly : readOnly,
-        matchProfiles: this.matchProfilesList,
-        privateView: true
+        // readOnly : readOnly,
+        matchProfiles: matchProfile ? [matchProfile] : this.matchProfilesList, //If matchProfile obj passed in, only pass this default using matchProfiles param
+        privateView: this.privateView
       });
     } else {
-      this.promptCreateMatchProfile();
+      this.matchProfileNotFoundHandler();
     }
-  }
-
-  private promptCreateMatchProfile() {
-    let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
-    alert.present();
-    alert.onDidDismiss(() => {
-      this.navCtrl.push('CreateMatchProfilePage');
-    });
   }
 
   createMatchProfile() {
@@ -162,54 +156,59 @@ export class ProfileSnapshotPage {
     }
   }
 
-  deleteActiveMatchProfile() {
-    if (this.numMatchProfiles == 0) {
+  deleteMatchProfileHandler(matchProfiles: any) {
+    if (this.numMatchProfiles == 0 || !matchProfiles) {
       console.error("Error: trying to delete invalid match profile");
     }
-    const message = `Are you sure you want to delete ${this.activeMatchProfileObj['names']}'s match profile ? This action cannot be undone.`;
-    const title = `Delete ${this.activeMatchProfileObj['names']}'s matching profile?`;
+    let profilesToDelete = `${this.activeMatchProfileObj['names']}'s match profile`;
+    let deleteTitle = `${this.activeMatchProfileObj['names']}'s matching profile`;
+    let confirm = 'the name associated with this matching profile';
+    if (matchProfiles.length > 1) {
+      console.log('deleteMatchProfile called on multiple match prfoiles, delete ALL');
+      profilesToDelete = deleteTitle = 'all matching profiles for this user';
+      confirm = 'the first name for this user';
+
+    }
+    const message = `Are you sure you want to delete ${profilesToDelete}? This action cannot be undone.`;
+    const title = `Delete ${deleteTitle}?`;
     this.dialogs.prompt(message, title, ['Confirm', 'Cancel'],
-      'Enter the name associated with this matching profile to confirm.')
+      `Enter ${confirm} to confirm.`)
       .then(obj => {
         if (obj.buttonIndex != 1) { //Cancel button pressed or user clicked outside dialog box
           return;
         }
         if (obj.input1 === undefined || !obj.input1 || obj.input1 != this.activeMatchProfileObj['names']) {
-          console.log('does not match');
+          console.log('Invalid input');
+          let alert = this.utils.presentAlert("Deletion of matching profile(s) failed. Please try again and enter the requested input correctly.");
+          alert.present();
         } else {
-          console.log('deleting matching profile ', this.activeMatchProfileObj['names']);
+          console.log('Deleting matching profile for ', this.activeMatchProfileObj['names']);
 
-          //TODO: DELETE MATCH_RESULT AND PUPPER_MESSAGES LINKED TO THIS MATCH PROFILE FIRST
-          ProfileSnapshotPage.deleteMatchProfileData(this.activeMatchProfileObj['id']);
-
-          this.matchProfService.deleteMatchProfileById(this.userProfileObj['id'],
-            this.activeMatchProfileObj['id'])
-            .map(res => res.json())
-            .subscribe(resp => {
-              console.log(resp);
-              if (resp.isSuccess) {
-                let alert = this.utils.presentAlert(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
-                alert.present();
-                this.updateActiveMatchProfile();
-              }
-
-            }, err => console.error('ERROR: ', JSON.stringify(err)));
+          this.deleteMatchProfileData(this.activeMatchProfileObj['id']);
         }
       })
       .catch(e => console.log('Error displaying dialog', e));
   }
 
+  editActiveMatchProfile() {
+    this.navCtrl.push('CreateMatchProfilePage',{
+      formData: this.activeMatchProfileObj,
+      isUpdate: true
+    });
+  }
+
   updateActiveMatchProfile() {
+    console.log('Updating active match profile after deletion of active match profile was completed.');
     if (this.numMatchProfiles == 1) { //Deleted the only match profile for user
-      this.activeMatchProfileObj = null;
-      this.storageUtils.removeDataFromStorage('profiles');
-      this.storageUtils.removeDataFromStorage('match');
+      this.clearMatchProfileData();
+
     } else { //Deleted match profile but others for user still remain
       const activeId = this.activeMatchProfileObj['id'];
       this.matchProfilesList = this.matchProfilesList.filter(profile => profile['id'] != activeId);
       this.activeMatchProfileObj = this.matchProfilesList[0]; //Replace with next profile in list
-      this.storageUtils.storeData('profiles', this.matchProfilesList);
-      this.storageUtils.storeData('match', this.activeMatchProfileObj);
+
+      this.storageUtils.storeData('matchProfiles', this.matchProfilesList);
+
       this.setNewDefaultMatchProfile();
     }
     this.numMatchProfiles--;
@@ -230,16 +229,46 @@ export class ProfileSnapshotPage {
   }
 
   async userProfileModal(readOnly: boolean) {
-
     const modal = await this.modal.create(UserProfileDetailPage, { readOnly: readOnly });
     return await modal.present();
   }
 
-  static deleteMatchProfileData(matchProfileId: number) {
-    console.log("Deleting match profile data for match profile id = " + matchProfileId);
+  deleteMatchProfileData(matchProfiles: any) {
+    console.log('Deleting match_result and pupper_message and match_preference data');
     console.log("not implemented yet");
     //1. delete match_result records
     //2. delete pupper_message records
+
+    matchProfiles.forEach(each => {
+      console.log("Deleting match_profile for matchProfileId=" + each.id);
+
+    });
+
+    if (matchProfiles.length == 1) {
+      this.matchProfService.deleteMatchProfileById(this.userProfileObj['id'], this.activeMatchProfileObj['id']);
+      let alert = this.utils.presentAlert(`${this.activeMatchProfileObj['names']}'s matching profile successfully deleted.`);
+      alert.present();
+
+      this.updateActiveMatchProfile();
+    }
+    else {
+      this.matchProfService.deleteAllMatchProfilesByUserId(this.userProfileObj['id'])
+        .map(res => res.json())
+        .subscribe(resp => {
+          console.log(resp);
+          if (resp.isSuccess) {
+
+            this.clearMatchProfileData();
+
+            let alert = this.utils.presentAlert(`All matching profiles associated with ${this.userProfileObj['firstName']}'s profile were successfully deleted.`);
+            alert.present();
+
+          } else {
+            console.log('Error: attempt to delete match profiles for an invalid userId');
+          }
+
+        }, err => console.error('ERROR: ', JSON.stringify(err)));
+    }
   }
 
   updateZipCode() {
@@ -276,5 +305,21 @@ export class ProfileSnapshotPage {
           }, err => console.error('ERROR UPDATING USER ZIP CODE: ', JSON.stringify(err)));
       }).catch(e => console.log('Error displaying dialog: ', JSON.stringify(e)));
   }
+
+  private matchProfileNotFoundHandler() {
+    let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
+    alert.present();
+    alert.onDidDismiss(() => {
+      this.navCtrl.push('CreateMatchProfilePage');
+    });
+  }
+
+  private clearMatchProfileData() {
+    this.activeMatchProfileObj = null;
+    this.storageUtils.removeDataFromStorage('matchProfiles');
+    this.storageUtils.removeDataFromStorage('match');
+    this.matchProfilesList = null;
+  }
+
 
 }
