@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar>
-    <ion-title *ngIf="profilesReady">MATCH PROFILES</ion-title>
+    <ion-title *ngIf="profilesReady">MATCH PROFILE DETAIL</ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content>
@@ -13,6 +13,8 @@
         <div class="profile-div">
           <div class="profile-image-div" [style.background-image]="'url(' + profile.profileImage + ')'" *ngIf="profilesReady">
           </div>
+          <ion-item-divider text-center="true" *ngIf="profilesReady && profile.isDefault">ACTIVE/DEFAULT MATCHING PROFILE</ion-item-divider>
+
           <div class="profile-detail" padding *ngIf="profilesReady">
             <ion-card-title><h1>{{profile.names}}</h1></ion-card-title>
             <ion-card-header>
