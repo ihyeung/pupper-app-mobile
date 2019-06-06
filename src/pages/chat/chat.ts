@@ -78,6 +78,7 @@ export class ChatPage {
     }
   }
 
+  //TODO: Revisit this functionality in the future.
   private initUserChat() {
     console.log('loading chat page between users');
     this.chatProfileImage =
