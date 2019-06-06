@@ -87,7 +87,6 @@ export class UserProfileDetailPage {
   }
 
   viewMatchProfiles() {
-
     this.matchProfService.getMatchProfilesByUserId(this.userProfile.id)
       .map(res => res.json())
       .subscribe(response => {
