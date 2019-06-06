@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { LoadingController } from 'ionic-angular';
-import { StorageUtilities } from '../../providers';
-import { MatchProfile } from '../../models/match-profile';
-import { environment as ENV } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
+import {StorageUtilities} from '../../providers';
+import {environment as ENV} from '../../environments/environment';
 
 
 @Injectable()
@@ -31,6 +29,7 @@ export class MatchProfiles {
       return this.http.put(url, matchProfileObj, { headers: this.authHeaders });
     }
 
+    //This endpoint has a void return type
     deleteMatchProfileById(userId: number, matchProfileId: number) {
       const url = `${ENV.BASE_URL}/user/${userId}/matchProfile/${matchProfileId}`;
       console.log("Deleting match profile: " + url);
@@ -38,6 +37,7 @@ export class MatchProfiles {
       return this.http.delete(url, { headers: this.authHeaders });
     }
 
+    //This endpoint returns a matchProfileReponse object
     deleteAllMatchProfilesByUserId(userId: number) {
       const url = `${ENV.BASE_URL}/matchProfile?userId=${userId}`;
       console.log("Deleting all match profiles for user:" + url);
