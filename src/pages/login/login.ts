@@ -190,7 +190,7 @@ export class LoginPage {
         if (resp.isSuccess) {
           this.updateLastLogin(userProfileObj, loader, 'TabsPage'); //Update last login, pass in TabsPage since matchProfiles were successfully retrieved
           const profiles = resp.matchProfiles;
-          this.storageUtils.storeData('profiles', profiles);
+          this.storageUtils.storeData('matchProfiles', profiles);
         } else  {
           this.updateLastLogin(userProfileObj, loader, 'CreateMatchProfilePage'); //Update last login, pass in CreateMatchProfilePage since matchProfiles were NOT successfully retrieved
           console.log('attempt to retreive match profiles failed');
