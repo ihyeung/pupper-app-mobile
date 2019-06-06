@@ -124,7 +124,6 @@ export class LoginPage {
       this.userService.getUserProfileByEmail(this.email, headers)
       .map(res => res.json())
       .subscribe(resp => {
-        console.log(JSON.stringify(resp));
         if (resp.isSuccess) {
           const userProfileObj = resp['userProfiles'][0];
           this.retrieveMatchProfileData(userProfileObj, loader);
@@ -134,11 +133,7 @@ export class LoginPage {
           this.storageUtils.storeData('email', this.email);
           this.storageUtils.storeData('password', this.password);
           //Happens when user created user account but never created user profile (only possible with old flow)
-          let alert = this.utils.presentAlert(USER_PROFILE_ERROR);
-          alert.present();
-          alert.onDidDismiss(() => {
-             this.navCtrl.push('CreateUserProfilePage');
-          });
+          this.profileErrorHandler(USER_PROFILE_ERROR, 'CreateUserProfilePage');
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
@@ -158,46 +153,49 @@ export class LoginPage {
             console.log('updated last login');
             const userProfile = resp['userProfiles'][0];
 
-            this.storeUserAndNavToMain(userProfile, loader, navPage)//Store user after last login has been updated
+            this.storeUserAndNavToPage(userProfile, loader, navPage)//Store user after last login has been updated
           }
         }, err => {
           console.error('ERROR: ', JSON.stringify(err));
           LoginPage.dismissLoader(loader);
         });
       } else {
-        this.storeUserAndNavToMain(userProfileObj, loader, navPage);
+        this.storeUserAndNavToPage(userProfileObj, loader, navPage);
       }
     }
 
-    private storeUserAndNavToMain(userProfileObj: any, loader: any, navPage: string) {
+    private storeUserAndNavToPage(userProfileObj: any, loader: any, navPage: string) {
       this.storageUtils.storeData('user', userProfileObj); //Store user
       LoginPage.dismissLoader(loader);
       if (navPage == 'CreateMatchProfilePage') {
-        let alert = this.utils.presentAlert(MATCH_PROFILE_ERROR);
-        alert.present();
-        alert.onDidDismiss(() => {
-          this.navCtrl.push(navPage);
-        });
+        this.profileErrorHandler(MATCH_PROFILE_ERROR, navPage);
       } else {
         this.navCtrl.push(navPage); //Only proceed after user/match profile data has been stored (for displaying on profile snapshot page)
       }
     }
 
-    retrieveMatchProfileData(userProfileObj: number, loader: any) {
+    retrieveMatchProfileData(userProfileObj: any, loader: any) {
       this.matchProfService.getMatchProfilesByUserId(userProfileObj['id'])
       .map(res => res.json())
       .subscribe(resp => {
         if (resp.isSuccess) {
+          this.storageUtils.storeData('matchProfiles', resp.matchProfiles);
           this.updateLastLogin(userProfileObj, loader, 'TabsPage'); //Update last login, pass in TabsPage since matchProfiles were successfully retrieved
-          const profiles = resp.matchProfiles;
-          this.storageUtils.storeData('matchProfiles', profiles);
-        } else  {
+        } else  { //Find all match profiles by userId returned empty list
           this.updateLastLogin(userProfileObj, loader, 'CreateMatchProfilePage'); //Update last login, pass in CreateMatchProfilePage since matchProfiles were NOT successfully retrieved
           console.log('attempt to retreive match profiles failed');
         }
       }, err => {
         console.error('ERROR: ', JSON.stringify(err));
         LoginPage.dismissLoader(loader);
+      });
+    }
+
+    private profileErrorHandler(alertText: string, navToPage: string) {
+      let alert = this.utils.presentAlert(alertText);
+      alert.present();
+      alert.onDidDismiss(() => {
+        this.navCtrl.push(navToPage);
       });
     }
 
