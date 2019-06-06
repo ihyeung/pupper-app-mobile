@@ -34,6 +34,7 @@
     "@ionic-native/toast": "^4.17.0",
     "@ionic-native/transfer": "^3.14.0",
     "@ionic/storage": "^2.2.0",
+    "braces": ">=2.3.1",
     "cordova-android": "7.1.4",
     "cordova-browser": "5.0.4",
     "cordova-ios": "4.5.5",
