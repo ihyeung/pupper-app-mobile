@@ -10,7 +10,7 @@ import { MatchProfiles, StorageUtilities } from "../../providers";
   templateUrl: 'preferences.html',
 })
 export class PreferencesPage {
-  
+
   matchPreferences: any = []; //match preferences for default match profile
   matchProfileObj: any = [];
 

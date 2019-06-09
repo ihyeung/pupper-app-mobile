@@ -15,7 +15,7 @@ export class SettingsPage {
   matchProfileObj: any = [];
   userObj: any = [];
   matchProfilesList: any = [];
-  matchPreferences: any = []; //match preferences for default match profile
+  // matchPreferences: any = []; //match preferences for default match profile
   hideProfile: boolean = false;
   showSimilar: boolean = false;
   size: any = [];
@@ -48,35 +48,9 @@ export class SettingsPage {
         }
       });
 
-      this.storage.getDataFromStorage('preferences').then(val => {
-        if (!val) {
-          console.log("No matching preferences found in storage");
-          if (this.matchProfileObj) {
-            console.log('Making http call to retrieve matching preferences for match profile id =' + this.matchProfileObj.id);
-            this.getMatchPreferencesForDefaultMatchProfile(this.matchProfileObj.id);
-          }
-        } else {
-          this.matchPreferences = val;
-        }
-      });
-
       this.storage.getDataFromStorage('matchProfiles').then(val => {
         this.matchProfilesList = val;
       });
-    }
-
-    getMatchPreferencesForDefaultMatchProfile(matchProfileId: number) {
-      this.matchProfiles.getMatchProfileByMatchProfileId(matchProfileId)
-      .map(res => res.json())
-      .subscribe(response => {
-        console.log(JSON.stringify(response));
-        if (response.isSuccess) {
-          this.matchPreferences = response['matchPreferences'];
-          console.log(JSON.stringify(this.matchPreferences));
-          this.storage.storeData('preferences', this.matchPreferences);
-        }
-      }
-      , err => console.error('ERROR: ', JSON.stringify(err)));
     }
 
     updateActiveMatchProfile() {
@@ -106,14 +80,6 @@ export class SettingsPage {
         matchProfiles: [this.matchProfileObj],
         readOnly : false
       });
-    }
-
-    saveMatchProfileSettings() {
-      this.dialog.alert('Match Profile button clicked')
-      .then(() => {
-        console.log('Dialog dismissed');
-      })
-      .catch(e => console.log('Error displaying dialog', e));
     }
 
     saveUserSettings() {
