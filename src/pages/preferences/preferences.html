@@ -1,0 +1,56 @@
+<!--
+  Generated template for the PreferencesPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary" class="nav">
+    <ion-title class="navTitle">
+      MATCHING PREFERENCES
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-item-divider>
+<!--    Matching Settings for {{active/default match profile.names}}-->
+  </ion-item-divider>
+  <ion-item>
+    <ion-label color="primary">Match Radius</ion-label>
+    <ion-range [(ngModel)]="searchRadius" min="3" max="50" step="5" pin="true" color="secondary">
+      <ion-label range-left>3 miles</ion-label>
+      <ion-label range-right>50 miles</ion-label>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label color="primary">Show me match profiles similar to mine first</ion-label>
+    <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="showSimilar"></ion-toggle>
+  </ion-item>
+  <ion-item>
+    <ion-label color="primary">Hide My Profile From Matching Results</ion-label>
+    <ion-toggle item-end right color="secondary" checked="false" [(ngModel)]="hideProfile"></ion-toggle>
+  </ion-item>
+
+  <ion-item>
+    <ion-label color="primary">Dog Size Range</ion-label>
+    <ion-range [(ngModel)]="size">
+      <ion-label range-left>TOY/PETITE</ion-label>
+      <ion-label range-right>EXTRA LARGE</ion-label>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label color="primary">Dog Age Range</ion-label>
+    <ion-range [(ngModel)]="age">
+      <ion-label range-left>PUPPY</ion-label>
+      <ion-label range-right>MATURE</ion-label>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label color="primary">Dog Energy Range</ion-label>
+    <ion-range [(ngModel)]="energy">
+      <ion-label range-left>MINIMAL</ion-label>
+      <ion-label range-right>EXTREME</ion-label>
+    </ion-range>
+  </ion-item>
+  <button ion-item outline color="primary" (click)="saveMatchProfileSettings()">Save match profile/matching changes</button>
+</ion-content>
