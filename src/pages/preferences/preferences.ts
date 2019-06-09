@@ -3,7 +3,6 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Dialogs } from '@ionic-native/dialogs';
 import { MatchProfiles, StorageUtilities } from "../../providers";
 
-
 @IonicPage()
 @Component({
   selector: 'page-preferences',
