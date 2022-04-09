@@ -60,7 +60,7 @@
     "ionicons": "3.0.0",
     "ios-sim": "^8.0.1",
     "js-yaml": "~>3.13.1",
-    "moment": "^2.19.3",
+    "moment": "^2.29.2",
     "ng2-swipe-cards": "^1.1.1",
     "node-sass": "^4.10.0",
     "npm": "^6.13.4",
